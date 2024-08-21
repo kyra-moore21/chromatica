@@ -1,5 +1,13 @@
 # Chromatica
 
+Node version: 22.6.0
+run nvm install 22.6.0
+nvm use 22.6.0
+
+npm i
+
+if you do not have Angular CLI installed run "npm i @angular/cli@18.2.1"
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.1.
 
 ## Development server
