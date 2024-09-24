@@ -111,22 +111,28 @@ export enum Emotions {
 
   // Function to one-hot encode emotions
 function oneHotEncodeEmotion(emotion: Emotions): number[] {
+    //get the emotion number
+    const emoNum = Emotions[emotion]
     const emotionVector = new Array(Object.keys(Emotions).length / 2).fill(0);  // Create zero vector of length 25
-    emotionVector[emotion] = 1;  // Set the index of the selected emotion to 1
+    emotionVector[emoNum] = 1;  // Set the index of the selected emotion to 1
     return emotionVector;
 }
   
   // Function to one-hot encode events
 function oneHotEncodeEvent(event: Events): number[] {
+    //get the event number
+    const eventNum = Events[event]
     const eventVector = new Array(Object.keys(Events).length / 2).fill(0);  // Create zero vector of length 25
-    eventVector[event] = 1;  // Set the index of the selected event to 1
+    eventVector[eventNum] = 1;  // Set the index of the selected event to 1
     return eventVector;
 }
 
 // Function to one-hot encode genres
 function oneHotEncodeGenre(genre: Genres): number[] {
+    //get the genre number
+    const genreNum = Genres[genre]
     const genreVector = new Array(Object.keys(Genres).length / 2).fill(0);  // Create zero vector of length 50
-    genreVector[genre] = 1;  // Set the index of the selected genre to 1
+    genreVector[genreNum] = 1;  // Set the index of the selected genre to 1
     return genreVector;
 }
   
