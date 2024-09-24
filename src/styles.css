@@ -2,3 +2,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root{
+    --color-text: #C9E8F5;
+    --color-bg: #021A21;
+    --navbar-background: linear-gradient(180deg, #042630 36%, #083A49 100%);
+    /* secondary color is used on the search bar, */
+    --color-secondary:#083A49;
+    --color-primary:#042630;
+    /* used on play buttons */
+    --color-tertiary: #4FA4C6;
+    /* main gradient used throughout app */
+    --color-gradient: linear-gradient(180deg, #2E6170 0%, rgba(30, 68, 78, 0.61) 100% );
+    --icon-unfocused: #878787;
+    --icon-focused: #C9E8F5;
+    /* gradient for genre/mood bubbles on profile/form */
+    --bubble-gradient: linear-gradient(180deg, #346B7A 0%, #388196 100%);
+    --color-button: #377E98;
+
+}
