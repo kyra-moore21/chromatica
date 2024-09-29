@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "chromatica": {
+    "app": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/chromatica",
+            "outputPath": "dist/app",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -92,10 +92,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "chromatica:build:production"
+              "buildTarget": "app:build:production"
             },
             "development": {
-              "buildTarget": "chromatica:build:development"
+              "buildTarget": "app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -126,24 +126,24 @@
         "ionic-cordova-serve": {
           "builder": "@ionic/angular-toolkit:cordova-serve",
           "options": {
-            "cordovaBuildTarget": "chromatica:ionic-cordova-build",
-            "devServerTarget": "chromatica:serve"
+            "cordovaBuildTarget": "app:ionic-cordova-build",
+            "devServerTarget": "app:serve"
           },
           "configurations": {
             "production": {
-              "cordovaBuildTarget": "chromatica:ionic-cordova-build:production",
-              "devServerTarget": "chromatica:serve:production"
+              "cordovaBuildTarget": "app:ionic-cordova-build:production",
+              "devServerTarget": "app:serve:production"
             }
           }
         },
         "ionic-cordova-build": {
           "builder": "@ionic/angular-toolkit:cordova-build",
           "options": {
-            "browserTarget": "chromatica:build"
+            "browserTarget": "app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "chromatica:build:production"
+              "browserTarget": "app:build:production"
             }
           }
         }
@@ -153,7 +153,8 @@
   "cli": {
     "schematicCollections": [
       "@ionic/angular-toolkit"
-    ]
+    ],
+    "analytics": false
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {
