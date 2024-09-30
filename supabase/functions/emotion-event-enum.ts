@@ -111,30 +111,38 @@ export enum Genres {
   None,
 }
 
+// Adjusting to exclude "None" from length calculation
+const emotionLength = (Object.keys(Emotions).length / 2) - 1;
+const eventLength = (Object.keys(Events).length / 2) - 1;
+const genreLength = (Object.keys(Genres).length / 2) - 1;
+
 // Function to one-hot encode emotions
 function oneHotEncodeEmotion(emotion: Emotions): number[] {
-  //get the emotion number
-  const emoNum = +Emotions[emotion];
-  const emotionVector = new Array(Object.keys(Emotions).length / 2).fill(0); // Create zero vector of length 25
-  emotionVector[emoNum] = 1; // Set the index of the selected emotion to 1
+  // Ensure that 'emotion' is used directly as it already represents the numeric value
+  const emotionVector = new Array(emotionLength).fill(0);
+  if (emotion >= 0 && emotion < emotionLength) {
+    emotionVector[emotion] = 1; // Set the index of the selected emotion to 1
+  }
   return emotionVector;
 }
 
 // Function to one-hot encode events
 function oneHotEncodeEvent(event: Events): number[] {
-  //get the event number
-  const eventNum = +Events[event];
-  const eventVector = new Array(Object.keys(Events).length / 2).fill(0); // Create zero vector of length 25
-  eventVector[eventNum] = 1; // Set the index of the selected event to 1
+  // Use 'event' directly
+  const eventVector = new Array(eventLength).fill(0);
+  if (event >= 0 && event < eventLength) {
+    eventVector[event] = 1;
+  }
   return eventVector;
 }
 
 // Function to one-hot encode genres
 function oneHotEncodeGenre(genre: Genres): number[] {
-  //get the genre number
-  const genreNum = +Genres[genre];
-  const genreVector = new Array(Object.keys(Genres).length / 2).fill(0); // Create zero vector of length 50
-  genreVector[genreNum] = 1; // Set the index of the selected genre to 1
+  // Use 'genre' directly
+  const genreVector = new Array(genreLength).fill(0);
+  if (genre >= 0 && genre < genreLength) {
+    genreVector[genre] = 1;
+  }
   return genreVector;
 }
 
@@ -147,24 +155,27 @@ export function combineEncodings(
   let emotionVector;
   let eventVector;
   let genreVector;
-  //check if any of the inputs is none and set that input to all zeros
+
+  // Check if any of the inputs is "None" and set that input to all zeros
   if (emotion == Emotions.None) {
-    emotionVector = new Array(Object.keys(Emotions).length / 2).fill(0); // Create zero vector of length 25
+    emotionVector = new Array(emotionLength).fill(0);
   } else {
     emotionVector = oneHotEncodeEmotion(emotion);
   }
+
   if (event == Events.None) {
-    eventVector = new Array(Object.keys(Events).length / 2).fill(0); // Create zero vector of length 25
+    eventVector = new Array(eventLength).fill(0);
   } else {
     eventVector = oneHotEncodeEvent(event);
   }
+
   if (genre == Genres.None) {
-    genreVector = new Array(Object.keys(Genres).length / 2).fill(0); // Create zero vector of length 50
+    genreVector = new Array(genreLength).fill(0);
   } else {
     genreVector = oneHotEncodeGenre(genre);
   }
 
-  // Concatenate both vectors
-  const combinedVector = [...emotionVector, ...eventVector, ...genreVector]; // This creates a 50-length vector
+  // Concatenate the vectors
+  const combinedVector = [...emotionVector, ...eventVector, ...genreVector];
   return combinedVector;
 }

@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
 
     const { data, error } = await this.supabase.storage
       .from('train')
-      .download('double_ds.csv');
+      .download('100_items.csv');
 
     const contents = await data!.text();
 
@@ -79,7 +79,15 @@ export class AppComponent implements OnInit {
       // Input layer
       model.add(
         tf.layers.dense({
-          inputShape: [101], // Your input shape, 101 elements
+          inputShape: [101],
+          units: 101,
+          activation: 'relu',
+        })
+      );
+
+      // Hidden layer
+      model.add(
+        tf.layers.dense({
           units: 128,
           activation: 'relu',
         })
@@ -93,19 +101,11 @@ export class AppComponent implements OnInit {
         })
       );
 
-      //dropout layer
-      model.add(
-        tf.layers.dropout({
-          rate: 0.2,
-        })
-      );
-
-      // Add another hidden layer with L2 regularization
+      // Hidden layer
       model.add(
         tf.layers.dense({
-          units: 64,
+          units: 32,
           activation: 'relu',
-          kernelRegularizer: tf.regularizers.l2({ l2: 0.01 }), // L2 regularization with a factor of 0.01
         })
       );
 
@@ -119,15 +119,16 @@ export class AppComponent implements OnInit {
 
       // Compile the model
       model.compile({
-        loss: 'meanSquaredError',
-        optimizer: tf.train.adam(0.0005),
+        loss: tf.losses.huberLoss,
+        optimizer: tf.train.adam(0.01),
+        metrics: ['mae'],
       });
     } else {
       this.updateConsole('Loading model');
       model = await tf.loadLayersModel('localstorage://model');
       model.compile({
         loss: 'meanSquaredError',
-        optimizer: tf.train.adam(0.0005),
+        optimizer: tf.train.sgd(0.01),
       });
     }
 
@@ -138,7 +139,7 @@ export class AppComponent implements OnInit {
       oneHotArray[i] = 1;
 
       //put the array into the oneHotInputsArray 10 times
-      for (let j = 0; j < 20; j++) {
+      for (let j = 0; j < 100; j++) {
         oneHotInputsArray.push(oneHotArray);
       }
     }
@@ -188,7 +189,7 @@ export class AppComponent implements OnInit {
 
     //loop over the array and add 10 of each into the oneHotInputsArray
     combinedOneHotArray.forEach((oneHotArray) => {
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 100; i++) {
         oneHotInputsArray.push(oneHotArray);
       }
     });
@@ -198,13 +199,18 @@ export class AppComponent implements OnInit {
 
     await model
       .fit(onHotInputs, audioFeatureOutputs, {
-        epochs: 500,
+        epochs: 10,
         callbacks: {
           onEpochEnd: async (epoch, logs) => {
-            this.updateConsole(`Epoch: ${epoch} Loss: ${logs!['loss']}`);
+            const mae = logs!['mae'].toFixed(2); // Format MAE to 2 decimal places
+            this.updateConsole(
+              `Epoch: ${epoch} Loss: ${logs!['loss']} Accuracy (MAE): ${mae}`
+            );
           },
         },
-        batchSize: 16,
+
+        batchSize: 32,
+        validationSplit: 0.1,
       })
       .then(() => {
         this.updateConsole('Training complete');
@@ -215,16 +221,17 @@ export class AppComponent implements OnInit {
 
   test() {
     this.updateConsole('Testing...');
-
-    // Use happy one-hot array
-    const happyOneHot = new Array(101).fill(0);
-    happyOneHot[2] = 1;
-    const happyOneHotTensor = tf.tensor2d([happyOneHot]);
-
+  
+    // Make a one hot array for the selected category
+    const oneHotArray = combineEncodings(Emotions.Guilty, Events.None, Genres.Pop);
+  
+    // Create a tensor from the one hot array
+    const tensor = tf.tensor2d([oneHotArray]);
+  
     tf.loadLayersModel('localstorage://model')
       .then((model) => {
-        const prediction = model.predict(happyOneHotTensor) as tf.Tensor;
-
+        const prediction = model.predict(tensor) as tf.Tensor;
+  
         // Add random noise to the prediction
         const noise = tf.randomNormal(prediction.shape, 0, 0.1);
         const noisyPrediction = prediction.add(noise);
@@ -233,191 +240,66 @@ export class AppComponent implements OnInit {
         noisyPrediction
           .array()
           .then((array) => {
-            // Check if array is 2D
             if (Array.isArray(array) && Array.isArray(array[0])) {
               const features = array[0] as number[];
+  
+              // Denormalize each feature
+              const denormalizedFeatures = [
+                this.denormalize(features[0], 0, 1), // acousticness (0 to 1)
+                this.denormalize(features[1], 0, 1), // danceability (0 to 1)
+                this.denormalize(features[2], 0, 1), // energy (0 to 1)
+                this.denormalize(features[3], 0, 1), // instrumentalness (0 to 1)
+                this.denormalize(features[4], -1, 11), // key (-1 to 11)
+                this.denormalize(features[5], 0, 1), // liveness (0 to 1)
+                this.denormalize(features[6], -60, 0), // loudness (-60 to 0)
+                this.denormalize(features[7], 0, 1), // mode (0 or 1)
+                this.denormalize(features[8], 0, 1), // speechiness (0 to 1)
+                this.denormalize(features[9], 35, 256), // tempo (35 to 256)
+                this.denormalize(features[10], 3, 7), // time_signature (3 to 7)
+                this.denormalize(features[11], 0, 1), // valence (0 to 1)
+              ];
+  
+              // Set target key and time signature to whole numbers
+              denormalizedFeatures[4] = Math.round(denormalizedFeatures[4]);
+              denormalizedFeatures[10] = Math.round(denormalizedFeatures[10]);
+              // Set mode to 0 or 1
+              denormalizedFeatures[7] = Math.round(denormalizedFeatures[7]);
+  
+              // Ensure all values are positive except loudness
+              denormalizedFeatures.forEach((feature, i) => {
+                if (i !== 6) {
+                  denormalizedFeatures[i] = Math.abs(feature);
+                }
+              });
 
-              // Log the features
-              features.forEach((feature, i) => {
+              //log the features
+              denormalizedFeatures.forEach((feature, i) => {
                 this.updateConsole(`Feature ${i}: ${feature}`);
               });
-
-              // Set all floats (number type) to 2 decimal places
-              features.forEach((feature, i) => {
-                features[i] = parseFloat(feature.toFixed(2));
-              });
-
-              // Set target key and time signature to whole number
-              features[4] = Math.round(features[4]);
-              features[10] = Math.round(features[10]);
-              // Set mode to 0 or 1
-              features[7] = Math.round(features[7]);
-
-              // Ensure all values are positive except loudness
-              features.forEach((feature, i) => {
-                if (i !== 6) {
-                  features[i] = Math.abs(feature);
+  
+              // Call the Spotify API using only the predicted target features
+              fetch(
+                `https://api.spotify.com/v1/recommendations?limit=1&seed_genres=pop&target_acousticness=${denormalizedFeatures[0]}&target_danceability=${denormalizedFeatures[1]}&target_energy=${denormalizedFeatures[2]}&target_instrumentalness=${denormalizedFeatures[3]}&target_key=${denormalizedFeatures[4]}&target_liveness=${denormalizedFeatures[5]}&target_loudness=${denormalizedFeatures[6]}&target_mode=${denormalizedFeatures[7]}&target_speechiness=${denormalizedFeatures[8]}&target_tempo=${denormalizedFeatures[9]}&target_time_signature=${denormalizedFeatures[10]}&target_valence=${denormalizedFeatures[11]}`,
+                {
+                  method: 'GET',
+                  headers: {
+                    Authorization: `Bearer ${this.spotifyAccessToken}`,
+                  },
                 }
-              });
-
-              // Initialize min and max array
-              const minMaxArray: number[] = [];
-              features.forEach((feature, i) => {
-                if (i === 4 || i === 10 || i === 7) {
-                  minMaxArray.push(feature);
-                  minMaxArray.push(feature);
-                } else if (i === 9) {
-                  minMaxArray.push(feature - 10);
-                  minMaxArray.push(feature + 10);
-                } else {
-                  minMaxArray.push(feature - 0.05);
-                  minMaxArray.push(feature + 0.05);
-                }
-              });
-
-              // Ensure all min and max values are within 2 decimal places
-              minMaxArray.forEach((feature, i) => {
-                minMaxArray[i] = parseFloat(feature.toFixed(2));
-              });
-
-              // Function to attempt fetching recommendations with an expanding range
-              const fetchWithExpandingRange = async (
-                expansionFactor = 1.5,
-                maxAttempts = 5,
-                attempt = 1
-              ) => {
-                this.updateConsole(`Attempt ${attempt}: Using min-max ranges`);
-
-                const adjustedMinMaxArray = minMaxArray.map((value, index) => {
-                  const middleValue = features[Math.floor(index / 2)];
-                  // Adjust min and max values based on index
-                  //do not use absolute value for loudness as it can be negative
-                  if (index === 12 || index === 13) {
-                    if (index % 2 === 0) {
-                      return parseFloat(
-                        (
-                          value -
-                          (expansionFactor + 0.3) ** (attempt - 1)
-                        ).toFixed(2)
-                      );
-                    } else {
-                      return parseFloat(
-                        (
-                          value +
-                          (expansionFactor + 1.2) ** (attempt - 1)
-                        ).toFixed(2)
-                      );
-                    }
-                  } else {
-                    //check if key, if it is then move by 1
-                    if (index === 8 || index === 9) {
-                      if (index % 2 === 0) {
-                        return value - 1;
-                      } else {
-                        return value + 1;
-                      }
-                    }
-                    // For all other features
-                    if (index % 2 === 0) {
-                      return parseFloat(
-                        (
-                          middleValue -
-                          Math.abs(middleValue - value) *
-                            expansionFactor ** (attempt - 1)
-                        ).toFixed(2)
-                      );
-                    } else {
-                      return parseFloat(
-                        (
-                          middleValue +
-                          Math.abs(middleValue - value) *
-                            expansionFactor ** (attempt - 1)
-                        ).toFixed(2)
-                      );
-                    }
-                  }
-                });
-
-                try {
-                  const response = await fetch(
-                    `https://api.spotify.com/v1/recommendations?limit=1&seed_genres=rock&min_acousticness=${
-                      adjustedMinMaxArray[0]
-                    }&max_acousticness=${
-                      adjustedMinMaxArray[1]
-                    }&target_acousticness=${features[0]}&min_danceability=${
-                      adjustedMinMaxArray[2]
-                    }&max_danceability=${
-                      adjustedMinMaxArray[3]
-                    }&target_danceability=${features[1]}&min_energy=${
-                      adjustedMinMaxArray[4]
-                    }&max_energy=${adjustedMinMaxArray[5]}&target_energy=${
-                      features[2]
-                    }&min_instrumentalness=${
-                      adjustedMinMaxArray[6]
-                    }&max_instrumentalness=${
-                      adjustedMinMaxArray[7]
-                    }&target_instrumentalness=${
-                      features[3]
-                    }&min_key=${-1}&max_key=${11}&target_key=${
-                      features[4]
-                    }&min_liveness=${adjustedMinMaxArray[10]}&max_liveness=${
-                      adjustedMinMaxArray[11]
-                    }&target_liveness=${features[5]}&min_loudness=${
-                      adjustedMinMaxArray[12]
-                    }&max_loudness=${adjustedMinMaxArray[13]}&target_loudness=${
-                      features[6]
-                    }&min_mode=${0}&max_mode=${1}&target_mode=${
-                      features[7]
-                    }&min_speechiness=${
-                      adjustedMinMaxArray[16]
-                    }&max_speechiness=${
-                      adjustedMinMaxArray[17]
-                    }&target_speechiness=${features[8]}&min_tempo=${
-                      adjustedMinMaxArray[18]
-                    }&max_tempo=${adjustedMinMaxArray[19]}&target_tempo=${
-                      features[9]
-                    }&min_valence=${adjustedMinMaxArray[22]}&max_valence=${
-                      adjustedMinMaxArray[23]
-                    }&target_valence=${features[11]}`,
-                    {
-                      method: 'GET',
-                      headers: {
-                        Authorization: `Bearer ${this.spotifyAccessToken}`,
-                      },
-                    }
-                  );
-
-                  const data = await response.json();
-
+              )
+                .then((response) => response.json())
+                .then((data) => {
                   if (data.tracks && data.tracks.length > 0) {
                     this.updateConsole(
                       `Song: ${data.tracks[0].name} by ${data.tracks[0].artists[0].name}`
                     );
-                    return;
-                  } else if (attempt < maxAttempts) {
-                    // If no tracks found, try again with an expanded range
-                    this.updateConsole(
-                      'No songs found, expanding the range...'
-                    );
-                    await fetchWithExpandingRange(
-                      expansionFactor,
-                      maxAttempts,
-                      attempt + 1
-                    );
                   } else {
-                    this.updateConsole(
-                      'No songs found after maximum attempts.'
-                    );
+                    this.updateConsole('No songs found.');
                   }
-                } catch (error) {
-                  this.updateConsole(
-                    'Error fetching recommendations: ' + error
-                  );
-                }
-              };
-
-              // Start fetching with expanding range
-              fetchWithExpandingRange();
+                })
+                .catch((error) => {
+                  this.updateConsole('Error fetching recommendations: ' + error);
+                });
             } else {
               this.updateConsole('Unexpected prediction structure');
             }
@@ -430,6 +312,246 @@ export class AppComponent implements OnInit {
         this.updateConsole('Error loading model: ' + err);
       });
   }
+  
+
+  // test() {
+  //   this.updateConsole('Testing...');
+
+  //   //make a one hot array for the happy vacation genre
+  //   const oneHotArray = combineEncodings(Emotions.Angry, Events.None, Genres.HipHop);
+
+  //   //log each item in the one hot array
+  //   oneHotArray.forEach((item, i) => {
+  //     this.updateConsole(`One hot array item ${i}: ${item}`);
+  //   });
+
+  //   // Create a tensor from the one hot array
+  //   const tensor = tf.tensor2d([oneHotArray]);
+
+  //   tf.loadLayersModel('localstorage://model')
+  //     .then((model) => {
+  //       const prediction = model.predict(tensor) as tf.Tensor;
+
+  //       // Add random noise to the prediction
+  //       const noise = tf.randomNormal(prediction.shape, 0, 0.1);
+  //       const noisyPrediction = prediction.add(noise);
+
+  //       // Use array() to get the predicted values directly
+  //       noisyPrediction
+  //         .array()
+  //         .then((array) => {
+  //           // Check if array is 2D
+  //           if (Array.isArray(array) && Array.isArray(array[0])) {
+  //             const features = array[0] as number[];
+
+  //             const denormalizedFeatures = [
+  //               this.denormalize(features[0], 0, 1), // acousticness (0 to 1)
+  //               this.denormalize(features[1], 0, 1), // danceability (0 to 1)
+  //               this.denormalize(features[2], 0, 1), // energy (0 to 1)
+  //               this.denormalize(features[3], 0, 1), // instrumentalness (0 to 1)
+  //               this.denormalize(features[4], -1, 11), // key (-1 to 11)
+  //               this.denormalize(features[5], 0, 1), // liveness (0 to 1)
+  //               this.denormalize(features[6], -60, 0), // loudness (-60 to 0)
+  //               this.denormalize(features[7], 0, 1), // mode (0 or 1)
+  //               this.denormalize(features[8], 0, 1), // speechiness (0 to 1)
+  //               this.denormalize(features[9], 35, 256), // tempo (using the broader range 35 to 256)
+  //               this.denormalize(features[10], 3, 7), // time_signature (3 to 7)
+  //               this.denormalize(features[11], 0, 1), // valence (0 to 1)
+  //             ];
+
+  //             // Log the features
+  //             denormalizedFeatures.forEach((feature, i) => {
+  //               this.updateConsole(`Feature ${i}: ${feature}`);
+  //             });
+
+  //             // Set target key and time signature to whole numbers
+  //             denormalizedFeatures[4] = Math.round(denormalizedFeatures[4]);
+  //             denormalizedFeatures[10] = Math.round(denormalizedFeatures[10]);
+  //             // Set mode to 0 or 1
+  //             denormalizedFeatures[7] = Math.round(denormalizedFeatures[7]);
+
+  //             // Ensure all values are positive except loudness
+  //             denormalizedFeatures.forEach((feature, i) => {
+  //               if (i !== 6) {
+  //                 denormalizedFeatures[i] = Math.abs(feature);
+  //               }
+  //             });
+
+  //             // Use the denormalized values in your min/max array or API call
+  //             const minMaxArray: number[] = [];
+  //             denormalizedFeatures.forEach((feature, i) => {
+  //               if (i === 4 || i === 10 || i === 7) {
+  //                 minMaxArray.push(feature);
+  //                 minMaxArray.push(feature);
+  //               } else if (i === 9) {
+  //                 minMaxArray.push(feature - 10);
+  //                 minMaxArray.push(feature + 10);
+  //               } else {
+  //                 minMaxArray.push(feature - 0.05);
+  //                 minMaxArray.push(feature + 0.05);
+  //               }
+  //             });
+
+  //             // Ensure all min and max values are within 2 decimal places
+  //             minMaxArray.forEach((feature, i) => {
+  //               minMaxArray[i] = parseFloat(feature.toFixed(2));
+  //             });
+
+  //             // Function to attempt fetching recommendations with an expanding range
+  //             const fetchWithExpandingRange = async (
+  //               expansionFactor = 1.5,
+  //               maxAttempts = 5,
+  //               attempt = 1
+  //             ) => {
+  //               this.updateConsole(`Attempt ${attempt}: Using min-max ranges`);
+
+  //               const adjustedMinMaxArray = minMaxArray.map((value, index) => {
+  //                 const middleValue =
+  //                   denormalizedFeatures[Math.floor(index / 2)];
+  //                 // Adjust min and max values based on index
+  //                 //do not use absolute value for loudness as it can be negative
+  //                 if (index === 12 || index === 13) {
+  //                   if (index % 2 === 0) {
+  //                     return parseFloat(
+  //                       (
+  //                         value -
+  //                         (expansionFactor + 0.3) ** (attempt - 1)
+  //                       ).toFixed(2)
+  //                     );
+  //                   } else {
+  //                     return parseFloat(
+  //                       (
+  //                         value +
+  //                         (expansionFactor + 1.2) ** (attempt - 1)
+  //                       ).toFixed(2)
+  //                     );
+  //                   }
+  //                 } else {
+  //                   //check if key, if it is then move by 1
+  //                   if (index === 8 || index === 9) {
+  //                     if (index % 2 === 0) {
+  //                       return value - 1;
+  //                     } else {
+  //                       return value + 1;
+  //                     }
+  //                   }
+  //                   // For all other features
+  //                   if (index % 2 === 0) {
+  //                     return parseFloat(
+  //                       (
+  //                         middleValue -
+  //                         Math.abs(middleValue - value) *
+  //                           expansionFactor ** (attempt - 1)
+  //                       ).toFixed(2)
+  //                     );
+  //                   } else {
+  //                     return parseFloat(
+  //                       (
+  //                         middleValue +
+  //                         Math.abs(middleValue - value) *
+  //                           expansionFactor ** (attempt - 1)
+  //                       ).toFixed(2)
+  //                     );
+  //                   }
+  //                 }
+  //               });
+
+  //               try {
+  //                 const response = await fetch(
+  //                   `https://api.spotify.com/v1/recommendations?limit=1&seed_genres=hip-hop&min_acousticness=${
+  //                     adjustedMinMaxArray[0]
+  //                   }&max_acousticness=${
+  //                     adjustedMinMaxArray[1]
+  //                   }&target_acousticness=${
+  //                     denormalizedFeatures[0]
+  //                   }&min_danceability=${
+  //                     adjustedMinMaxArray[2]
+  //                   }&max_danceability=${
+  //                     adjustedMinMaxArray[3]
+  //                   }&target_danceability=${
+  //                     denormalizedFeatures[1]
+  //                   }&min_energy=${adjustedMinMaxArray[4]}&max_energy=${
+  //                     adjustedMinMaxArray[5]
+  //                   }&target_energy=${
+  //                     denormalizedFeatures[2]
+  //                   }&min_instrumentalness=${
+  //                     adjustedMinMaxArray[6]
+  //                   }&max_instrumentalness=${
+  //                     adjustedMinMaxArray[7]
+  //                   }&target_instrumentalness=${
+  //                     denormalizedFeatures[3]
+  //                   }&min_key=${-1}&max_key=${11}&target_key=${
+  //                     denormalizedFeatures[4]
+  //                   }&min_liveness=${adjustedMinMaxArray[10]}&max_liveness=${
+  //                     adjustedMinMaxArray[11]
+  //                   }&target_liveness=${denormalizedFeatures[5]}&min_loudness=${
+  //                     adjustedMinMaxArray[12]
+  //                   }&max_loudness=${adjustedMinMaxArray[13]}&target_loudness=${
+  //                     denormalizedFeatures[6]
+  //                   }&min_mode=${0}&max_mode=${1}&target_mode=${
+  //                     denormalizedFeatures[7]
+  //                   }&min_speechiness=${
+  //                     adjustedMinMaxArray[16]
+  //                   }&max_speechiness=${
+  //                     adjustedMinMaxArray[17]
+  //                   }&target_speechiness=${denormalizedFeatures[8]}&min_tempo=${
+  //                     adjustedMinMaxArray[18]
+  //                   }&max_tempo=${adjustedMinMaxArray[19]}&target_tempo=${
+  //                     denormalizedFeatures[9]
+  //                   }&min_valence=${adjustedMinMaxArray[22]}&max_valence=${
+  //                     adjustedMinMaxArray[23]
+  //                   }&target_valence=${denormalizedFeatures[11]}`,
+  //                   {
+  //                     method: 'GET',
+  //                     headers: {
+  //                       Authorization: `Bearer ${this.spotifyAccessToken}`,
+  //                     },
+  //                   }
+  //                 );
+
+  //                 const data = await response.json();
+
+  //                 if (data.tracks && data.tracks.length > 0) {
+  //                   this.updateConsole(
+  //                     `Song: ${data.tracks[0].name} by ${data.tracks[0].artists[0].name}`
+  //                   );
+  //                   return;
+  //                 } else if (attempt < maxAttempts) {
+  //                   // If no tracks found, try again with an expanded range
+  //                   this.updateConsole(
+  //                     'No songs found, expanding the range...'
+  //                   );
+  //                   await fetchWithExpandingRange(
+  //                     expansionFactor,
+  //                     maxAttempts,
+  //                     attempt + 1
+  //                   );
+  //                 } else {
+  //                   this.updateConsole(
+  //                     'No songs found after maximum attempts.'
+  //                   );
+  //                 }
+  //               } catch (error) {
+  //                 this.updateConsole(
+  //                   'Error fetching recommendations: ' + error
+  //                 );
+  //               }
+  //             };
+
+  //             // Start fetching with expanding range
+  //             fetchWithExpandingRange();
+  //           } else {
+  //             this.updateConsole('Unexpected prediction structure');
+  //           }
+  //         })
+  //         .catch((err) => {
+  //           this.updateConsole('Error getting prediction: ' + err);
+  //         });
+  //     })
+  //     .catch((err) => {
+  //       this.updateConsole('Error loading model: ' + err);
+  //     });
+  // }
 
   async getAllFeatures() {
     this.updateConsole('Getting all features...');
@@ -474,7 +596,32 @@ export class AppComponent implements OnInit {
 
   getAllAudioFeatures(csv: string): any {
     const parsedData = this.parseCSV(csv);
-    parsedData.forEach((row) => row.shift());
+    parsedData.forEach((row) => {
+      row.shift(); // Remove the 'Happy' label
+
+      // Normalize each feature using their respective min and max values
+      row[0] = this.normalize(row[0], 0, 1); // acousticness (0 to 1)
+      row[1] = this.normalize(row[1], 0, 1); // danceability (0 to 1)
+      row[2] = this.normalize(row[2], 0, 1); // energy (0 to 1)
+      row[3] = this.normalize(row[3], 0, 1); // instrumentalness (0 to 1)
+      row[4] = this.normalize(row[4], -1, 11); // key (-1 to 11)
+      row[5] = this.normalize(row[5], 0, 1); // liveness (0 to 1)
+      row[6] = this.normalize(row[6], -60, 0); // loudness (-60 to 0)
+      row[7] = this.normalize(row[7], 0, 1); // mode (0 or 1)
+      row[8] = this.normalize(row[8], 0, 1); // speechiness (0 to 1)
+      row[9] = this.normalize(row[9], 35, 256); // tempo (using the broader range 35 to 256)
+      row[10] = this.normalize(row[10], 3, 7); // time_signature (3 to 7)
+      row[11] = this.normalize(row[11], 0, 1); // valence (0 to 1)
+    });
     return parsedData;
+  }
+
+  // Normalization function
+  normalize(value: number, min: number, max: number) {
+    return (value - min) / (max - min);
+  }
+
+  denormalize(value: number, min: number, max: number) {
+    return value * (max - min) + min;
   }
 }
