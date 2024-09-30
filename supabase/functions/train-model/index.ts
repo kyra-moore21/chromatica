@@ -7,6 +7,7 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import * as nnFunctions from '../emotion-event-enum.ts';
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import * as tf from 'npm:@tensorflow/tfjs';
+import * as tfnode from 'npm:@tensorflow/tfjs-node';
 //import "../_shared/supabaseClient.ts"
 
 function parseCSV(csv: string): number[][] {
@@ -37,6 +38,58 @@ function getAllAudioFeatures(csv: string): any {
   return parsedData;
 }
 
+async function saveModel(model, supabase) {
+  // Save the model after training
+  const modelJson = await model.toJSON(); // Get model topology in JSON format
+  console.log(modelJson);
+  // Convert to Blob for upload
+  const modelBlob = new Blob([JSON.stringify(modelJson)], {
+    type: 'application/json',
+  });
+  const modelFile = new File([modelBlob], { name: 'model.json' });
+
+  // Save model weights to an array buffer
+  const weights = await model.getWeights();
+  const weightsArray = await Promise.all(
+    weights.map((weight) => weight.array())
+  );
+  const weightsBlob = new Blob([new Float32Array(weightsArray.flat())], {
+    type: 'application/octet-stream',
+  });
+
+  // Upload model and weights to Supabase
+  await supabase.storage.from('models').upload('model.json', modelFile);
+  await supabase.storage
+    .from('models')
+    .upload('model-weights.bin', weightsBlob);
+}
+
+async function loadModel(supabase) {
+  // Get public URLs or download files from Supabase storage
+  const { data: modelJsonURL } = await supabase.storage
+    .from('models')
+    .getPublicUrl('model.json');
+
+  // const { data: weightsData, error: weightsError } = await supabase.storage
+  //   .from('models')
+  //   .download('model-weights.bin');
+
+  // if (jsonError || weightsError) {
+  //   console.error('Error downloading model files:', jsonError || weightsError);
+  //   return null;
+  // }
+
+  // // Convert response data to proper formats
+  // const modelJson = await modelJsonData.text();
+  // const weightsArrayBuffer = await weightsData.arrayBuffer();
+
+  // Load the model using the downloaded data
+  const model = await tf.loadLayersModel(modelJsonURL);
+
+  console.log('Model loaded successfully');
+  return model;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -65,8 +118,6 @@ Deno.serve(async (req) => {
   const { data: modelData, error: modelError } = await supabase.storage
     .from('models')
     .download('model.json');
-
-  console.log(modelData);
 
   const contents = await data.text();
 
@@ -122,12 +173,9 @@ Deno.serve(async (req) => {
   } else {
     console.log('Loading model');
     //load the model
-    const modelJsonText = await modelData.text();
-    const modelJson = JSON.parse(modelJsonText);
-
-    console.log(modelJson);
-
-    model = await tf.models.modelFromJSON(modelJson);
+    await loadModel(supabase).then((loadedModel) => {
+      model = loadedModel;
+    });
   }
 
   //one hot array gen
@@ -158,18 +206,21 @@ Deno.serve(async (req) => {
       console.log('Training complete');
     });
 
-  //save model to supabase
-  const modelJSON = await model.toJSON();
+  // //save model to supabase
+  // const modelJSON = await model.toJSON();
 
-  //save the json string to a file
-  const modelBlob = new Blob([JSON.stringify(modelJSON)], {
-    type: 'application/json',
-  });
-  const modelFile = new File([modelBlob], 'model.json');
+  // //save the json string to a file
+  // const modelBlob = new Blob([JSON.stringify(modelJSON)], {
+  //   type: 'application/json',
+  // });
+  // const modelFile = new File([modelBlob], 'model.json');
 
-  //upload to supabase
-  const { data: modelUploadData, error: modelUploadError } =
-    await supabase.storage.from('models').upload('model.json', modelFile);
+  // //upload to supabase
+  // const { data: modelUploadData, error: modelUploadError } =
+  //   await supabase.storage.from('models').upload('model.json', modelFile);
+
+  //save the model
+  await saveModel(model, supabase);
 
   return new Response(JSON.stringify('Completed'), {
     headers: { 'Content-Type': 'application/json' },
