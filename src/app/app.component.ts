@@ -127,8 +127,9 @@ export class AppComponent implements OnInit {
       this.updateConsole('Loading model');
       model = await tf.loadLayersModel('localstorage://model');
       model.compile({
-        loss: 'meanSquaredError',
-        optimizer: tf.train.sgd(0.01),
+        loss: tf.losses.huberLoss,
+        optimizer: tf.train.adam(0.01),
+        metrics: ['mae'],
       });
     }
 
