@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { TabsComponent } from './components/tabs/tabs.component';
 
+
 export const routes: Routes = [
     {
         path: '',
@@ -22,13 +23,23 @@ export const routes: Routes = [
                 path: 'profile',
                 loadComponent: () => import('./components/profile/profile.component').then (m => m.ProfileComponent)
             },
-            { 
-                path: '', 
+            {
+                path: '',
                 redirectTo: 'home',
                 pathMatch: 'full'
             }
 
-            
+
+           
         ]
     },
+    {
+        path: 'form',
+        loadComponent: () => import('./components/form/form.component').then(m => m.FormComponent),
+    },
+    {
+        path: '',
+        redirectTo: 'tabs',
+        pathMatch: 'full'
+    }
 ];

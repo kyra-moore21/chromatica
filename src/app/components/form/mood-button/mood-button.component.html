@@ -1,0 +1,29 @@
+
+<div class="ion-padding text-center">
+  <h4>Select Emotions</h4>
+<div class="inline-grid grid-cols-3 md:grid-cols-5 buttons gap-2 overflow-y-auto">
+  @for (emotion of emotions; track $index) {
+  <button class="moodBtn w-24 h-10 rounded-full"  [class.active]="isSelected(emotion, emotionSelections)" (click)="toggleSelected(emotion, emotionSelections)">
+    {{ Emotion[emotion] }}
+  </button>
+  }
+</div>
+</div>
+
+<div class="ion-padding text-center">
+  <h4>Select Events</h4>
+  <div class="inline-grid grid-cols-3 md:grid-cols-5 buttons gap-2">
+   @for (event of events; track $index) {
+    <button class="moodBtn w-24 h-10 rounded-full" [class.active]="isSelected(event, eventSelections)" (click)="toggleSelected(event, eventSelections)" >{{ Event[event] }}</button>
+   }
+  </div>
+</div>
+
+<div class="ion-padding text-center">
+  <h4>Select Genres</h4>
+  <div class="inline-grid grid-cols-3 md:grid-cols-5 buttons gap-2">
+    @for (genre of genres; track $index) {
+      <button class="moodBtn w-24 h-10 rounded-full" [class.active]="isSelected(genre, genreSelections)" (click)="toggleSelected(genre, genreSelections)">{{Genre[genre]}}</button>
+    }
+  </div>
+</div>
