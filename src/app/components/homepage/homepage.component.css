@@ -1,8 +1,0 @@
-.btn{
-    background-color: var(--color-button);
-    font-family: var( --font-montserrat);
-    font-weight: 400;
-    font-size: 16px;
-    border-radius: 8px;
-    @apply py-4 px-3 mx-3;
-}
