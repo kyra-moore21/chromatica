@@ -1,0 +1,10 @@
+h2{
+    font-family: var(--font-courier-prime);
+    font-size: 22px;
+    font-weight: 400;
+}
+p{
+    font-family: var(--font-montserrat);
+    font-size: 18px;
+    color: #c9e8f5af;
+}
