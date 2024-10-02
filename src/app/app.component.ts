@@ -12,4 +12,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 export class AppComponent implements OnInit {
   title = 'chromatica';
   constructor() {}
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
 }
