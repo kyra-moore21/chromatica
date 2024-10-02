@@ -7,4 +7,39 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+/* removed import statement to use custom color scheme */
+/* import the fonts */
+
+:root {
+  --color-text: #c9e8f5;
+  --color-bg: #021a21;
+  --navbar-background: linear-gradient(180deg, #042630 36%, #083a49 100%);
+  /* secondary color is used on the search bar, */
+  --color-secondary: #083a49;
+  --color-primary: #042630;
+  /* used on play buttons */
+  --color-tertiary: #4fa4c6;
+  /* main gradient used throughout app */
+  --color-gradient: linear-gradient(
+    180deg,
+    #2e6170 0%,
+    rgba(30, 68, 78, 0.61) 100%
+  );
+  --icon-unfocused: #878787;
+  --icon-focused: #c9e8f5;
+  /* gradient for genre/mood bubbles on profile/form */
+  --bubble-gradient: linear-gradient(180deg, #346b7a 0%, #388196 100%);
+  --color-button: #377e98;
+
+  /* fonts */
+  --font-montserrat: 'Montserrat', sans-serif;
+  --font-courier-prime: 'Courier Prime', monospace;
+
+  /* Ionic overrides */
+  --ion-background-color: var(--color-bg);
+  --ion-text-color: var(--color-text);
+  --ion-tab-bar-background: var(--navbar-background);
+  --ion-tab-bar-color: var(--icon-unfocused);
+  --ion-tab-bar-color-selected: var(--icon-focused);
+}
