@@ -18,7 +18,7 @@ export class FormComponent  implements OnInit {
 
 
   ngOnInit() {
-     this.route.queryParams.subscribe(params => {
+     this.route.queryParams.subscribe((params: { [x: string]: string; }) => {
       if (params['type']) {
         this.generationType = params['type'];
       }

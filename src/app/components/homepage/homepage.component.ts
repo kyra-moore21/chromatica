@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 import { environment } from '../../../environments/environment';
 import { createClient } from '@supabase/supabase-js';
 import * as tf from '@tensorflow/tfjs';
@@ -19,8 +20,6 @@ import {
 })
 export class HomepageComponent implements OnInit {
   constructor(private router: Router) {}
-
-  ngOnInit() {}
 
   navigateToForm(type: 'Song' | 'Playlist') {
     this.router.navigate(['/form'], {
