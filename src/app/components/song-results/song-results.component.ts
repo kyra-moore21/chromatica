@@ -39,9 +39,11 @@ export class SongResultsComponent  implements OnInit {
         console.log('Emotion:', this.emotionName);
         console.log('Event:', this.eventName);
         console.log('Genre:', this.genreName);
-        });
+        
         this.loadRecommendations();
+        });
   }
+
    loadRecommendations() {
     this.isLoading = true;
     this.errorMessage = "";

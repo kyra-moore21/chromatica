@@ -1,5 +1,3 @@
-
-
 export interface GeneratedSong {
     trackName: string;
     artist: string;
