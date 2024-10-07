@@ -1,0 +1,54 @@
+<div class="relative">
+  <button class="absolute right-4 top-4" (click)="navigateToHome()">X</button>
+</div>
+@if (isLoading) {
+  <div>
+  <!-- eventually could change to a pretty spinner -->
+  <p class="text-center">Loading Recommendations...</p>
+</div>
+}
+ @if (errorMessage) {
+  <div>
+  <p class="text-center">{{errorMessage}}</p>  
+  </div>
+  }
+  <div>
+    @if (!errorMessage && !isLoading) {
+      <div class="ion-padding">
+
+        <div>
+          <h2 class=" text-center">Here is your {{this.emotionName}}, {{this.eventName}}, {{this.genreName}} song</h2>
+        </div>
+        <div class="p-4 mt-16 flex justify-center items-start h-screen">
+        <div class="bg-main-gradient p-8 rounded-lg shadow-md w-80">
+            <!-- album cover -->
+             <img [src]="recommendation.imageUrl" [alt]="recommendation.trackName" class="w-64 h-64 mx-auto rounded-lg mb-4 shadow-lg shadow-slate-400" />
+             <!--song title  -->
+             <h2 class="text-xl font-semibold text-center">{{recommendation.trackName}}</h2>
+             <!--artist name -->
+             <p class="text-color text-sm text-center">{{recommendation.artist}}</p>
+             <div class="mt-6 flex justify-center items-center">
+              <!-- Play/Pause Button -->
+              @if (recommendation.previewUrl != '') {
+                <audio #audioPlayer [src]="recommendation.previewUrl" preload="auto"></audio>
+                <button (click)="togglePlayPause()" class="p-3 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none">
+                  @if (!isPlaying) {
+                    <ion-icon name="play" size="large" class="text-gray-600"></ion-icon>
+                  } @else {
+                    <ion-icon name="pause" size="large" class="text-gray-600"></ion-icon>
+                  }
+                </button>
+              } @else {
+                <p class="text-center text-sm text-gray-500">No audio preview available</p>
+              }
+            </div>
+            <div class="mt-6 text-center">
+              <a class="btn text-text p-2 rounded-md" 
+                [href]="'https://open.spotify.com/track/' + recommendation.spotifyTrackId" 
+                target="_blank">Listen on Spotify</a>
+            </div>
+          </div>
+           <!-- Spotify Link -->
+        </div>
+      </div>
+      }

@@ -1,0 +1,19 @@
+ 
+  <h2 class="text-center">Choose an Emotion</h2>
+  <div class="emotion-container pb-20">
+    @for (emotion of emotions; track $index) {
+      <button
+        class="moodBtn"
+        [class.selected]="selectedEmotion === emotion"
+        (click)="toggleEmotions(emotion)">
+        {{ Emotions[emotion] }}
+      </button>
+    }
+  </div>
+
+<!-- Next button to move to event selection -->
+<div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-navbar-gradient">
+  <div class="flex items-center justify-center h-full max-w-56 mx-auto font-medium">
+    <button class="btn" (click)="proceedToEventSelection()">Next</button>
+  </div>
+</div>

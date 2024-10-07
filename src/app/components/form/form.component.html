@@ -1,18 +1,35 @@
 
-  <ion-content>
-    <div>
-      <button class="absolute right-7 mt-4" (click)="navigateToHome()">X</button>
+<ion-content class="ion-padding">
+  <div class="relative">
+    <button class="absolute right-4 top-4" (click)="navigateToHome()">X</button>
+  </div>
+  <div [ngSwitch]="currentStep">
+    <app-emotion-selection
+      *ngSwitchCase="'emotion'"
+      [emotions]="availableEmotions"
+      [selectedEmotion]="selectedEmotion"
+      (selectedEmotionChange)="onEmotionsChange($event)">
+    </app-emotion-selection>
+    <app-event-selection
+    *ngSwitchCase="'event'"
+    [events]="availableEvents"
+    [selectedEvent]="selectedEvents"
+    (selectedEventsChange)="onEventsChange($event)">
+    </app-event-selection>
+    <app-genre-selection
+    *ngSwitchCase="'genre'"
+    [genres]="availableGenres"
+    [selectedGenre]="selectedGenre"
+    (selectedGenresChange)="onGenresChange($event)">
+    </app-genre-selection>
+  </div>
+  @if (currentStep === 'genre') {
+    <div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-navbar-gradient">
+      <div class="flex items-center justify-center h-full max-w-56 mx-auto font-medium">
+    <button class="btn" (click)="submitForm()">Generate</button>
+      </div>
     </div>
-  
-      <h2 class="text-center">Generate {{ generationType }}</h2>
-    <app-mood-button></app-mood-button>
-    
-  
-  
+  }
   </ion-content>
-  <ion-footer>
-    <ion-toolbar class="text-center">
-      <button  class="btn">Create {{ generationType }}</button>
-    </ion-toolbar>
-  </ion-footer>
+
 

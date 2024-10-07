@@ -21,12 +21,52 @@ module.exports = {
         'navbar-gradient': 'linear-gradient(180deg, #042630 36%, #083a49 100%)',
         'main-gradient': 'linear-gradient(180deg, #2e6170 0%, rgba(30, 68, 78, 0.61) 100%)',
         'bubble-gradient': 'linear-gradient(180deg, #346b7a 0%, #388196 100%)',
+      'bubble-gradient-selected': 'linear-gradient(145deg, #20414b, #38829665)',
+      },
+      boxShadow: {
+        'neumorphic': '4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.05)',
+        'neumorphic-hover': '6px 6px 12px rgba(0, 0, 0, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.05)',
+        'neumorphic-inset': 'inset 4px 4px 8px rgba(0, 0, 0, 0.3), inset -4px -4px 8px rgba(255, 255, 255, 0.05)',
       },
     },
   },
   plugins: [
     function({ addComponents, theme }) {
       addComponents({
+        '.emotion-container': {
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: '16px',
+          padding: '24px',
+          maxWidth: '640px',
+          margin: '0 auto',
+          backgroundColor: 'rgba(2, 26, 33, 0.9)', // Slightly transparent bg color
+          borderRadius: '16px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        },
+        '.moodBtn': {
+          background: theme('backgroundImage.bubble-gradient'),
+          fontSize: '12px',
+          borderRadius: '50%',
+          padding: '0',
+          width: '95px',
+          height: '95px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          color: theme('colors.text'),
+          textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
+          boxShadow: theme('boxShadow.neumorphic'),
+          '&.selected': {
+            background: theme('backgroundImage.bubble-gradient-selected'),
+            transform: 'scale(1.1)',
+            boxShadow: theme('boxShadow.neumorphic-inset'),
+          }
+        },
         '.btn': {
           backgroundColor: theme('colors.button'),
           fontFamily: theme('fontFamily.montserrat'),
@@ -40,7 +80,7 @@ module.exports = {
           fontFamily: theme('fontFamily.courierPrime'),
           fontSize: '22px',
           fontWeight: '400'
-        }
+        },
       })
     },
   ],

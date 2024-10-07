@@ -38,6 +38,10 @@ export const routes: Routes = [
         loadComponent: () => import('./components/form/form.component').then(m => m.FormComponent),
     },
     {
+        path: 'song-results',
+        loadComponent: () => import('./components/song-results/song-results.component').then(m => m.SongResultsComponent),
+    },
+    {
         path: '',
         redirectTo: 'tabs',
         pathMatch: 'full'

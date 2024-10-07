@@ -1,0 +1,11 @@
+<h2 class="text-center">Choose a Genre</h2>
+<div class="emotion-container pb-20">
+  @for (genre of genres; track genre) {
+    <button
+      class="moodBtn"
+      [class.selected]="selectedGenre === genre"
+      (click)="toggleGenres(genre)">
+      {{ splitOnCapital(Genres[genre]) }}
+    </button>
+  }
+</div>
