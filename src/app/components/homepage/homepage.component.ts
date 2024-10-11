@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet, Router, ActivatedRoute } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { environment } from '../../../environments/environment';
 import { createClient } from '@supabase/supabase-js';
@@ -19,7 +19,13 @@ import {
   standalone: true,
 })
 export class HomepageComponent implements OnInit {
-  constructor(private router: Router, private changeDetector: ChangeDetectorRef
+  emotionName: string = '';
+  eventName: string = '';
+  genreName: string = '';
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   navigateToForm(type: 'Song' | 'Playlist') {
@@ -41,18 +47,18 @@ export class HomepageComponent implements OnInit {
   ngOnInit() {
     this.changeDetector.detectChanges();
     //get the spotify access token (post)
-    fetch('https://accounts.spotify.com/api/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `grant_type=client_credentials&client_id=${environment.SPOTIFY_CLIENT_ID}&client_secret=${environment.SPOTIFY_CLIENT_SECRET}`,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        //console.log(data);
-        this.spotifyAccessToken = data.access_token;
-      });
+    // fetch('https://accounts.spotify.com/api/token', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/x-www-form-urlencoded',
+    //   },
+    //   body: `grant_type=client_credentials&client_id=${environment.SPOTIFY_CLIENT_ID}&client_secret=${environment.SPOTIFY_CLIENT_SECRET}`,
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     //console.log(data);
+    //     this.spotifyAccessToken = data.access_token;
+    //   });
   }
 
   // Function to update the HTML "console"
@@ -236,9 +242,9 @@ export class HomepageComponent implements OnInit {
 
     // Make a one hot array for the selected category
     const oneHotArray = combineEncodings(
-      Emotions.Angry,
-      Events.None,
-      Genres.Pop
+      Emotions.Happy,
+      Events.Celebration,
+      Genres.Disco
     );
 
     // Create a tensor from the one hot array
@@ -295,7 +301,7 @@ export class HomepageComponent implements OnInit {
 
               // Call the Spotify API using only the predicted target features
               fetch(
-                `https://api.spotify.com/v1/recommendations?limit=1&seed_genres=pop&target_acousticness=${denormalizedFeatures[0]}&target_danceability=${denormalizedFeatures[1]}&target_energy=${denormalizedFeatures[2]}&target_instrumentalness=${denormalizedFeatures[3]}&target_key=${denormalizedFeatures[4]}&target_liveness=${denormalizedFeatures[5]}&target_loudness=${denormalizedFeatures[6]}&target_mode=${denormalizedFeatures[7]}&target_speechiness=${denormalizedFeatures[8]}&target_tempo=${denormalizedFeatures[9]}&target_time_signature=${denormalizedFeatures[10]}&target_valence=${denormalizedFeatures[11]}`,
+                `https://api.spotify.com/v1/recommendations?limit=1&seed_genres=disco&target_acousticness=${denormalizedFeatures[0]}&target_danceability=${denormalizedFeatures[1]}&target_energy=${denormalizedFeatures[2]}&target_instrumentalness=${denormalizedFeatures[3]}&target_key=${denormalizedFeatures[4]}&target_liveness=${denormalizedFeatures[5]}&target_loudness=${denormalizedFeatures[6]}&target_mode=${denormalizedFeatures[7]}&target_speechiness=${denormalizedFeatures[8]}&target_tempo=${denormalizedFeatures[9]}&target_time_signature=${denormalizedFeatures[10]}&target_valence=${denormalizedFeatures[11]}`,
                 {
                   method: 'GET',
                   headers: {

@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { MoodButtonComponent } from './mood-button.component';
+import { GenreSelectionComponent } from './genre-selection.component';
 
-describe('MoodButtonComponent', () => {
-  let component: MoodButtonComponent;
-  let fixture: ComponentFixture<MoodButtonComponent>;
+describe('GenreSelectionComponent', () => {
+  let component: GenreSelectionComponent;
+  let fixture: ComponentFixture<GenreSelectionComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MoodButtonComponent ],
+      declarations: [ GenreSelectionComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MoodButtonComponent);
+    fixture = TestBed.createComponent(GenreSelectionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
