@@ -6,13 +6,14 @@ import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { pause, play } from 'ionicons/icons';
 import { FormService } from '../../services/form.service';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-song-results',
   templateUrl: './song-results.component.html',
   styleUrls: ['./song-results.component.css'],
-  imports: [IonIcon],
+  imports: [IonIcon, CommonModule],
   standalone: true
 })
 export class SongResultsComponent  implements OnInit {

@@ -21,7 +21,7 @@ module.exports = {
         'navbar-gradient': 'linear-gradient(180deg, #042630 36%, #083a49 100%)',
         'main-gradient': 'linear-gradient(180deg, #2e6170 0%, rgba(30, 68, 78, 0.61) 100%)',
         'bubble-gradient': 'linear-gradient(180deg, #346b7a 0%, #388196 100%)',
-      'bubble-gradient-selected': 'linear-gradient(145deg, #20414b, #38829665)',
+        'bubble-gradient-selected': 'linear-gradient(145deg, #20414b, #38829665)',
       },
       boxShadow: {
         'neumorphic': '4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.05)',
@@ -47,11 +47,10 @@ module.exports = {
         },
         '.moodBtn': {
           background: theme('backgroundImage.bubble-gradient'),
-          fontSize: '12px',
+          fontSize: '14px',
+          display: 'flex',
           borderRadius: '50%',
           padding: '0',
-          width: '95px',
-          height: '95px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -73,7 +72,7 @@ module.exports = {
           fontWeight: '400',
           fontSize: '16px',
           borderRadius: '8px',
-          padding: '16px 12px',
+          padding: '16px 20px',
           margin: '0 12px'
         },
         'h2': {
