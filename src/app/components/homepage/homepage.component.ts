@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { environment } from '../../../environments/environment';
@@ -19,7 +19,8 @@ import {
   standalone: true,
 })
 export class HomepageComponent implements OnInit {
-  constructor(private router: Router) {}
+  constructor(private router: Router, private changeDetector: ChangeDetectorRef
+  ) {}
 
   navigateToForm(type: 'Song' | 'Playlist') {
     this.router.navigate(['/form'], {
@@ -38,6 +39,7 @@ export class HomepageComponent implements OnInit {
   });
 
   ngOnInit() {
+    this.changeDetector.detectChanges();
     //get the spotify access token (post)
     fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
