@@ -22,8 +22,8 @@ export class SupabaseService {
     })
   }
 
-  signUp(email: string, password: string) {
-    return this.supabase.auth.signUp({ email, password });
+  signUp(email: string, password: string, username: string) {
+    return this.supabase.auth.signUp({ email, password, options: { data: { display_name: username } } });
   }
 
   signOut() {

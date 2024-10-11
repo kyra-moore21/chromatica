@@ -24,7 +24,9 @@ export class LoginComponent  implements OnInit {
   constructor(private navCtrl: NavController, private supabase: SupabaseService, private toast: ToastService, private common: CommonService) { }
 
   ngOnInit() {
+    console.log(this.supabase.getSession())
     this.supabase.onAuthStateChange((event, session) => {
+      console.log(event);
       if (event === 'SIGNED_IN') {
         // Successful Spotify login, navigate to the home page
         this.navCtrl.navigateForward('tabs/home', { animated: false });
