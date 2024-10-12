@@ -1,42 +1,25 @@
-<h2 class="text-center mb-4">Choose an Emotion</h2>
-<div class="flex justify-center items-center min-h-screen">
-  <div class="grid grid-cols-3 gap-3 place-content-center text-center mb-16">
-  <div class="grid gap-2">
-    @for (first of firstColumn; track first) {
-      <button
-        class="moodBtn w-24 h-24"
-        [class.selected]="selectedEmotion === first"
-        (click)="toggleEmotions(first)">
-        {{ Emotions[first] }}
-      </button>
-    }
-  </div>
-  <div class="grid gap-4">
-    @for (second of secondColumn; track second) {
-      <button 
-      class="moodBtn w-32 h-32"
-      [class.selected]="selectedEmotion === second" 
-      (click)="toggleEmotions(second)">
-      {{Emotions[second]}}
-    </button>
-    }
-  </div>
-  <div class="grid gap-2" >
-    @for (third of thirdColumn; track third) {
-      <button 
-      class="moodBtn w-24 h-24" 
-      [class.selected]="selectedEmotion === third"
-      (click)="toggleEmotions(third)"
-      >{{Emotions[third]}}</button>
-    }
-  </div>
-  </div>
 
-</div>  
-
-<!-- Next button to move to event selection -->
-<div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-navbar-gradient">
-  <div class="flex items-center justify-center h-full max-w-56 mx-auto font-medium">
-    <button class="btn" (click)="proceedToEventSelection()">Next</button>
+  <h2 class="text-center mb-2 text-2xl p-4">choose an emotion</h2>
+  
+  <div class="overflow-auto">
+    <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto pb-14">
+      @for (emotion of emotions; track emotion) {
+        <button
+          class="moodBtn shadow-md flex items-center justify-center"
+          [ngStyle]="getSize(emotion)"
+          [class.selected]="selectedEmotion === emotion"
+          (click)="toggleEmotions(emotion)">
+          {{ Emotions[emotion].toString().toLowerCase() }}
+        </button>
+      }
+    </div>
   </div>
+@if (selectedEmotion != Emotions.None) {
+  <div class="fixed bottom-4 left-0 right-0 flex justify-center animate-fade-in">
+<button 
+ class="btn px-14 py-4 rounded-lg shadow-lg"
+ (click)="proceedToEventSelection()">
+ continue
+</button>
 </div>
+}

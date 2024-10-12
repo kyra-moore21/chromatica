@@ -52,6 +52,8 @@ module.exports = {
           borderRadius: '50%',
           padding: '0',
           display: 'flex',
+          width: '95px',
+          height: '95px',
           alignItems: 'center',
           justifyContent: 'center',
           border: 'none',
@@ -60,6 +62,7 @@ module.exports = {
           color: theme('colors.text'),
           textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
           boxShadow: theme('boxShadow.neumorphic'),
+          fontFamily: theme('fontFamily.courierPrime'),
           '&.selected': {
             background: theme('backgroundImage.bubble-gradient-selected'),
             transform: 'scale(1.1)',
@@ -67,8 +70,8 @@ module.exports = {
           }
         },
         '.btn': {
-          backgroundColor: theme('colors.button'),
-          fontFamily: theme('fontFamily.montserrat'),
+          backgroundColor: theme('colors.tertiary'),
+          fontFamily: theme('fontFamily.courierPrime'),
           fontWeight: '400',
           fontSize: '16px',
           borderRadius: '8px',

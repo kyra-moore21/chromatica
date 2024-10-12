@@ -17,7 +17,7 @@ export class FormService {
     if(expections.includes(str)){
       return str;
     }
-    return str.split(/(?=[A-Z])/).join(' ');
+    return str.split(/(?=[A-Z])/).join(' ').toLowerCase();
   }
 
   

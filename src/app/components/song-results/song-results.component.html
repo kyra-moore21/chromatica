@@ -5,7 +5,7 @@
 
   @if (isLoading) {
     <div class="flex-grow flex items-center justify-center">
-      <p class="text-center">Loading Recommendations...</p>
+      <p class="text-center">loading recommendations...</p>
     </div>
   }
 
@@ -22,7 +22,7 @@
     <!-- Main Content -->
     <div class="mt-10 flex flex-col items-center justify-center px-4 pb-20">
       <h2 class="text-center mt-6 mb-6 text-lg w-full px-4">
-        Here is your {{this.emotionName}}, {{this.eventName}}, {{this.genreName}} song
+        your {{this.emotionName.toString().toLowerCase()}}, {{this.eventName.toString().toLowerCase()}}, {{this.genreName.toString().toLowerCase()}} song
       </h2>
       <div class="bg-main-gradient p-6 rounded-lg shadow-md w-full max-w-xs">
         <!-- Album Cover -->
@@ -47,7 +47,7 @@
                         [ngClass]="{'ml-0.5': !isPlaying}"></ion-icon>
             </button>
           } @else {
-            <p class="text-sm text-gray-500">No audio preview available</p>
+            <p class="text-sm text-gray-500">no audio preview available</p>
           }
         </div>
       </div>
@@ -59,7 +59,7 @@
         <a class="btn text-text p-2"
            [href]="'https://open.spotify.com/track/' + recommendation.spotifyTrackId"
            target="_blank">
-          Listen on Spotify
+          listen on spotify
         </a>
       </div>
     </div>

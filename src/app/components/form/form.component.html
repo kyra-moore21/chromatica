@@ -24,11 +24,9 @@
     </app-genre-selection>
   </div>
   @if (currentStep === 'genre') {
-    <div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-navbar-gradient">
-      <div class="flex items-center justify-center h-full max-w-56 mx-auto font-medium">
-    <button class="btn" (click)="submitForm()">Generate</button>
+    <div class="fixed bottom-4 left-0 right-0 flex justify-center">
+    <button class="btn px-14 py-4 rounded-lg shadow-lg" (click)="submitForm()">Generate {{generationType}}</button>
       </div>
-    </div>
   }
   </ion-content>
 
