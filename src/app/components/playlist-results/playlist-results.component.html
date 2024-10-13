@@ -1,8 +1,8 @@
-<div class="overflow-auto relative ion-padding">
+<div class="overflow-y-auto overflow-x-hidden relative ion-padding">
   <div class="relative p-4">
     <button class="absolute right-4 top-4 text-xl" (click)="navigateToHome()">X</button>
   </div>
-  <h2 class="text-center mt-1 mb-4">your 
+  <h2 class="text-center mt-8 mb-4">your 
     {{this.emotionName.toString().toLowerCase()}}, 
     {{this.eventName.toString().toLowerCase()}}, 
     {{this.genreName.toString().toLowerCase()}} playlist</h2>
@@ -13,9 +13,9 @@
           <input checked type="checkbox" class="w-6 h-6 custom-checkbox mr-2">
           <img class="rounded-md h-16 w-16 object-cover mr-2" [src]="song.imageUrl" 
           [alt]="song.trackName">
-          <div >
-            <h3 class="m-0 p-0">{{song.trackName}}</h3>
-            <p>{{song.artist}}</p>
+          <div class="flex-grow mr-2 w-56"> 
+            <h3 class="m-0 p-0 truncate ">{{song.trackName}}</h3>
+            <p class="truncate">{{song.artist}}</p>
           </div>
         </div>
         @if(song.previewUrl) {

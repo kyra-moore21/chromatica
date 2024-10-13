@@ -33,8 +33,8 @@ spotifyPlaylistLink: string = '';
         this.emotionName = params['emotion'] || 'None';
         this.eventName = params['event'] || 'None';
         this.genreName = params['genre'] || 'None';
+        this.loadRecommendation();
     });
-    this.loadRecommendation();
   }
    loadRecommendation(){
     this.recommendations = this.formService.getRecommendation();

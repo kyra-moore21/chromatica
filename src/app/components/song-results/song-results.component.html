@@ -12,7 +12,7 @@
   @if (!errorMessage) {
     <!-- Main Content -->
     <div class="mt-10 flex flex-col items-center justify-center px-4 pb-20">
-      <h2 class="text-center mt-6 mb-6 text-lg w-full px-4">
+      <h2 class="text-center mt-6 mb-6 w-full px-4">
         your {{this.emotionName.toString().toLowerCase()}}, {{this.eventName.toString().toLowerCase()}}, {{this.genreName.toString().toLowerCase()}} song
       </h2>
       @for (recommendation of recommendations; track recommendation.spotifyTrackId) {
