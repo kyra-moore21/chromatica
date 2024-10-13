@@ -33,18 +33,6 @@ module.exports = {
   plugins: [
     function({ addComponents, theme }) {
       addComponents({
-        '.emotion-container': {
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: '16px',
-          padding: '24px',
-          maxWidth: '640px',
-          margin: '0 auto',
-          backgroundColor: 'rgba(2, 26, 33, 0.9)', // Slightly transparent bg color
-          borderRadius: '16px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-        },
         '.moodBtn': {
           background: theme('backgroundImage.bubble-gradient'),
           fontSize: '14px',

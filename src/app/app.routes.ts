@@ -42,6 +42,10 @@ export const routes: Routes = [
         loadComponent: () => import('./components/song-results/song-results.component').then(m => m.SongResultsComponent),
     },
     {
+        path: 'playlist-results',
+        loadComponent: () => import('./components/playlist-results/playlist-results.component').then(m => m.PlaylistResultsComponent),
+    },
+    {
         path: '',
         redirectTo: 'tabs',
         pathMatch: 'full'

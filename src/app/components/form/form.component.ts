@@ -7,12 +7,14 @@ import { Emotions, Events, Genres } from '../../../../supabase/functions/emotion
 import { EventSelectionComponent } from './event-selection/event-selection.component';
 import { GenreSelectionComponent } from "./genre-selection/genre-selection.component";
 import { FormService } from '../../services/form.service';
+import { SpotifyService } from '../../services/spotify-service.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
   standalone: true,
-  imports: [IonicModule, CommonModule, EmotionSelectionComponent, EventSelectionComponent, GenreSelectionComponent],
+  imports: [IonicModule, CommonModule, FormsModule, EmotionSelectionComponent, EventSelectionComponent, GenreSelectionComponent],
   styleUrls: ['./form.component.scss'],
 })
 export class FormComponent  implements OnInit {
@@ -33,9 +35,15 @@ export class FormComponent  implements OnInit {
   selectedGenre: Genres = Genres.None;
 
   // Tracks the current step in the form
-  currentStep: 'emotion' | 'event' | 'genre' = 'emotion';
+  currentStep: 'emotion' | 'event' | 'genre'| 'count' = 'emotion';
 
-  constructor(private route: ActivatedRoute, private router: Router, private formService: FormService ) {}
+  numberOfSongs: number = 1; 
+
+  //array of available song count
+  songCountOptions:number[] = [10, 20, 30];
+
+
+  constructor(private route: ActivatedRoute, private router: Router, private formService: FormService, private spotifyService: SpotifyService ) {}
 
 
   ngOnInit() {
@@ -49,6 +57,10 @@ export class FormComponent  implements OnInit {
   }
  
   navigateToHome(){
+    this.currentStep = 'emotion';
+    this.selectedEmotion = Emotions.None;
+    this.selectedEvents = Events.None;
+    this.selectedGenre = Genres.None;
     this.router.navigate(['/home']);
   }
   onEmotionsChange(emotion: number) {
@@ -62,20 +74,55 @@ export class FormComponent  implements OnInit {
   onGenresChange(genre: number){
     this.selectedGenre = genre;
   }
+  proceedToCount() {
+    if (this.generationType === 'Playlist') {
+      this.currentStep = 'count';
+    }
+  }
 
  submitForm(){
   const emotionName = this.formService.convertEnumName(Emotions, this.selectedEmotion);
   const eventName = this.formService.convertEnumName(Events, this.selectedEvents);
   const genreName = this.formService.convertEnumName(Genres, this.selectedGenre);
-  console.log(emotionName, eventName, genreName);
-
-  this.router.navigate(['/song-results'],{
-    queryParams: {
-      emotion: emotionName,
-      event: eventName,
-      genre: genreName
-    }
-  })
- }
+  let tracks: number = this.generationType === 'Song' ? 1 : this.numberOfSongs;
   
+  this.spotifyService.getSpotifyRecommendations(this.selectedEmotion, this.selectedEvents, this.selectedGenre, tracks).subscribe({
+    next: (response) => {
+      this.formService.setRecommendation(response);
+      //determine the navigation route based on if song or playlist 
+      const navigationRoute = this.generationType === 'Song' ? '/song-results' : '/playlist-results';
+      this.router.navigate([navigationRoute], {
+        queryParams: {
+          emotion: emotionName,
+          event: eventName,
+          genre: genreName
+      }
+    });
+  },
+  error: (error) => {
+    console.error('Error fetching recommendations:', error);
+    // Handle error (e.g., show error message to user)
+  }
+});
+}
+onSongCountChange(count: number) {
+  this.numberOfSongs = count;
+}
+
+getSizeForCount(count: number): { width: string; height: string; fontSize: string } {
+  let size: number;
+  if (count === 10) {
+    size = 140;
+  } else if (count === 20) {
+    size = 90;
+  } else {
+    size = 120;
+  }
+  
+  return {
+    width: `${size}px`,
+    height: `${size}px`,
+    fontSize: `${Math.floor(size * 0.2)}px`
+  };
+}
 }

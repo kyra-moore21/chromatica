@@ -1,33 +1,74 @@
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding bg-bg">
+  <div class="relative md:max-w-4xl md:mx-auto md:px-8">
   <div class="relative">
-    <button class="absolute right-4 top-4 text-xl" (click)="navigateToHome()">X</button>
+    <button class="absolute right-4 top-4 text-xl md:right-20" (click)="navigateToHome()">X</button>
   </div>
-  <div [ngSwitch]="currentStep">
-    <app-emotion-selection
-      *ngSwitchCase="'emotion'"
-      [emotions]="availableEmotions"
-      [selectedEmotion]="selectedEmotion"
-      (selectedEmotionChange)="onEmotionsChange($event)">
-    </app-emotion-selection>
-    <app-event-selection
-    *ngSwitchCase="'event'"
-    [events]="availableEvents"
-    [selectedEvent]="selectedEvents"
-    (selectedEventsChange)="onEventsChange($event)">
-    </app-event-selection>
-    <app-genre-selection
-    *ngSwitchCase="'genre'"
-    [genres]="availableGenres"
-    [selectedGenre]="selectedGenre"
-    (selectedGenresChange)="onGenresChange($event)">
-    </app-genre-selection>
-  </div>
-  @if (currentStep === 'genre') {
-    <div class="fixed bottom-4 left-0 right-0 flex justify-center">
-    <button class="btn px-14 py-4 rounded-lg shadow-lg" (click)="submitForm()">Generate {{generationType}}</button>
+  @switch (currentStep) {
+    @case ('emotion') {
+      <app-emotion-selection
+        [emotions]="availableEmotions"
+        [selectedEmotion]="selectedEmotion"
+        (selectedEmotionChange)="onEmotionsChange($event)">
+      </app-emotion-selection>
+    }
+    @case ('event') {
+      <app-event-selection
+        [events]="availableEvents"
+        [selectedEvent]="selectedEvents"
+        (selectedEventsChange)="onEventsChange($event)">
+      </app-event-selection>
+    }
+    @case ('genre') {
+      <app-genre-selection
+        [genres]="availableGenres"
+        [selectedGenre]="selectedGenre"
+        (selectedGenresChange)="onGenresChange($event)">
+      </app-genre-selection>
+      @if (generationType === "Song") {
+        <div class="fixed bottom-4 left-0 right-0 flex justify-center">
+          <button class="btn px-14 py-4 rounded-lg shadow-lg" (click)="submitForm()">
+            generate song
+          </button>
+        </div>
+      }
+      @else {
+        <div class="fixed bottom-4 left-0 right-0 flex justify-center">
+          <button class="btn px-14 py-4 rounded-lg shadow-lg" (click)="proceedToCount()" >
+            continue
+          </button>
+        </div>
+      }
+    }
+    @case ('count') {
+      <div class="flex flex-col justify-start min-h-screen pt-16 md:pt-24 md:min-h-0">
+        <div class="bg-[#032731] rounded-lg shadow-lg p-8 mx-auto max-w-md w-full mt-20 height md:max-w-xl md:mt-8">
+          <h3 class="text-center font-courierPrime pb-6 text-lg">choose your playlist size:</h3>
+          <div class="flex flex-wrap justify-center gap-4 max-w-4xl mc-auto pt-4 pb-14">
+            @for (option of songCountOptions; track option;) {
+
+              <button
+              [ngClass]="{'selected': numberOfSongs === option}"
+              [ngStyle]="getSizeForCount(option)"
+              (click)="onSongCountChange(option)"
+              class="moodBtn shadow-md flex items-center justify-center">
+              {{option}} tracks
+            </button>
+
+            }
+          </div>
+          <div class="flex justify-center">
+            @if(numberOfSongs != 1){
+              <button class="btn px-14 py-3 mt-10 w-full max-w-xs rounded-lg shadow-lg" (click)="submitForm()">
+                generate playlist
+              </button>
+            }
+          </div>
+        </div>
       </div>
-  }
-  </ion-content>
+    }
+    }
+  </div>
+</ion-content>
 
 

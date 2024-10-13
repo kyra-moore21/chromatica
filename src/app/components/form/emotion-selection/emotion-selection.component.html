@@ -2,7 +2,7 @@
   <h2 class="text-center mb-2 text-2xl p-4">choose an emotion</h2>
   
   <div class="overflow-auto">
-    <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto pb-14">
+    <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto pt-4 pb-14">
       @for (emotion of emotions; track emotion) {
         <button
           class="moodBtn shadow-md flex items-center justify-center"
@@ -15,7 +15,7 @@
     </div>
   </div>
 @if (selectedEmotion != Emotions.None) {
-  <div class="fixed bottom-4 left-0 right-0 flex justify-center animate-fade-in">
+  <div class="fixed bottom-4 left-0 right-0 flex justify-center">
 <button 
  class="btn px-14 py-4 rounded-lg shadow-lg"
  (click)="proceedToEventSelection()">

@@ -1,3 +1,34 @@
-<p>
-  playlist-results works!
-</p>
+<div class="overflow-auto relative ion-padding">
+  <div class="relative p-4">
+    <button class="absolute right-4 top-4 text-xl" (click)="navigateToHome()">X</button>
+  </div>
+  <h2 class="text-center mt-1 mb-4">your 
+    {{this.emotionName.toString().toLowerCase()}}, 
+    {{this.eventName.toString().toLowerCase()}}, 
+    {{this.genreName.toString().toLowerCase()}} playlist</h2>
+  <ul class="flex flex-col gap-4 pb-20">
+    @for (song of recommendations; track song; let i = $index) {
+      <li class="flex items-center list-none justify-between"> 
+        <div class="flex items-center">
+          <input checked type="checkbox" class="w-6 h-6 custom-checkbox mr-2">
+          <img class="rounded-md h-16 w-16 object-cover mr-2" [src]="song.imageUrl" 
+          [alt]="song.trackName">
+          <div >
+            <h3 class="m-0 p-0">{{song.trackName}}</h3>
+            <p>{{song.artist}}</p>
+          </div>
+        </div>
+        @if(song.previewUrl) {
+          <button (click)="togglePlayPause(i)">
+            <ion-icon [name]="isPlaying(i) ? 'pause' : 'play'" class="h-6 w-6 text-tertiary"></ion-icon>
+          </button>
+        }
+      </li>
+    }
+  </ul>
+</div>
+  <div class="text-center mt-4">
+    <footer class="fixed bottom-0 left-0 z-20 w-full transparent-footer pt-4">
+      <button class="btn mb-2">listen on spotify</button>
+    </footer>
+  </div>

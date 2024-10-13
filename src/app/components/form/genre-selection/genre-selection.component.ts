@@ -50,6 +50,7 @@ Genres = Genres;
    this.selectedGenresChange.emit(this.selectedGenre);
   }
 
+  
   splitOnCapital(genre: string): string {
     return this.formService.splitOnCapital(genre);
   }
