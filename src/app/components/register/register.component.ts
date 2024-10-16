@@ -14,7 +14,6 @@ import { CommonService } from '../../shared/common.service';
 })
 export class RegisterComponent  implements OnInit {
   email: string = "";
-  username: string = "";
   password: string = "";
   confirmPass: string = "";
 
@@ -24,13 +23,13 @@ export class RegisterComponent  implements OnInit {
 
   register() {
     //check for empty email or password
-    if (this.email === "" || this.password === "" || this.username === "") {
-      this.toast.showToast("email, username, or password is empty", "error")
+    if (this.email === "" || this.password === "") {
+      this.toast.showToast("email, or password is empty", "error")
       return
     }
     //check if passwords match
     if (this.password === this.confirmPass) {
-      this.supabase.signUp(this.email, this.password, this.username).then((res) => {
+      this.supabase.signUp(this.email, this.password).then((res) => {
         console.log(res)
         if (res.error) {
           this.toast.showToast(this.common.lowercaseRemoveStop(res.error.message), "error")

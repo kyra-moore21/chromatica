@@ -1,17 +1,17 @@
 <div class="flex flex-col justify-center items-center h-full w-full">
   <h1 class="font-courierPrime font-bold">
     welcome to
-    <span class="rainbow">
-      <span (click)="playNoteForLetter(0)" class="text-orange-500">c</span>
-      <span (click)="playNoteForLetter(1)" class="text-yellow-500">h</span>
-      <span (click)="playNoteForLetter(2)" class="text-yellow-400">r</span>
-      <span (click)="playNoteForLetter(3)" class="text-green-400">o</span>
-      <span (click)="playNoteForLetter(4)" class="text-blue-400">m</span>
-      <span (click)="playNoteForLetter(5)" class="text-indigo-400">a</span>
-      <span (click)="playNoteForLetter(6)" class="text-purple-400">t</span>
-      <span (click)="playNoteForLetter(7)" class="text-pink-400">i</span>
-      <span (click)="playNoteForLetter(8)" class="text-red-400">c</span>
-      <span (click)="playNoteForLetter(9)" class="text-lime-400">a</span>
+    <span class="rainbow" (touchstart)="handleTouchMove($event)" (touchmove)="handleTouchMove($event)" (touchend)="stopPlaying()">
+      <span id="letter-0" class="text-orange-500">c</span>
+      <span id="letter-1" class="text-yellow-500">h</span>
+      <span id="letter-2" class="text-yellow-400">r</span>
+      <span id="letter-3" class="text-green-400">o</span>
+      <span id="letter-4" class="text-blue-400">m</span>
+      <span id="letter-5" class="text-indigo-400">a</span>
+      <span id="letter-6" class="text-purple-400">t</span>
+      <span id="letter-7" class="text-pink-400">i</span>
+      <span id="letter-8" class="text-red-400">c</span>
+      <span id="letter-9" class="text-lime-400">a</span>
     </span>
   </h1>
   

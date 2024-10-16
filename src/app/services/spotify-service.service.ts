@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import * as tf from '@tensorflow/tfjs';
 import { GeneratedSong } from '../models/generated-song';
-import {shareReplay } from 'rxjs/operators';
 import {
   Emotions,
   Genres,
@@ -32,8 +31,8 @@ export class SpotifyService {
     .then(data => data.access_token));
   }
     getSpotifyRecommendations(emotion: number, event: number, genre: number):Observable<GeneratedSong>{
-      return new Observable<GeneratedSong>(observer => {
-        this.spotifyAccessToken.subscribe(token => {
+      return new Observable<GeneratedSong>((observer: any) => {
+        this.spotifyAccessToken.subscribe((token: any) => {
             // Convert numbers to enum values here
           const emotionEnum = emotion as Emotions;
           const eventEnum = event as Events;

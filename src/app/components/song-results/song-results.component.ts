@@ -31,7 +31,7 @@ export class SongResultsComponent  implements OnInit {
   }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params: any) => {
       this.emotionName = params['emotion'] || 'None'; //fallback to none if not provided
       this.eventName = params['event'] || 'None';
       this.genreName = params['genre'] || 'None';
@@ -55,7 +55,7 @@ export class SongResultsComponent  implements OnInit {
           this.recommendation = response;
           this.isLoading = false;
         },
-        error: (error) => {
+        error: (error: any) => {
           this.errorMessage = 'An unexpected error occurred. Please try again.';
           this.isLoading = false;
           console.error('Error fetching recommendations:', error);

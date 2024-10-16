@@ -30,6 +30,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'choose-username',
+    loadComponent: () =>
+      import('./components/choose-username/choose-username.component').then(
+        (m) => m.ChooseUsernameComponent
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'tabs',
     component: TabsComponent,
     canActivate: [AuthGuard], // Protect the TabsComponent itself
