@@ -23,17 +23,17 @@
       {{ this.genreName.toString().toLowerCase() }} song
     </h2>
     @for (recommendation of recommendations; track
-    recommendation.spotifyTrackId) {
+    recommendation.spotify_track_id) {
     <div class="bg-main-gradient p-6 rounded-lg shadow-md w-full max-w-xs mb-8">
       <!-- Album Cover -->
       <img
-        [src]="recommendation.imageUrl"
-        [alt]="recommendation.trackName"
+        [src]="recommendation.song_image_url"
+        [alt]="recommendation.track_name"
         class="w-full aspect-square object-cover rounded-lg mb-4 shadow-lg shadow-bg"
       />
 
       <!-- Song Title -->
-      <h2 class="text-xl text-center mb-1">{{ recommendation.trackName }}</h2>
+      <h2 class="text-xl text-center mb-1">{{ recommendation.track_name }}</h2>
 
       <!-- Artist Name -->
       <p class="text-color text-sm text-center mb-4">
@@ -42,7 +42,7 @@
 
       <!-- Audio Preview -->
       <div class="flex justify-center items-center h-12">
-        @if (recommendation.previewUrl) {
+        @if (recommendation.preview_url) {
         <button
           (click)="togglePlayPause()"
           class="p-3 rounded-full bg-blue-100 focus:outline-none w-12 h-12 relative"
@@ -64,7 +64,7 @@
         <a
           class="btn btn-info font-courierPrime font-thin text-text p-0"
           [href]="
-            'https://open.spotify.com/track/' + recommendation.spotifyTrackId
+            'https://open.spotify.com/track/' + recommendation.spotify_track_id
           "
           target="_blank"
         >

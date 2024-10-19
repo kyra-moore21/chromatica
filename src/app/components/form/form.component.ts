@@ -142,8 +142,11 @@ export class FormComponent implements OnInit {
         tracks
       )
       .subscribe({
-        next: (response) => {
-          this.formService.setRecommendation(response);
+        next: async (response) => {
+          await this.formService.setRecommendation(
+            response,
+            this.generationType
+          );
           const navigationRoute =
             this.generationType === 'Song'
               ? '/song-results'

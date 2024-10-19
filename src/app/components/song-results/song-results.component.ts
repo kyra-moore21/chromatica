@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GeneratedSong } from '../../models/generated-song';
+import { GeneratedSong } from '../../models/database.types';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { pause, play, close } from 'ionicons/icons';
@@ -40,12 +40,12 @@ export class SongResultsComponent implements OnInit {
     });
   }
 
-  loadRecommendation() {
+  async loadRecommendation() {
     this.recommendations = this.formService.getRecommendation();
     if (this.recommendations && this.recommendations.length > 0) {
       const firstRecommendation = this.recommendations[0];
-      if (firstRecommendation.previewUrl) {
-        this.initAudioElement(firstRecommendation.previewUrl);
+      if (firstRecommendation.preview_url) {
+        this.initAudioElement(firstRecommendation.preview_url);
       }
     }
   }
