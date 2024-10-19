@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { EmotionSelectionComponent } from './emotion-selection.component';
+import { IsLoadingComponent } from './is-loading.component';
 
-describe('EmotionSelectionComponent', () => {
-  let component: EmotionSelectionComponent;
-  let fixture: ComponentFixture<EmotionSelectionComponent>;
+describe('IsLoadingComponent', () => {
+  let component: IsLoadingComponent;
+  let fixture: ComponentFixture<IsLoadingComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ EmotionSelectionComponent ],
+      declarations: [ IsLoadingComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EmotionSelectionComponent);
+    fixture = TestBed.createComponent(IsLoadingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
