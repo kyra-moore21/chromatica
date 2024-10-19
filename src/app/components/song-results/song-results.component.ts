@@ -1,84 +1,79 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SpotifyService } from '../../services/spotify-service.service';
 import { GeneratedSong } from '../../models/generated-song';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { pause, play } from 'ionicons/icons';
+import { pause, play, close } from 'ionicons/icons';
 import { FormService } from '../../services/form.service';
 import { CommonModule } from '@angular/common';
-
 
 @Component({
   selector: 'app-song-results',
   templateUrl: './song-results.component.html',
   styleUrls: ['./song-results.component.css'],
   imports: [IonIcon, CommonModule],
-  standalone: true
+  standalone: true,
 })
-export class SongResultsComponent  implements OnInit {
-  @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
+export class SongResultsComponent implements OnInit {
   emotionName: number = 0;
   eventName: number = 0;
   genreName: number = 0;
-  recommendation = {} as GeneratedSong;
-  isLoading: boolean = true; 
-  errorMessage: string = ''
+  recommendations: GeneratedSong[] = [];
+  errorMessage: string = '';
   isPlaying: boolean = false;
+  audioElement: HTMLAudioElement | null = null;
 
-  constructor(private route: ActivatedRoute, private router: Router, private spotifyService: SpotifyService, private formService: FormService) { 
-    addIcons({ play, pause})
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private formService: FormService
+  ) {
+    addIcons({ play, pause, close });
   }
 
+
   ngOnInit() {
-    this.route.queryParams.subscribe((params: any) => {
+    this.route.queryParams.subscribe((params) => {
       this.emotionName = params['emotion'] || 'None'; //fallback to none if not provided
       this.eventName = params['event'] || 'None';
       this.genreName = params['genre'] || 'None';
-
-        // Log the values for debugging
-        console.log('Emotion:', this.emotionName);
-        console.log('Event:', this.eventName);
-        console.log('Genre:', this.genreName);
-        
-        this.loadRecommendations();
-        });
+      this.loadRecommendation();
+    });
   }
 
-   loadRecommendations() {
-    this.isLoading = true;
-    this.errorMessage = "";
-    this.recommendation = {} as GeneratedSong; // Reset recommendation before making a new call
-      this.spotifyService.getSpotifyRecommendations(this.emotionName, this.eventName, this.genreName).subscribe({
-        next: (response: GeneratedSong) => {
-          console.log(response);
-          this.recommendation = response;
-          this.isLoading = false;
-        },
-        error: (error: any) => {
-          this.errorMessage = 'An unexpected error occurred. Please try again.';
-          this.isLoading = false;
-          console.error('Error fetching recommendations:', error);
-        },
-        complete: () => {
-          console.log('Recommendation fetching complete');
-        }
-   });
-  }
-  togglePlayPause() {
-    const audio = this.audioPlayer.nativeElement;
-    this.isPlaying ? audio.pause() : audio.play();
-    this.isPlaying = !this.isPlaying;
-  }
-  spiltOnCapital(str: string): string{
-    return this.formService.splitOnCapital(str);
-  }
-  navigateToHome(){
-    this.router.navigate(['/home']);
+
+  loadRecommendation() {
+    this.recommendations = this.formService.getRecommendation();
+    if (this.recommendations && this.recommendations.length > 0) {
+      const firstRecommendation = this.recommendations[0];
+      if (firstRecommendation.previewUrl) {
+        this.initAudioElement(firstRecommendation.previewUrl);
+      }
     }
-
   }
 
 
+  initAudioElement(previewUrl: string) {
+    this.audioElement = new Audio(previewUrl);
+    this.audioElement.addEventListener('ended', () => {
+      this.isPlaying = false;
+    });
+  }
 
-  
+  togglePlayPause() {
+    if (this.audioElement) {
+      if (this.isPlaying) {
+        this.audioElement.pause();
+      } else {
+        this.audioElement
+          .play()
+          .catch((error) => console.error('Error playing audio:', error));
+      }
+      this.isPlaying = !this.isPlaying;
+    }
+  }
+
+  navigateToHome() {
+    this.router.navigate(['/home']);
+  }
+}

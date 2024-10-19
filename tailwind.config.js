@@ -68,34 +68,22 @@ module.exports = {
   },
   plugins: [
     function ({ addComponents, theme }) {
-      addComponents({
-        ".emotion-container": {
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: "16px",
-          padding: "24px",
-          maxWidth: "640px",
-          margin: "0 auto",
-          backgroundColor: "rgba(2, 26, 33, 0.9)", // Slightly transparent bg color
-          borderRadius: "16px",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-        },
-        ".moodBtn": {
+      ".moodBtn": {
           background: theme("backgroundImage.bubble-gradient"),
           fontSize: "14px",
           display: "flex",
           borderRadius: "50%",
           padding: "0",
           display: "flex",
+          width: "95px",
+          height: "95px",
           alignItems: "center",
           justifyContent: "center",
-          border: "none",
-          cursor: "pointer",
           transition: "all 0.3s ease",
           color: theme("colors.text"),
           textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
           boxShadow: theme("boxShadow.neumorphic"),
+          fontFamily: theme("fontFamily.courierPrime"),
           "&.selected": {
             background: theme("backgroundImage.bubble-gradient-selected"),
             transform: "scale(1.1)",

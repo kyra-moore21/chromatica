@@ -30,9 +30,10 @@ export class SpotifyService {
     .then(response => response.json())
     .then(data => data.access_token));
   }
-    getSpotifyRecommendations(emotion: number, event: number, genre: number):Observable<GeneratedSong>{
-      return new Observable<GeneratedSong>((observer: any) => {
-        this.spotifyAccessToken.subscribe((token: any) => {
+
+    getSpotifyRecommendations(emotion: number, event: number, genre: number, tracks:number):Observable<GeneratedSong[]>{
+      return new Observable<GeneratedSong[]>(observer => {
+        this.spotifyAccessToken.subscribe(token => {
             // Convert numbers to enum values here
           const emotionEnum = emotion as Emotions;
           const eventEnum = event as Events;
@@ -98,7 +99,7 @@ export class SpotifyService {
       
                     // Call the Spotify API using only the predicted target features
                     fetch(
-                      `https://api.spotify.com/v1/recommendations?limit=1&${spotifyGenreParam}&target_acousticness=${denormalizedFeatures[0]}&target_danceability=${denormalizedFeatures[1]}&target_energy=${denormalizedFeatures[2]}&target_instrumentalness=${denormalizedFeatures[3]}&target_key=${denormalizedFeatures[4]}&target_liveness=${denormalizedFeatures[5]}&target_loudness=${denormalizedFeatures[6]}&target_mode=${denormalizedFeatures[7]}&target_speechiness=${denormalizedFeatures[8]}&target_tempo=${denormalizedFeatures[9]}&target_time_signature=${denormalizedFeatures[10]}&target_valence=${denormalizedFeatures[11]}`,
+                      `https://api.spotify.com/v1/recommendations?limit=${tracks}&${spotifyGenreParam}&target_acousticness=${denormalizedFeatures[0]}&target_danceability=${denormalizedFeatures[1]}&target_energy=${denormalizedFeatures[2]}&target_instrumentalness=${denormalizedFeatures[3]}&target_key=${denormalizedFeatures[4]}&target_liveness=${denormalizedFeatures[5]}&target_loudness=${denormalizedFeatures[6]}&target_mode=${denormalizedFeatures[7]}&target_speechiness=${denormalizedFeatures[8]}&target_tempo=${denormalizedFeatures[9]}&target_time_signature=${denormalizedFeatures[10]}&target_valence=${denormalizedFeatures[11]}`,
                       {
                         method: 'GET',
                         headers: {
@@ -109,14 +110,14 @@ export class SpotifyService {
                       .then((response) => response.json())
                       .then((data) => {
                         if (data.tracks && data.tracks.length > 0) {
-                          const recommendation: GeneratedSong = {
-                            trackName: data.tracks[0].name,
-                            artist: data.tracks[0].artists[0].name,
-                            spotifyTrackId: data.tracks[0].id,
-                            imageUrl: data.tracks[0].album.images.length > 0 ? data.tracks[0].album.images[0].url : '',
-                             previewUrl: data.tracks[0].preview_url || '',
-                          };
-                          observer.next(recommendation);
+                      const recommendations: GeneratedSong[] = data.tracks.map((track: any) => ({
+                        trackName: track.name,
+                        artist: track.artists[0].name,
+                        spotifyTrackId: track.id,
+                        imageUrl: track.album.images.length > 0 ? track.album.images[0].url : '',
+                        previewUrl: track.preview_url || '',
+                          }));
+                          observer.next(recommendations);
                           observer.complete();
                         } else {
                           console.error('No songs found.');
@@ -158,9 +159,8 @@ export class SpotifyService {
     console.log("Genre number received:", genre);
   
     // Convert number to enum value
-    const genreEnum = genre as Genres;
-    const genreString = genreEnum.toString();
-    console.log("Genre enum value:", genreString);
+    const genreEnum = Genres[genre];
+    
   
     // Use an object to map specific cases to their Spotify parameters
     const genreMap: { [key: string]: string } = {
@@ -173,23 +173,23 @@ export class SpotifyService {
       WorldMusic: "seed_genres=world-music",
       Chillout: "seed_genres=chill",
        // Nujabes, MF Doom, Joji, Ariel Pink
-      LoFi: "seed_artists=1anyVhU62p31KFi8MEzkbf,2pAWfrd7WFF3XhVt9GooDL,3MZsBdqDrRTJihTHQrO6Dq,5H0YoDsPDi9fObFmJtTjfN",
+      LoFi: "seed_genres=chill",
       // Talking Heads, New Order, The B-52s, The Police 
-      NewWave: "seed_artists=2x9SpqnPi8rlE9pjHBwmSC,6hN9F0iuULZYWXppob22Aj,3AokAhp2wx1D0jrPNjYyEz,4KXFlsUjMe7XhrsT83nhvW",
+      NewWave: "seed_genres=punk-rock",
       // Talking Heads, New Order, The B-52s, The Police 
-      PostRock: "seed_artists=2PJ1zitqoFoeTu0gwApyQd,6PRqUJmJ5mNiqJI4ZFrRVH,4k1ELeJKT1ISyDv8JivPpB,2VwGAJ2AiNjk1tZggDI0t1",
+      PostRock: "seed_genres=alternative",
       // Including Pink Floyd, Rush, Yes, and Genesis
-      ProgressiveRock: "seed_artists=3CkvROUTQ6nRi9yQOcsB50,3KEixMtvwCxexjMy9fffig,7AC976RDJzL2asmZuz7qil,6P7H3ai06vU1sGvdpBwDmE",
+      ProgressiveRock: "seed_genres=rock",
        // Including My Bloody Valentine, Slowdive, Ride, and Lush
-      Shoegaze: "seed_artists=3DkbZ4cKGVoJQg2vKxZGjc,5WiLThuSRiqBreHUChbYNx,2dCv0qCeqyYNNuHphZpC6w,3q7HBObVc0L8jNeTe5Gofh",
+      Shoegaze: "seed_genres=indie",
        // Including Kavinsky, The Midnight, Carpenter Brut, and Gunship
-      Synthwave: "seed_artists=6ltzsmQQbmdoHHbLZ4ZN25,5zVWxGnPSFKxmGOubiKTNR,5NDMKrqqiZ7UgOMK5c0Ae4,3PALZKWkpwjRvBsRmhlVSS",
+      Synthwave: "seed_genre=synth_pop",
       // Including Future, Travis Scott, Migos, and Young Thug
-      Trap: "seed_artists=1RAelE7rH6BQY0R8PnGKrf,7jVv8c5Fj3E9VhNjxT4snq,6oMuImdp5ZcFhWP0ESe6mG,50co4Is1HCEo8bhOyUWKpn"
+      Trap: "seed_genres=hip-hop,rap"
     };
   
     // Check if the genre is in the map, otherwise default to toLowerCase() of the genre string
-    const spotifyParam = genreMap[genreString] || `seed_genres=${genreString.toLowerCase()}`;
+    const spotifyParam = genreMap[genreEnum] || `seed_genres=${genreEnum.toLowerCase()}`;
   
     console.log("Spotify parameter:", spotifyParam);
     return spotifyParam;

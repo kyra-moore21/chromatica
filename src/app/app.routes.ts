@@ -3,6 +3,7 @@ import { TabsComponent } from './components/tabs/tabs.component';
 import { AuthGuard } from './shared/auth.guard';
 
 export const routes: Routes = [
+
   {
     path: '',
     redirectTo: 'login',
@@ -74,11 +75,6 @@ export const routes: Routes = [
           ),
         canActivate: [AuthGuard],
       },
-      {
-        path: '',
-        redirectTo: 'home',
-        pathMatch: 'full',
-      },
     ],
   },
   {
@@ -92,6 +88,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./components/song-results/song-results.component').then(
         (m) => m.SongResultsComponent
+      ),
+  },
+      {
+    path: 'playlist-results',
+    loadComponent: () =>
+      import('./components/song-results/playlist-results.component').then(
+        (m) => m.PlaylistResultsComponent
       ),
   },
   {

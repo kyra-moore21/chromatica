@@ -1,0 +1,5 @@
+.transparent-footer {
+  background: linear-gradient(to bottom, rgba(2, 26, 33, 0) 0%, #021a21 20%);
+  padding-bottom: 0;
+  margin-bottom: 0;
+}

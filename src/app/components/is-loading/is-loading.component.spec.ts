@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { EventSelectionComponent } from './event-selection.component';
+import { IsLoadingComponent } from './is-loading.component';
 
-describe('EventSelectionComponent', () => {
-  let component: EventSelectionComponent;
-  let fixture: ComponentFixture<EventSelectionComponent>;
+describe('IsLoadingComponent', () => {
+  let component: IsLoadingComponent;
+  let fixture: ComponentFixture<IsLoadingComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ EventSelectionComponent ],
+      declarations: [ IsLoadingComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EventSelectionComponent);
+    fixture = TestBed.createComponent(IsLoadingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

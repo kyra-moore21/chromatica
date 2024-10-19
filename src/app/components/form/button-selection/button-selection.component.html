@@ -1,0 +1,39 @@
+<h2 class="text-center mb-2 text-2xl p-4 font-courierPrime">{{ title }}</h2>
+
+<div class="text-center font-courierPrime">
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    (input)="searchItems()"
+    [placeholder]="'Search ' + getSearchPlaceholder(title) + '...'"
+    class="bg-transparent border border-gray-300 text-text text-sm rounded-lg w-5/6 ml-3 mr-3 p-2"
+  />
+</div>
+
+<div class="overflow-auto">
+  <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto pt-4 pb-14">
+    @for (item of filteredItems; track item) {
+    <button
+      class="moodBtn shadow-md flex items-center justify-center"
+      [ngStyle]="getSize(item)"
+      [class.selected]="selectedItem === item"
+      (click)="toggleSelection(item)"
+    >
+      {{ getItemDisplay(item) }}
+    </button>
+    }
+  </div>
+</div>
+
+@if (isGenreSelection || selectedItem !== defaultValue) {
+<div
+  class="fixed bottom-4 left-0 right-0 flex justify-center font-courierPrime"
+>
+  <button
+    class="btn btn-accent px-14 py-4 rounded-lg font-thin shadow-lg"
+    (click)="proceed.emit()"
+  >
+    {{ getButtonText() }}
+  </button>
+</div>
+}
