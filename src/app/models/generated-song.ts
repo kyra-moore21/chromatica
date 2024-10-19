@@ -4,5 +4,4 @@ export interface GeneratedSong {
     spotifyTrackId: string;
     imageUrl: string;
     previewUrl: string;
-
 }

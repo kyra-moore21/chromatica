@@ -1,0 +1,8 @@
+<div class="flex flex-col justify-center items-center h-full w-full">
+  <h1 class="font-courierPrime">choose your username</h1>
+  <div class="flex flex-col font-courierPrime mt-5 w-[85%]">
+    <label class="mb-3">username</label>
+    <input type="text" class="input input-bordered w-full" [(ngModel)]="username" />
+    <button class="btn btn-accent w-full mt-5" (click)="saveUsername()">save username</button>
+  </div>
+</div>

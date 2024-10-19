@@ -68,8 +68,7 @@ module.exports = {
   },
   plugins: [
     function ({ addComponents, theme }) {
-      addComponents({
-        ".moodBtn": {
+      ".moodBtn": {
           background: theme("backgroundImage.bubble-gradient"),
           fontSize: "14px",
           display: "flex",
@@ -90,20 +89,20 @@ module.exports = {
             transform: "scale(1.1)",
             boxShadow: theme("boxShadow.neumorphic-inset"),
           },
-          // ".btn": {
-          //   backgroundColor: theme("colors.button"),
-          //   fontFamily: theme("fontFamily.montserrat"),
-          //   fontWeight: "400",
-          //   fontSize: "16px",
-          //   borderRadius: "8px",
-          //   padding: "16px 20px",
-          //   margin: "0 12px",
-          // },
-          h2: {
-            fontFamily: theme("fontFamily.courierPrime"),
-            fontSize: "22px",
-            fontWeight: "400",
-          },
+        },
+        // ".btn": {
+        //   backgroundColor: theme("colors.button"),
+        //   fontFamily: theme("fontFamily.montserrat"),
+        //   fontWeight: "400",
+        //   fontSize: "16px",
+        //   borderRadius: "8px",
+        //   padding: "16px 20px",
+        //   margin: "0 12px",
+        // },
+        h2: {
+          fontFamily: theme("fontFamily.courierPrime"),
+          fontSize: "22px",
+          fontWeight: "400",
         },
       });
     },
