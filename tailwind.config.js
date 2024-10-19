@@ -67,45 +67,36 @@ module.exports = {
     ],
   },
   plugins: [
-    function ({ addComponents, theme }) {
-      ".moodBtn": {
-          background: theme("backgroundImage.bubble-gradient"),
-          fontSize: "14px",
-          display: "flex",
-          borderRadius: "50%",
-          padding: "0",
-          display: "flex",
-          width: "95px",
-          height: "95px",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "all 0.3s ease",
-          color: theme("colors.text"),
-          textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
-          boxShadow: theme("boxShadow.neumorphic"),
-          fontFamily: theme("fontFamily.courierPrime"),
-          "&.selected": {
-            background: theme("backgroundImage.bubble-gradient-selected"),
-            transform: "scale(1.1)",
-            boxShadow: theme("boxShadow.neumorphic-inset"),
+    function({ addComponents, theme }) {
+      addComponents({
+        '.moodBtn': {
+          background: theme('backgroundImage.bubble-gradient'),
+          fontSize: '14px',
+          display: 'flex',
+          borderRadius: '50%',
+          padding: '0',
+          width: '95px',
+          height: '95px',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'all 0.3s ease',
+          color: theme('colors.text'),
+          textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
+          boxShadow: theme('boxShadow.neumorphic'),
+          fontFamily: theme('fontFamily.courierPrime'),
+          '&.selected': {
+            background: theme('backgroundImage.bubble-gradient-selected'),
+            transform: 'scale(1.1)',
+            boxShadow: theme('boxShadow.neumorphic-inset'),
           },
         },
-        // ".btn": {
-        //   backgroundColor: theme("colors.button"),
-        //   fontFamily: theme("fontFamily.montserrat"),
-        //   fontWeight: "400",
-        //   fontSize: "16px",
-        //   borderRadius: "8px",
-        //   padding: "16px 20px",
-        //   margin: "0 12px",
-        // },
-        h2: {
-          fontFamily: theme("fontFamily.courierPrime"),
-          fontSize: "22px",
-          fontWeight: "400",
+        'h2': {
+          fontFamily: theme('fontFamily.courierPrime'),
+          fontSize: '22px',
+          fontWeight: '400',
         },
       });
     },
-    require("daisyui"),
+    require('daisyui'),
   ],
 };

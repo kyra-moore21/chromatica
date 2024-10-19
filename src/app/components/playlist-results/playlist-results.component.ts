@@ -118,6 +118,6 @@ export class PlaylistResultsComponent implements OnInit {
     return this.currentlyPlayingIndex === index;
   }
   navigateToHome() {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/tabs/home']);
   }
 }

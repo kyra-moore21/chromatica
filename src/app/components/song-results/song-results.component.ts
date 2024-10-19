@@ -31,7 +31,6 @@ export class SongResultsComponent implements OnInit {
     addIcons({ play, pause, close });
   }
 
-
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       this.emotionName = params['emotion'] || 'None'; //fallback to none if not provided
@@ -40,7 +39,6 @@ export class SongResultsComponent implements OnInit {
       this.loadRecommendation();
     });
   }
-
 
   loadRecommendation() {
     this.recommendations = this.formService.getRecommendation();
@@ -51,7 +49,6 @@ export class SongResultsComponent implements OnInit {
       }
     }
   }
-
 
   initAudioElement(previewUrl: string) {
     this.audioElement = new Audio(previewUrl);
@@ -74,6 +71,6 @@ export class SongResultsComponent implements OnInit {
   }
 
   navigateToHome() {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/tabs/home']);
   }
 }
