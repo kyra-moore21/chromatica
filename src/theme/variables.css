@@ -42,4 +42,5 @@
   --ion-tab-bar-color: var(--icon-unfocused);
   --ion-tab-bar-color-selected: var(--icon-focused);
   --ion-toolbar-background: var(--navbar-background);
+
 }

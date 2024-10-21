@@ -1,12 +1,20 @@
-<div class="flex flex-col justify-center mt-6">
+<div class="flex flex-col justify-center mt-6 font-courierPrime">
   <div class="flex flex-row items-center justify-center">
-    <button class="btn" (click)="navigateToForm('Song')">generate song</button>
-    <button class="btn" (click)="navigateToForm('Playlist')">
+    <button
+      class="btn btn-accent font-thin mx-3 w-48"
+      (click)="navigateToForm('Song')"
+    >
+      generate song
+    </button>
+    <button
+      class="btn btn-accent font-thin mx-3 w-48"
+      (click)="navigateToForm('Playlist')"
+    >
       generate playlist
     </button>
   </div>
 
-  <div class="w-screen h-screen flex items-center justify-center">
+  <!-- <div class="w-screen h-screen flex items-center justify-center">
     <h1 class="flex flex-col">
       <button
         class="hover:cursor-pointer border-solid border border-white p-2 rounded mt-3"
@@ -23,9 +31,9 @@
       <div
         id="console-output"
         class="mt-3 p-3 border border-gray-500 rounded max-h-64 overflow-y-auto text-white bg-gray-800"
-      >
+      > -->
         <!-- Logs will appear here -->
-      </div>
+      <!-- </div>
     </h1>
-  </div>
+  </div> -->
 </div>

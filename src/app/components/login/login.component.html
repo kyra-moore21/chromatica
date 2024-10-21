@@ -1,0 +1,42 @@
+<div class="flex flex-col justify-center items-center h-full w-full">
+  <h1 class="font-courierPrime font-bold">
+    welcome to
+    <span class="rainbow" (touchstart)="handleTouchMove($event)" (touchmove)="handleTouchMove($event)" (touchend)="stopPlaying()">
+      <span id="letter-0" class="text-orange-500">c</span>
+      <span id="letter-1" class="text-yellow-500">h</span>
+      <span id="letter-2" class="text-yellow-400">r</span>
+      <span id="letter-3" class="text-green-400">o</span>
+      <span id="letter-4" class="text-blue-400">m</span>
+      <span id="letter-5" class="text-indigo-400">a</span>
+      <span id="letter-6" class="text-purple-400">t</span>
+      <span id="letter-7" class="text-pink-400">i</span>
+      <span id="letter-8" class="text-red-400">c</span>
+      <span id="letter-9" class="text-lime-400">a</span>
+    </span>
+  </h1>
+  
+  <h6 class="font-courierPrime my-0">your personal music generation genius</h6>
+
+  <div class="flex flex-col font-courierPrime mt-5 w-[85%]">
+    <label class="mb-3">email</label>
+    <input type="text" class="input input-bordered w-full" [(ngModel)]="email" />
+    <label class="my-3">password</label>
+    <input type="password" class="input input-bordered w-full" [(ngModel)]="password" />
+    <a (click)="navigate('forgot')" class="font-courierPrime mt-3 text-accent"
+    >forgot password?</a>
+    <button class="btn btn-accent w-full mt-5" (click)="login()">login</button>
+  </div>
+  <div class="flex items-center mt-5 w-[85%]">
+    <hr class="flex-grow border-t border-white" />
+    <span class="px-3 text-white font-courierPrime">or</span>
+    <hr class="flex-grow border-t border-white" />
+  </div>
+  <div class="mt-5 w-[85%]">
+    <button class="btn btn-info font-courierPrime w-full" (click)="loginSpotify()">login with spotify</button>
+  </div>
+  <div class="mt-5">
+    <a (click)="navigate('register')" class="font-courierPrime text-accent"
+      >don't have an account? register here</a
+    >
+  </div>
+</div>

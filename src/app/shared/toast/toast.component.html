@@ -1,0 +1,22 @@
+<div
+  *ngFor="let toast of toastService.getToasts()"
+  class="z-50 toast toast-top toast-center font-courierPrime text-sm flex justify-center items-center min-w-[350px]"
+>
+  <div
+    class="alert flex flex-row items-center justify-between"
+    [ngClass]="{
+      'alert-success': toast.type === 'success',
+      'alert-error': toast.type === 'error',
+      'alert-info': toast.type === 'info',
+      'alert-warning': toast.type === 'warning'
+    }"
+  >
+    <span class="mr-6 whitespace-normal break-words">{{ toast.message }}</span>
+    <button
+      (click)="removeToast(toast.id)"
+      class="p-1 active:bg-gray-700 rounded-md"
+    >
+      ✕
+    </button>
+  </div>
+</div>

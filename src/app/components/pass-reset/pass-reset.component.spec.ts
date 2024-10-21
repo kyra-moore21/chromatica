@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { MoodButtonComponent } from './mood-button.component';
+import { PassResetComponent } from './pass-reset.component';
 
-describe('MoodButtonComponent', () => {
-  let component: MoodButtonComponent;
-  let fixture: ComponentFixture<MoodButtonComponent>;
+describe('PassResetComponent', () => {
+  let component: PassResetComponent;
+  let fixture: ComponentFixture<PassResetComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MoodButtonComponent ],
+      declarations: [ PassResetComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MoodButtonComponent);
+    fixture = TestBed.createComponent(PassResetComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
