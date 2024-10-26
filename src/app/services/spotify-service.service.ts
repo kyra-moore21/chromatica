@@ -272,8 +272,9 @@ export class SpotifyService {
   }
   getTopTracks(limit: number): Observable<string> {
     const token = this.getProviderToken();
+    const offset = this.createRandomOffset();
     //using top five tracks default is medium_term/6 months
-    const url: string = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=${limit}`;
+    const url: string = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=${limit}&offset=${offset}`;
 
     return this.http.get<any>(url, {
       headers: new HttpHeaders({
@@ -320,7 +321,8 @@ export class SpotifyService {
 
   getTopArtistsForNoGenre(limit: number): Observable<string[]> {
     const token = this.getProviderToken();
-    const url = `https://api.spotify.com/v1/me/top/artists?limit=${limit}`;
+    const offset = this.createRandomOffset();
+    const url = `https://api.spotify.com/v1/me/top/artists?limit=${limit}&offset=${offset}`;
 
     return this.http.get<any>(url, {
       headers: new HttpHeaders({
@@ -348,12 +350,12 @@ export class SpotifyService {
     // If genre is 'None', handle separately and return early
     if (genreEnum === 'None') {
       // No genre selected: Fetch 4 top artists directly and 4 top tracks
-      return this.getTopArtistsForNoGenre(1).pipe(
+      return this.getTopArtistsForNoGenre(2).pipe(
         switchMap(topArtists => {
           const seedArtists = `seed_artists=${topArtists.join('%2C')}`;
 
           // Fetch 4 top tracks
-          return this.getTopTracks(4).pipe(
+          return this.getTopTracks(1).pipe(
             map(seedTracks => {
               const combinedParams = `${seedArtists}&${seedTracks}`;
               console.log('Final combined parameters with no genre selected:', combinedParams);
@@ -411,6 +413,9 @@ export class SpotifyService {
         }
       })
     );
+  }
+  createRandomOffset(): number {
+    return Math.floor(Math.random() * 50) + 1;
   }
 
 }

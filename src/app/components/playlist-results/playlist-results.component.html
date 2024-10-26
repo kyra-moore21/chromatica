@@ -1,11 +1,6 @@
-<div
-  class="overflow-y-auto overflow-x-hidden relative ion-padding font-courierPrime"
->
+<div class="overflow-y-auto overflow-x-hidden relative ion-padding font-courierPrime">
   <div class="relative p-4">
-    <button
-      (click)="navigateToHome()"
-      class="absolute right-6 top-6 text-gray-400"
-    >
+    <button (click)="navigateToHome()" class="absolute right-6 top-6 text-gray-400">
       <ion-icon name="close" class="text-3xl"></ion-icon>
     </button>
   </div>
@@ -18,16 +13,8 @@
     @for (song of recommendations; track song; let i = $index) {
     <li class="flex items-center list-none justify-between">
       <div class="flex items-center">
-        <input
-          checked
-          type="checkbox"
-          class="w-7 h-7 checkbox checkbox-accent mr-2"
-        />
-        <img
-          class="rounded-md h-16 w-16 object-cover mr-2"
-          [src]="song.song_image_url"
-          [alt]="song.track_name"
-        />
+        <input [(ngModel)]="song.isSelected" type="checkbox" class="w-7 h-7 checkbox checkbox-accent mr-2" />
+        <img class="rounded-md h-16 w-16 object-cover mr-2" [src]="song.song_image_url" [alt]="song.track_name" />
         <div class="flex-grow mr-2 w-56">
           <h3 class="m-0 p-0 font-courierPrime truncate">
             {{ song.track_name }}
@@ -39,10 +26,7 @@
       </div>
       @if(song.preview_url) {
       <button (click)="togglePlayPause(i)">
-        <ion-icon
-          [name]="isPlaying(i) ? 'pause' : 'play'"
-          class="text-tertiary text-3xl"
-        ></ion-icon>
+        <ion-icon [name]="isPlaying(i) ? 'pause' : 'play'" class="text-tertiary text-3xl"></ion-icon>
       </button>
       }
     </li>
@@ -51,7 +35,8 @@
 </div>
 <div class="text-center mt-4">
   <footer class="fixed bottom-0 left-0 z-20 w-full transparent-footer pt-4">
-    <button class="btn btn-info font-courierPrime font-thin text-text mb-2" onclick="my_modal_3.showModal()">add to spotify</button>
+    <button class="btn btn-info font-courierPrime font-thin text-text p-2 mb-2" [disabled]="isAdded" target="_blank"
+      onclick="my_modal_3.showModal()">{{ isAdded ? "Added" : "Add To Liked Songs" }}</button>
   </footer>
   <dialog id="my_modal_3" class="modal modal-middle">
     <div class="modal-box h-72 flex items-center justify-center">
@@ -59,11 +44,14 @@
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         <div class="flex flex-col gap-4">
           <label class="font-courierPrime font-thin">name your playlist:</label>
-          <input type="text" [(ngModel)]="playlistName" name="playlistName" class="py-2 px-4 pe-11 block rounded-lg text-black font-courierPrime font-thin" placeholder="name your playlist..."/>
-          <button (click)="CreateSpotifyPlaylist(playlistName, true, recommendations)" class="btn btn-info font-courierPrime font-thin text-text p-0">add to spotify</button>
+          <input type="text" [(ngModel)]="playlistName" name="playlistName"
+            class="py-2 px-4 pe-11 block rounded-lg text-black font-courierPrime font-thin"
+            placeholder="name your playlist..." />
+          <button (click)="CreateSpotifyPlaylist(playlistName, true, recommendations)"
+            class="btn btn-info font-courierPrime font-thin text-text p-0">add to spotify</button>
         </div>
       </form>
     </div>
   </dialog>
-  
+
 </div>

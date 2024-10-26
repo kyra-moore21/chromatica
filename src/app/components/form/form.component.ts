@@ -8,7 +8,7 @@ import {
   Genres,
 } from '../../../../supabase/functions/emotion-event-enum';
 import { addIcons } from 'ionicons';
-import { close } from 'ionicons/icons';
+import { bug, close, sad } from 'ionicons/icons';
 import { FormService } from '../../services/form.service';
 import { SpotifyService } from '../../services/spotify-service.service';
 import { FormsModule } from '@angular/forms';
@@ -32,6 +32,8 @@ import { firstValueFrom } from 'rxjs';
 export class FormComponent implements OnInit {
   @ViewChild(IonContent, { static: false }) content!: IonContent;
   generationType: 'Song' | 'Playlist' = 'Song';
+  error: boolean = false;
+  errorMSG: any;
   //enum references
   Emotions = Emotions;
   Events = Events;
@@ -69,7 +71,7 @@ export class FormComponent implements OnInit {
     private formService: FormService,
     private spotifyService: SpotifyService
   ) {
-    addIcons({ close });
+    addIcons({ close, sad });
   }
 
   ngOnInit() {
@@ -124,9 +126,9 @@ export class FormComponent implements OnInit {
       const emotionName = this.formService.convertEnumName(Emotions, this.selectedEmotion);
       const eventName = this.formService.convertEnumName(Events, this.selectedEvents);
       const genreName = this.formService.convertEnumName(Genres, this.selectedGenre);
-      
+
       const tracks = this.generationType === 'Song' ? 1 : this.numberOfSongs;
-  
+
       const spotifyResponse = await firstValueFrom(
         this.spotifyService.getSpotifyRecommendations(
           this.selectedEmotion,
@@ -135,13 +137,13 @@ export class FormComponent implements OnInit {
           tracks
         )
       );
-  
+
       await this.formService.setRecommendation(spotifyResponse, this.generationType);
-  
-      const navigationRoute = this.generationType === 'Song' 
-        ? '/song-results' 
+
+      const navigationRoute = this.generationType === 'Song'
+        ? '/song-results'
         : '/playlist-results';
-      
+
       this.navCtrl.navigateRoot([navigationRoute], {
         queryParams: {
           emotion: emotionName,
@@ -149,9 +151,12 @@ export class FormComponent implements OnInit {
           genre: genreName,
         },
       });
-  
+
     } catch (error) {
       console.error('Error in form submission:', error);
+      this.error = true;
+      this.errorMSG = error;
+      this.isLoading = false;
     } finally {
       this.isLoading = false;
       this.resetForm();
