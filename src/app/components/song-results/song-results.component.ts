@@ -79,6 +79,7 @@ export class SongResultsComponent implements OnInit {
 
   navigateToHome() {
     this.isAdded = false;
+    this.audioElement?.pause();
     this.navCtrl.navigateRoot('/tabs/home');
   }
   async addToLikedSongs(trackId: string, songId: string) {
@@ -88,8 +89,8 @@ export class SongResultsComponent implements OnInit {
       );
       if (success) {
         // If successfully added to liked songs, update the song in the database
-       await this.formService.updateIndividualSong(songId);
- 
+        await this.formService.updateIndividualSong(songId);
+
         console.log('Track added to liked songs and updated in the database.');
         this.isAdded = true;
       }

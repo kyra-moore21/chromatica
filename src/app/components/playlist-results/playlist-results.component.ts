@@ -120,21 +120,22 @@ export class PlaylistResultsComponent implements OnInit {
     return this.currentlyPlayingIndex === index;
   }
   navigateToHome() {
+    this.audioElement?.pause();
     this.router.navigate(['/tabs/home']);
   }
-  
+
   CreateSpotifyPlaylist(name: string, visibility: boolean, recommendation: GeneratedSong[]) {
     const spotifyId = this.getSpotifyId();
     if (!spotifyId) {
-    console.error('No Spotify ID available');
-    return;
+      console.error('No Spotify ID available');
+      return;
     }
 
-    const trackIds:string[] = recommendation.map(data => data.spotify_track_id);
+    const trackIds: string[] = recommendation.map(data => data.spotify_track_id);
 
     this.spotifyService.createAndAddTracksToPlaylist(name, visibility, spotifyId, trackIds)
     let playlistId = recommendation[1].playlist_id;
-    if(playlistId != null ){
+    if (playlistId != null) {
       this.formService.updatePlaylist(playlistId);
     }
   }
@@ -146,7 +147,7 @@ export class PlaylistResultsComponent implements OnInit {
       console.error('No user data found in localStorage');
       return null;
     }
-  
+
     try {
       const userData = JSON.parse(userDataString);
       return userData.spotify_id;

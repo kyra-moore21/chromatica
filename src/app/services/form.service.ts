@@ -36,7 +36,7 @@ export class FormService {
     recommendation: GeneratedSong[],
     generationType: 'Song' | 'Playlist') {
     const supabase = this.supabase.getClient();
-    
+
     try {
       let playlistId: string | null = null;
 
@@ -87,6 +87,10 @@ export class FormService {
       this.recommendation = songsWithIds;
       return songsWithIds;
 
+      //below can we used to test without adding to db
+      // this.recommendation = recommendation;
+      // return recommendation;
+
     } catch (error: any) {
       this.toastService.showToast(error.message, 'error');
       throw error;
@@ -95,30 +99,30 @@ export class FormService {
 
   async updateIndividualSong(songId: string) {
     const supabase = this.supabase.getClient();
-    
+
     try {
       const { error: songError } = await supabase
         .from('generated_songs')
         .update({ added_to_spotify: true })
         .eq('id', songId);
-  
+
       if (songError) throw songError;
-  
+
     } catch (error: any) {
       console.error('Error updating song:', error);
       throw error;
     }
   }
 
-  async updatePlaylist(playlistId: string){
+  async updatePlaylist(playlistId: string) {
     const supabase = this.supabase.getClient();
-    try{
+    try {
       //update the playlist
-      const {data: playlistData, error: playlistError} = await supabase
+      const { data: playlistData, error: playlistError } = await supabase
         .from('generated_playlists')
-        .update({ added_to_spotify: true})
+        .update({ added_to_spotify: true })
         .eq('id', playlistId)
-        if(playlistError) throw playlistError;
+      if (playlistError) throw playlistError;
     } catch (error: any) {
       throw error
     }
