@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, IonicModule } from '@ionic/angular';
+import { IonContent, IonicModule, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import {
   Emotions,
@@ -14,6 +14,7 @@ import { SpotifyService } from '../../services/spotify-service.service';
 import { FormsModule } from '@angular/forms';
 import { ButtonSelectionComponent } from './button-selection/button-selection.component';
 import { IsLoadingComponent } from '../is-loading/is-loading.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-form',
@@ -64,7 +65,7 @@ export class FormComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    private navCtrl: NavController,
     private formService: FormService,
     private spotifyService: SpotifyService
   ) {
@@ -89,7 +90,7 @@ export class FormComponent implements OnInit {
 
   navigateToHome() {
     this.resetForm();
-    this.router.navigate(['/home']);
+    this.navCtrl.navigateRoot('tabs/home');
   }
 
   //setting selected emotion to pass in load recommendations
@@ -117,58 +118,44 @@ export class FormComponent implements OnInit {
     }
   }
 
-  submitForm() {
-    this.isLoading = true;
-    const emotionName = this.formService.convertEnumName(
-      Emotions,
-      this.selectedEmotion
-    );
-    const eventName = this.formService.convertEnumName(
-      Events,
-      this.selectedEvents
-    );
-    const genreName = this.formService.convertEnumName(
-      Genres,
-      this.selectedGenre
-    );
-    let tracks: number =
-      this.generationType === 'Song' ? 1 : this.numberOfSongs;
-
-    this.spotifyService
-      .getSpotifyRecommendations(
-        this.selectedEmotion,
-        this.selectedEvents,
-        this.selectedGenre,
-        tracks
-      )
-      .subscribe({
-        next: async (response) => {
-          await this.formService.setRecommendation(
-            response,
-            this.generationType
-          );
-          const navigationRoute =
-            this.generationType === 'Song'
-              ? '/song-results'
-              : '/playlist-results';
-          this.router.navigate([navigationRoute], {
-            queryParams: {
-              emotion: emotionName,
-              event: eventName,
-              genre: genreName,
-            },
-          });
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Error fetching recommendations:', error);
-          this.isLoading = false;
-          // Handle error (e.g., show error message to user)
-        },
-        complete: () => {
-          this.resetForm();
+  async submitForm() {
+    try {
+      this.isLoading = true;
+      const emotionName = this.formService.convertEnumName(Emotions, this.selectedEmotion);
+      const eventName = this.formService.convertEnumName(Events, this.selectedEvents);
+      const genreName = this.formService.convertEnumName(Genres, this.selectedGenre);
+      
+      const tracks = this.generationType === 'Song' ? 1 : this.numberOfSongs;
+  
+      const spotifyResponse = await firstValueFrom(
+        this.spotifyService.getSpotifyRecommendations(
+          this.selectedEmotion,
+          this.selectedEvents,
+          this.selectedGenre,
+          tracks
+        )
+      );
+  
+      await this.formService.setRecommendation(spotifyResponse, this.generationType);
+  
+      const navigationRoute = this.generationType === 'Song' 
+        ? '/song-results' 
+        : '/playlist-results';
+      
+      this.navCtrl.navigateRoot([navigationRoute], {
+        queryParams: {
+          emotion: emotionName,
+          event: eventName,
+          genre: genreName,
         },
       });
+  
+    } catch (error) {
+      console.error('Error in form submission:', error);
+    } finally {
+      this.isLoading = false;
+      this.resetForm();
+    }
   }
   onSongCountChange(count: number) {
     this.numberOfSongs = count;

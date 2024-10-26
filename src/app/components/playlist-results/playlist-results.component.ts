@@ -6,12 +6,14 @@ import { close, pause, play } from 'ionicons/icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormService } from '../../services/form.service';
 import { CommonModule } from '@angular/common';
+import { SpotifyService } from '../../services/spotify-service.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-playlist-results',
   templateUrl: './playlist-results.component.html',
   styleUrls: ['./playlist-results.component.scss'],
-  imports: [IonIcon, CommonModule],
+  imports: [IonIcon, CommonModule, FormsModule],
   standalone: true,
 })
 export class PlaylistResultsComponent implements OnInit {
@@ -23,7 +25,7 @@ export class PlaylistResultsComponent implements OnInit {
   currentlyPlayingIndex: number | null = null;
   audioElement: HTMLAudioElement | null = null;
   spotifyPlaylistLink: string = '';
-  // mockRecommendations: GeneratedSong[] = [
+  playlistName!: string;
   //   {
   //     spotify_track_id: '121222',
   //     track_name: 'Blinding Lights',
@@ -69,7 +71,8 @@ export class PlaylistResultsComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private formService: FormService
+    private formService: FormService,
+    private spotifyService: SpotifyService
   ) {
     addIcons({ play, pause, close });
   }
@@ -84,7 +87,6 @@ export class PlaylistResultsComponent implements OnInit {
   }
   loadRecommendation() {
     this.recommendations = this.formService.getRecommendation();
-    // this.recommendations = this.mockRecommendations;
   }
 
   togglePlayPause(index: number) {
@@ -119,5 +121,38 @@ export class PlaylistResultsComponent implements OnInit {
   }
   navigateToHome() {
     this.router.navigate(['/tabs/home']);
+  }
+  
+  CreateSpotifyPlaylist(name: string, visibility: boolean, recommendation: GeneratedSong[]) {
+    const spotifyId = this.getSpotifyId();
+    if (!spotifyId) {
+    console.error('No Spotify ID available');
+    return;
+    }
+
+    const trackIds:string[] = recommendation.map(data => data.spotify_track_id);
+
+    this.spotifyService.createAndAddTracksToPlaylist(name, visibility, spotifyId, trackIds)
+    let playlistId = recommendation[1].playlist_id;
+    if(playlistId != null ){
+      this.formService.updatePlaylist(playlistId);
+    }
+  }
+
+  getSpotifyId(): string | null {
+    const userDataString = localStorage.getItem('user');
+
+    if (!userDataString) {
+      console.error('No user data found in localStorage');
+      return null;
+    }
+  
+    try {
+      const userData = JSON.parse(userDataString);
+      return userData.spotify_id;
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      return null;
+    }
   }
 }

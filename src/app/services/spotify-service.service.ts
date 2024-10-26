@@ -8,17 +8,37 @@ import {
   Events,
   combineEncodings,
 } from '../../../supabase/functions/emotion-event-enum';
-import { from, Observable } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  from,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  switchMap,
+  throwError,
+} from 'rxjs';
+import { SupabaseService } from '../shared/supabase.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ToastService } from '../shared/toast/toast.service';
+import { CommonService } from '../shared/common.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SpotifyService {
   private spotifyAccessToken: Observable<string>;
-  constructor() {
+
+  constructor(
+    private supabase: SupabaseService,
+    private http: HttpClient,
+    private toastService: ToastService,
+    private commonService: CommonService
+  ) {
     this.spotifyAccessToken = this.getSpotifyAccessToken();
   }
-  //get the spotify access token (post)
+
   private getSpotifyAccessToken(): Observable<string> {
     return from(
       fetch('https://accounts.spotify.com/api/token', {
@@ -32,6 +52,93 @@ export class SpotifyService {
         .then((data) => data.access_token)
     );
   }
+  getProviderToken() {
+    return localStorage.getItem('oauth_provider_token');
+  }
+  addToLikedSongs(trackId: string): Observable<boolean> {
+    const url: string = `https://api.spotify.com/v1/me/tracks?ids=${trackId}`;
+    const provider_token = localStorage.getItem('oauth_provider_token');
+
+    if (!provider_token) {
+      console.error('No provider token available');
+      return of(false);
+    }
+
+    return this.http
+      .put<any>(url, null, {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${provider_token}`,
+          'Content-Type': 'application/json',
+        }),
+      })
+      .pipe(
+        map(() => true),
+        catchError((error) => {
+          console.error('Error adding song to liked songs:', error);
+          return of(false);
+        })
+      );
+  }
+  createPlaylist(name: string, visibility: boolean,user_id: string) {
+    const token = this.getProviderToken();
+    const url: string = `https://api.spotify.com/v1/users/${user_id}/playlists`;
+    //create the body of the request
+    const body = {
+      name: name,
+      public: visibility,
+    };
+    //request
+    return this.http.post<any>(url, body, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+      }),
+    });
+  }
+  addTracksToPlaylist(uris: string[], playlistId: string) {
+    const token = this.getProviderToken();
+    const url: string = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+    
+    
+     // Prepend "spotify:track:" to each track ID
+      const trackUris = uris.map(id => `spotify:track:${id}`);
+
+      // Log to ensure the URIs are correctly formatted
+      console.log('Formatted Track URIs:', trackUris);
+      console.log('Playlist ID:', playlistId);
+
+    return this.http.post<any>(
+      url,
+      { uris: trackUris },
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
+    );
+  }
+
+  async createAndAddTracksToPlaylist(name: string, visibility: boolean, user_id: string, trackIds: string[]) {
+    //creating the playlist
+    try {
+      const createPlaylistResponse = await firstValueFrom(
+        this.createPlaylist(name, visibility, user_id)
+      );
+      //extract the id from creating the playlist
+      const playlistId = createPlaylistResponse.id;
+
+      const addTracksResponse = await firstValueFrom(
+        this.addTracksToPlaylist(trackIds, playlistId)
+      );
+      return addTracksResponse;
+    } catch (error: any) {
+      console.error('error creating playlist or adding tracks: ', error);
+      this.toastService.showToast(
+        this.commonService.lowercaseRemoveStop(error.message),
+        'error'
+      );
+    }
+  }
+
 
   getSpotifyRecommendations(
     emotion: number,
