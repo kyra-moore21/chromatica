@@ -4,11 +4,14 @@
       <ion-icon name="close" class="text-3xl"></ion-icon>
     </button>
   </div>
+
   <h2 class="text-center mt-12 mb-8">
     your {{ this.emotionName.toString().toLowerCase() }},
-    {{ this.eventName.toString().toLowerCase() }},
-    {{ this.genreName.toString().toLowerCase() }} playlist
+    {{ this.eventName.toString().toLowerCase() }}
+    {{ this.genreName.toString().toLowerCase() !== 'none' ? ', ' + this.genreName.toString().toLowerCase() : '' }}
+    playlist
   </h2>
+
   <ul class="flex flex-col gap-4 pb-20">
     @for (song of recommendations; track song; let i = $index) {
     <li class="flex items-center list-none justify-between">

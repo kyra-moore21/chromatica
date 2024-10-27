@@ -4,6 +4,7 @@ import { SupabaseService } from '../shared/supabase.service';
 import { ToastService } from '../shared/toast/toast.service';
 import { CommonService } from '../shared/common.service';
 import { catchError, from, Observable, tap } from 'rxjs';
+import { Emotions, Genres } from '../../../supabase/functions/emotion-event-enum';
 
 @Injectable({
   providedIn: 'root',
@@ -87,7 +88,7 @@ export class FormService {
       this.recommendation = songsWithIds;
       return songsWithIds;
 
-      //below can we used to test without adding to db
+      //below can we used to test without adding to db 
       // this.recommendation = recommendation;
       // return recommendation;
 
@@ -139,4 +140,148 @@ export class FormService {
   getRecommendation() {
     return this.recommendation;
   }
+
+  async updateUserMoodGenreEvents(event: string, emotion: string, genre: string) {
+    const userId = this.user.id;
+    if (!userId) {
+      throw new Error('User is not authenticated');
+    }
+
+    try {
+      // Check and update user_events
+      await this.upsertUserEvent(userId, event);
+
+      // Check and update user_moods
+      await this.upsertUserMood(userId, emotion);
+
+      // Check and update user_genres
+      await this.upsertUserGenre(userId, genre);
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
+  }
+
+  private async upsertUserEvent(userId: string, event: string) {
+    if (event.toLowerCase() === "none") {
+      return;
+    }
+    const { data, error } = await this.supabase.getClient()
+      .from('user_events')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('event', event)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      // Error handling other than "no record found"
+      throw error;
+    }
+
+    if (data) {
+      // Update the existing record
+      const { error: updateError } = await this.supabase.getClient()
+        .from('user_events')
+        .update({
+          frequency: (data.frequency || 0) + 1,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', data.id);
+
+      if (updateError) throw updateError;
+    } else {
+      // Insert a new record
+      const { error: insertError } = await this.supabase.getClient()
+        .from('user_events')
+        .insert({
+          user_id: userId,
+          event,
+          frequency: 1,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+
+      if (insertError) throw insertError;
+    }
+  }
+
+  private async upsertUserMood(userId: string, mood: string) {
+    if (mood.toLowerCase() === "none") {
+      return;
+    }
+    const { data, error } = await this.supabase.getClient()
+      .from('user_moods')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('mood', mood)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
+
+    if (data) {
+      const { error: updateError } = await this.supabase.getClient()
+        .from('user_moods')
+        .update({
+          frequency: (data.frequency || 0) + 1,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', data.id);
+
+      if (updateError) throw updateError;
+    } else {
+      const { error: insertError } = await this.supabase.getClient()
+        .from('user_moods')
+        .insert({
+          user_id: userId,
+          mood,
+          frequency: 1,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+
+      if (insertError) throw insertError;
+    }
+  }
+
+  private async upsertUserGenre(userId: string, genre: string) {
+    if (genre.toLowerCase() === "none") {
+      return;
+    }
+    const { data, error } = await this.supabase.getClient()
+      .from('user_genres')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('genre', genre)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
+
+    if (data) {
+      const { error: updateError } = await this.supabase.getClient()
+        .from('user_genres')
+        .update({
+          frequency: (data.frequency || 0) + 1,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', data.id);
+
+      if (updateError) throw updateError;
+    } else {
+      const { error: insertError } = await this.supabase.getClient()
+        .from('user_genres')
+        .insert({
+          user_id: userId,
+          genre,
+          frequency: 1,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+
+      if (insertError) throw insertError;
+    }
+  }
+
 }

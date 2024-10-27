@@ -1,9 +1,6 @@
 <div class="flex flex-col h-screen">
   <div class="relative p-4">
-    <button
-      (click)="navigateToHome()"
-      class="absolute right-6 top-6 text-gray-400"
-    >
+    <button (click)="navigateToHome()" class="absolute right-6 top-6 text-gray-400">
       <ion-icon name="close" class="text-3xl"></ion-icon>
     </button>
   </div>
@@ -14,23 +11,20 @@
   </div>
   } @if (!errorMessage) {
   <!-- Main Content -->
-  <div
-    class="mt-10 flex flex-col items-center font-courierPrime justify-center px-4 pb-20"
-  >
-    <h2 class="text-center mt-6 mb-6 w-full px-4">
+  <div class="mt-10 flex flex-col items-center font-courierPrime justify-center px-4 pb-20">
+    <h2 class="text-center mt-12 mb-8">
       your {{ this.emotionName.toString().toLowerCase() }},
-      {{ this.eventName.toString().toLowerCase() }},
-      {{ this.genreName.toString().toLowerCase() }} song
+      {{ this.eventName.toString().toLowerCase() }}
+      {{ this.genreName.toString().toLowerCase() !== 'none' ? ', ' + this.genreName.toString().toLowerCase() : '' }}
+      song
     </h2>
+
     @for (recommendation of recommendations; track
     recommendation.spotify_track_id) {
     <div class="bg-main-gradient p-6 rounded-lg shadow-md w-full max-w-xs mb-8">
       <!-- Album Cover -->
-      <img
-        [src]="recommendation.song_image_url"
-        [alt]="recommendation.track_name"
-        class="w-full aspect-square object-cover rounded-lg mb-4 shadow-lg shadow-bg"
-      />
+      <img [src]="recommendation.song_image_url" [alt]="recommendation.track_name"
+        class="w-full aspect-square object-cover rounded-lg mb-4 shadow-lg shadow-bg" />
 
       <!-- Song Title -->
       <h2 class="text-xl text-center mb-1">{{ recommendation.track_name }}</h2>
@@ -43,16 +37,10 @@
       <!-- Audio Preview -->
       <div class="flex justify-center items-center h-12">
         @if (recommendation.preview_url) {
-        <button
-          (click)="togglePlayPause()"
-          class="p-3 rounded-full bg-blue-100 focus:outline-none w-12 h-12 relative"
-        >
-          <ion-icon
-            [name]="isPlaying ? 'pause' : 'play'"
-            size="large"
+        <button (click)="togglePlayPause()" class="p-3 rounded-full bg-blue-100 focus:outline-none w-12 h-12 relative">
+          <ion-icon [name]="isPlaying ? 'pause' : 'play'" size="large"
             class="text-secondary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            [ngClass]="{ 'ml-0.5': !isPlaying }"
-          ></ion-icon>
+            [ngClass]="{ 'ml-0.5': !isPlaying }"></ion-icon>
         </button>
         } @else {
         <p class="text-sm text-gray-500">no audio preview available</p>
@@ -61,14 +49,9 @@
 
       <!-- Listen on Spotify button -->
       <div class="mt-4 flex justify-center">
-        <button
-          class="btn btn-info font-courierPrime font-thin text-text p-2"
-          (click)="
+        <button class="btn btn-info font-courierPrime font-thin text-text p-2" (click)="
             addToLikedSongs(recommendation.spotify_track_id, recommendation.id)
-          "
-          target="_blank"
-          [disabled]="isAdded"
-        >
+          " target="_blank" [disabled]="isAdded">
           {{ isAdded ? "Added" : "Add To Liked Songs" }}
         </button>
       </div>

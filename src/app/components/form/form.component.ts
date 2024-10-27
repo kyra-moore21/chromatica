@@ -139,6 +139,7 @@ export class FormComponent implements OnInit {
       );
 
       await this.formService.setRecommendation(spotifyResponse, this.generationType);
+      await this.formService.updateUserMoodGenreEvents(eventName, emotionName, genreName);
 
       const navigationRoute = this.generationType === 'Song'
         ? '/song-results'
