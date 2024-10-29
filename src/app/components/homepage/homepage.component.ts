@@ -1,8 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet, Router, ActivatedRoute } from '@angular/router';
 import { IonicModule, NavController } from '@ionic/angular';
-import { SupabaseService } from '../../shared/supabase.service';
-
+import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-homepage',
@@ -24,8 +23,9 @@ export class HomepageComponent implements OnInit {
   ) {}
 
   navigateToForm(type: 'Song' | 'Playlist') {
-    this.router.navigate(['/form'], {
+    this.navCtrl.navigateForward(['/form'], {
       queryParams: { type: type },
+      animated: false,
     });
   }
 
@@ -41,7 +41,5 @@ export class HomepageComponent implements OnInit {
     if (!cachedUsername) {
       this.navCtrl.navigateForward('/choose-username', { animated: false });
     }
-
   }
-
 }

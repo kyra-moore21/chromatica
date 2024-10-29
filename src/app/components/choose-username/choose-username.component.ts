@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService } from '../../shared/supabase.service';
+import { SupabaseService } from '../../services/supabase.service';
 import { ToastService } from '../../shared/toast/toast.service';
 import { NavController } from '@ionic/angular';
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, IonicModule } from '@ionic/angular';
+import { IonContent, IonicModule, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import {
   Emotions,
@@ -66,7 +66,8 @@ export class FormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private formService: FormService,
-    private spotifyService: SpotifyService
+    private spotifyService: SpotifyService,
+    private navCtrl: NavController
   ) {
     addIcons({ close });
   }
@@ -89,7 +90,7 @@ export class FormComponent implements OnInit {
 
   navigateToHome() {
     this.resetForm();
-    this.router.navigate(['/home']);
+    this.navCtrl.navigateBack(['/tabs/home'], { animated: false });
   }
 
   //setting selected emotion to pass in load recommendations
@@ -151,12 +152,13 @@ export class FormComponent implements OnInit {
             this.generationType === 'Song'
               ? '/song-results'
               : '/playlist-results';
-          this.router.navigate([navigationRoute], {
+          this.navCtrl.navigateForward([navigationRoute], {
             queryParams: {
               emotion: emotionName,
               event: eventName,
               genre: genreName,
             },
+            animated: false,
           });
           this.isLoading = false;
         },

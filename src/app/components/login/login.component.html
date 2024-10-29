@@ -17,7 +17,7 @@
   
   <h6 class="font-courierPrime my-0">your personal music generation genius</h6>
 
-  <div class="flex flex-col font-courierPrime mt-5 w-[85%]">
+  <!-- <div class="flex flex-col font-courierPrime mt-5 w-[85%]">
     <label class="mb-3">email</label>
     <input type="text" class="input input-bordered w-full" [(ngModel)]="email" />
     <label class="my-3">password</label>
@@ -30,13 +30,13 @@
     <hr class="flex-grow border-t border-white" />
     <span class="px-3 text-white font-courierPrime">or</span>
     <hr class="flex-grow border-t border-white" />
+  </div> -->
+  <div class="mt-24 w-[85%]">
+    <button class="btn btn-info font-courierPrime w-full" (click)="loginSpotify()">login with <img src="/Spotify_Full_Logo_RGB_White.png" height="80px" width="80px" class="mb-[0.15rem]"/></button>
   </div>
-  <div class="mt-5 w-[85%]">
-    <button class="btn btn-info font-courierPrime w-full" (click)="loginSpotify()">login with spotify</button>
-  </div>
-  <div class="mt-5">
+  <!-- <div class="mt-5">
     <a (click)="navigate('register')" class="font-courierPrime text-accent"
       >don't have an account? register here</a
     >
-  </div>
+  </div> -->
 </div>

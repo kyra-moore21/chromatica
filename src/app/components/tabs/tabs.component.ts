@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IonLabel, IonTabs, IonIcon, IonTabBar, IonTabButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { homeOutline, timeOutline, peopleOutline, personOutline } from 'ionicons/icons';
+import { homeSharp, timeSharp, peopleSharp, personSharp } from 'ionicons/icons';
 
 @Component({
   selector: 'app-tabs',
@@ -13,7 +13,7 @@ import { homeOutline, timeOutline, peopleOutline, personOutline } from 'ionicons
 export class TabsComponent  implements OnInit {
 
   constructor() { 
-    addIcons({ homeOutline, timeOutline, peopleOutline, personOutline  })
+    addIcons({ homeSharp, timeSharp, peopleSharp, personSharp  })
   }
 
   ngOnInit() {}

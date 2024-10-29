@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GeneratedSong } from '../../models/database.types';
-import { IonIcon } from '@ionic/angular/standalone';
+import { IonIcon, NavController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { pause, play, close } from 'ionicons/icons';
 import { FormService } from '../../services/form.service';
@@ -26,7 +26,8 @@ export class SongResultsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private formService: FormService
+    private formService: FormService,
+    private navCtrl: NavController
   ) {
     addIcons({ play, pause, close });
   }
@@ -71,6 +72,6 @@ export class SongResultsComponent implements OnInit {
   }
 
   navigateToHome() {
-    this.router.navigate(['/tabs/home']);
+    this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
   }
 }
