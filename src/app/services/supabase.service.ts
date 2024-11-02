@@ -25,50 +25,63 @@ export class SupabaseService {
       provider: 'spotify',
       options: {
         scopes:
-        'user-library-modify playlist-read-collaborative playlist-read-private playlist-modify-public playlist-modify-private user-read-email user-read-private user-read-playback-position user-top-read',
+          'user-library-modify playlist-read-collaborative playlist-read-private playlist-modify-public playlist-modify-private user-read-email user-read-private user-read-playback-position user-top-read',
         redirectTo: redirectUri,
       },
     });
   }
-  
+
   signUp(email: string, password: string) {
     return this.supabase.auth.signUp({ email, password });
   }
-  
+
   signOut() {
     return this.supabase.auth.signOut();
   }
-  
+
   forgotPass(email: string) {
     return this.supabase.auth.resetPasswordForEmail(email, {
       redirectTo: 'localhost:4200/',
     });
   }
-  
+
   getSession() {
     return this.supabase.auth.getSession();
   }
-  
+
   onAuthStateChange(callback: (event: string, session: any) => void) {
     this.supabase.auth.onAuthStateChange((event, session) => {
-      if (session && session.provider_token) {
-        window.localStorage.setItem(
-          'oauth_provider_token',
-          session.provider_token
-        );
+      console.log(`Auth state changed: ${event}`);
+
+      if (event === 'SIGNED_IN') {
+        this.updateTokens(session);
       }
-      if (session && session.provider_refresh_token) {
-        window.localStorage.setItem(
-          'oauth_refresh_token',
-          session.refresh_token
-        );
-      }
-      if (event === 'SIGNED_OUT') {
-        window.localStorage.removeItem('oauth_provider_token');
-        window.localStorage.removeItem('oauth_refresh_token');
+      else if (event === 'SIGNED_OUT') {
+        this.clearTokens();
       }
       callback(event, session);
     });
   }
- 
+
+
+  private updateTokens(session: any) {
+    if (session && session.provider_token) {
+      window.localStorage.setItem(
+        'oauth_provider_token',
+        session.provider_token
+      );
+    }
+    if (session && session.provider_refresh_token) {
+      window.localStorage.setItem(
+        'oauth_refresh_token',
+        session.provider_refresh_token
+      );
+    }
+  }
+
+  private clearTokens() {
+    window.localStorage.removeItem('oauth_provider_token');
+    window.localStorage.removeItem('oauth_refresh_token');
+  }
+
 }

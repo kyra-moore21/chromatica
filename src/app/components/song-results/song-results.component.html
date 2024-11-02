@@ -14,8 +14,9 @@
   <div class="mt-10 flex flex-col items-center font-courierPrime justify-center px-4 pb-20">
     <h2 class="text-center mt-12 mb-8">
       your {{ this.emotionName.toString().toLowerCase() }},
-      {{ this.eventName.toString().toLowerCase() }}
-      {{ this.genreName.toString().toLowerCase() !== 'none' ? ', ' + this.genreName.toString().toLowerCase() : '' }}
+      {{ this.eventName.toString().toLowerCase().trim() }}
+      {{ this.genreName.toString().toLowerCase() !== 'none' ? ', ' + this.genreName.toString().toLowerCase() :
+      '' }}
       song
     </h2>
 
