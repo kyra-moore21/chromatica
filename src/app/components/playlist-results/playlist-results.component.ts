@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GeneratedSong } from '../../models/database.types';
 import { addIcons } from 'ionicons';
-import { IonIcon } from '@ionic/angular/standalone';
+import { IonIcon, NavController } from '@ionic/angular/standalone';
 import { close, pause, play } from 'ionicons/icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormService } from '../../services/form.service';
@@ -31,7 +31,8 @@ export class PlaylistResultsComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private formService: FormService,
-    private spotifyService: SpotifyService
+    private spotifyService: SpotifyService,
+    private navCtrl: NavController
   ) {
     addIcons({ play, pause, close });
   }
@@ -84,7 +85,7 @@ export class PlaylistResultsComponent implements OnInit {
   }
   navigateToHome() {
     this.audioElement?.pause();
-    this.router.navigate(['/tabs/home']);
+    this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
   }
 
   CreateSpotifyPlaylist(name: string, visibility: boolean, recommendation: GeneratedSong[]) {

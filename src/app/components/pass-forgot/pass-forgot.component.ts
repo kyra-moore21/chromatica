@@ -1,31 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService } from '../../shared/supabase.service';
-
+import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-pass-forgot',
   templateUrl: './pass-forgot.component.html',
   styleUrls: ['./pass-forgot.component.scss'],
   standalone: true,
-  imports: [FormsModule]
+  imports: [FormsModule],
 })
-export class PassForgotComponent  implements OnInit {
+export class PassForgotComponent implements OnInit {
+  email: string = '';
 
-  email: string = "";
-
-  constructor(private navCtrl: NavController, private supabase: SupabaseService) { }
+  constructor(
+    private navCtrl: NavController,
+    private supabase: SupabaseService
+  ) {}
 
   ngOnInit() {}
 
   navigate() {
-    this.navCtrl.navigateBack('login', { animated: false })
+    this.navCtrl.navigateBack('login', { animated: false });
   }
 
   sendReset() {
     //check if email is populated
-    this.supabase.forgotPass(this.email)
+    this.supabase.forgotPass(this.email);
   }
-
 }

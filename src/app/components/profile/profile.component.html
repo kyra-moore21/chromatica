@@ -14,15 +14,14 @@
     </p>
   </div>
   <div class="mt-5 flex justify-center items-center space-x-5">
-    <img src="/mock/test.jpg" height="120px" width="120px" class="rounded" />
+    <div onclick="picture_chg.showModal()">
+      <img src="/mock/test.jpg" height="120px" width="120px" class="rounded" />
+    </div>
     <div
       class="flex flex-col justify-center font-light text-lg space-y-4 font-courierPrime"
     >
       <span class="flex flex-row justify-start items-center">{{user.username}}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 ml-3 pb-[0.1rem]">
-          <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
-          <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
-        </svg>
+        <ion-icon name="create-outline" class="ml-2 mb-[3px]" onclick="name_chg.showModal()"></ion-icon>
       </span>
       <span>social score: {{user.social_score}}</span>
       <span>{{user.friend_count}} friend{{user.friend_count == 1 ? '' : 's'}}</span>
@@ -90,14 +89,10 @@
     <div
       class="rounded-lg bg-main-gradient w-[85%] p-4 flex items-center justify-center"
     >
-    @if (user.is_spotify_connected) {
       <div class="flex flex-row justify-center items-center">
         <img [src]="spotifyPicUrl" class="rounded-full w-[40px] h-[40px] object-cover" />
         <span class="ml-4">{{user.spotify_id}}</span>
       </div>
-    } @else {
-      <button class="btn btn-info w-[95%]" (click)="connectSpotify()">connect spotify</button>
-    }
     </div>
   </div>
   <div class="font-courierPrime mt-8 flex flex-col justify-center items-center">
@@ -124,3 +119,53 @@
     </div>
   </div>
 </div>
+
+<dialog id="picture_chg" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">change profile picture</h3>
+
+    <!-- Image preview -->
+    <div class="py-4 flex justify-center">
+      <div class="w-24 h-24 rounded-full overflow-hidden">
+        <img id="profileImagePreview" src="/mock/test.jpg" alt="Profile Image" class="w-full h-full object-cover" />
+      </div>
+    </div>
+
+    <!-- Buttons for taking a picture or choosing from gallery -->
+    <div class="flex flex-col items-center space-y-4 py-4">
+      <button class="btn btn-primary" (click)="takePicture()">take a picture</button>
+      <button class="btn btn-secondary" (click)="chooseFromGallery()">choose from gallery</button>
+    </div>
+
+    <!-- Save and Close buttons -->
+    <div class="modal-action">
+      <form method="dialog" class="flex flex-row justify-between w-full">
+        <button class="btn mr-auto btn-success" (click)="saveProfilePicture()">save</button>
+        <button class="btn btn-error">close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+
+<dialog id="name_chg" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold text-center">change your username</h3>
+
+    <!-- input for new username -->
+    <input
+      type="text"
+      class="input input-accent w-full mt-4 "
+      placeholder="new username"
+      [(ngModel)]="newUsername"
+    />
+
+    <!-- Save and Close buttons -->
+    <div class="modal-action">
+      <form method="dialog" class="flex flex-row justify-between w-full">
+        <button class="btn mr-auto btn-success" (click)="saveUsername()">save</button>
+        <button class="btn btn-error">close</button>
+      </form>
+    </div>
+  </div>
+</dialog>

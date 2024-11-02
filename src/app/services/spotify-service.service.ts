@@ -19,10 +19,10 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
-import { SupabaseService } from '../shared/supabase.service';
+import { SupabaseService } from '../services/supabase.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ToastService } from '../shared/toast/toast.service';
-import { CommonService } from '../shared/common.service';
+import { CommonService } from '../services/common.service';
 
 @Injectable({
   providedIn: 'root',

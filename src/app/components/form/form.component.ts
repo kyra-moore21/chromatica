@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonicModule, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import {
@@ -8,7 +8,7 @@ import {
   Genres,
 } from '../../../../supabase/functions/emotion-event-enum';
 import { addIcons } from 'ionicons';
-import { bug, close, sad } from 'ionicons/icons';
+import { close, sad } from 'ionicons/icons';
 import { FormService } from '../../services/form.service';
 import { SpotifyService } from '../../services/spotify-service.service';
 import { FormsModule } from '@angular/forms';
@@ -67,9 +67,9 @@ export class FormComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private navCtrl: NavController,
     private formService: FormService,
-    private spotifyService: SpotifyService
+    private spotifyService: SpotifyService,
+    private navCtrl: NavController
   ) {
     addIcons({ close, sad });
   }
@@ -92,7 +92,7 @@ export class FormComponent implements OnInit {
 
   navigateToHome() {
     this.resetForm();
-    this.navCtrl.navigateRoot('tabs/home');
+    this.navCtrl.navigateBack(['/tabs/home'], { animated: false });
   }
 
   //setting selected emotion to pass in load recommendations
@@ -145,12 +145,13 @@ export class FormComponent implements OnInit {
         ? '/song-results'
         : '/playlist-results';
 
-      this.navCtrl.navigateRoot([navigationRoute], {
+      this.navCtrl.navigateForward([navigationRoute], {
         queryParams: {
           emotion: emotionName,
           event: eventName,
           genre: genreName,
         },
+        animated: false,
       });
 
     } catch (error) {

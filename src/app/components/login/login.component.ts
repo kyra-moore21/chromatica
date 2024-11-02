@@ -1,10 +1,11 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService } from '../../shared/supabase.service';
+import { SupabaseService } from '../../services/supabase.service';
 import { ToastService } from '../../shared/toast/toast.service';
-import { CommonService } from '../../shared/common.service';
+import { CommonService } from '../../services/common.service';
 import * as Tone from 'tone';
+
 
 @Component({
   selector: 'app-login',
@@ -37,9 +38,21 @@ export class LoginComponent implements OnInit {
     private supabase: SupabaseService,
     private toast: ToastService,
     private common: CommonService
-  ) {}
+  ) { }
+
+  // ngOnInit() {
+  //   // Listen for changes to the auth state
+  //   this.supabase.onAuthStateChange((event, session) => {
+  //     console.log('Auth state changed:', event);
+  //     if (event === 'SIGNED_IN') {
+  //       //this.handleSessionUpdate(session);
+  //       console.log('signed in');
+  //     }
+  //   });
+  // }
 
   ngOnInit() {
+    console.log('test login')
     this.supabase.onAuthStateChange((event, session) => {
       console.log(event);
       if (event === 'SIGNED_IN') {
@@ -117,7 +130,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  stopPlaying() {}
+  stopPlaying() { }
 
   playNoteForLetter(index: number, element: HTMLElement) {
     const note = this.chromaticScale[index % this.chromaticScale.length];
@@ -163,7 +176,10 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  loginSpotify() {
-    this.supabase.signInWithSpotify();
+  async loginSpotify() {
+    const { data, error } = await this.supabase.signInWithSpotify(
+      'http://localhost:8100/callback'
+      // 'chromatica://callback'
+    );
   }
 }

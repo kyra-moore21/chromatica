@@ -88,6 +88,7 @@ export const routes: Routes = [
       import('./components/song-results/song-results.component').then(
         (m) => m.SongResultsComponent
       ),
+    canActivate: [AuthGuard],
   },
   {
     path: 'playlist-results',
@@ -95,6 +96,15 @@ export const routes: Routes = [
       import('./components/playlist-results/playlist-results.component').then(
         (m) => m.PlaylistResultsComponent
       ),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'friend-list',
+    loadComponent: () =>
+      import('./components/friend-list/friend-list.component').then(
+        (m) => m.FriendListComponent
+      ),
+    canActivate: [AuthGuard],
   },
   {
     path: '**',

@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { GeneratedSong, User } from '../models/database.types';
-import { SupabaseService } from '../shared/supabase.service';
+import { SupabaseService } from './supabase.service';
 import { ToastService } from '../shared/toast/toast.service';
-import { CommonService } from '../shared/common.service';
+import { CommonService } from './common.service';
 import { catchError, from, Observable, tap } from 'rxjs';
 import { Emotions, Genres } from '../../../supabase/functions/emotion-event-enum';
 
 type ActivityType = 'event' | 'mood' | 'genre';
 type TableNames = 'user_events' | 'user_moods' | 'user_genres';
-
 
 @Injectable({
   providedIn: 'root',

@@ -32,7 +32,8 @@ export class SongResultsComponent implements OnInit {
     private navCtrl: NavController,
     private formService: FormService,
     private spotifyService: SpotifyService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router,
   ) {
     addIcons({ play, pause, close });
   }
@@ -80,8 +81,9 @@ export class SongResultsComponent implements OnInit {
   navigateToHome() {
     this.isAdded = false;
     this.audioElement?.pause();
-    this.navCtrl.navigateRoot('/tabs/home');
+    this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
   }
+
   async addToLikedSongs(trackId: string, songId: string) {
     try {
       const success = await firstValueFrom(
