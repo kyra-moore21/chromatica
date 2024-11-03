@@ -10,15 +10,12 @@ import {
 } from '../../../supabase/functions/emotion-event-enum';
 import {
   catchError,
-  defer,
   firstValueFrom,
   from,
   map,
-  mergeMap,
   Observable,
   of,
   switchMap,
-  throwError,
 } from 'rxjs';
 import { SupabaseService } from '../services/supabase.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
@@ -55,14 +52,19 @@ export class SpotifyService {
         return of(false);
       }
 
+
       return this.http.put<any>(url, null, {
         headers: new HttpHeaders({
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         }),
       }).pipe(
-        map(() => true),
+        map(() => {
+          this.toastService.showToast("Song added to liked songs!", 'success');
+          return true;
+        }),
         catchError(error => {
+          this.toastService.showToast("error adding to liked songs, please try again", 'error')
           console.error('Error adding song to liked songs:', error);
           return of(false);
         })
@@ -136,6 +138,7 @@ export class SpotifyService {
       });
     });
   }
+
   addTracksToPlaylist(uris: string[], playlistId: string) {
     return this.handleSpotifyApi(() => {
       const token = this.getProviderToken();
@@ -156,11 +159,43 @@ export class SpotifyService {
     })
   }
 
-  createAndAddTracksToPlaylist(name: string, visibility: boolean, user_id: string, trackIds: string[]) {
+
+  addPlaylistCoverImage(playlist_id: string, emotion: Emotions) {
+    const token = this.getProviderToken();
+    const url: string = `https://api.spotify.com/v1/playlists/${playlist_id}/images`;
+
+    return fetch(`/lil-guys/${emotion.toString().toLowerCase().trim()}.png`)
+      .then(response => response.blob())
+      .then(blob => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = reader.result as string;
+            resolve(base64data.split(',')[1]);
+          };
+          reader.readAsDataURL(blob);
+        });
+      })
+      .then(base64 => {
+        return firstValueFrom(this.http.put(url, base64, {
+          headers: new HttpHeaders({
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'image/png'
+          })
+        }));
+      });
+  }
+
+  createAndAddTracksToPlaylist(name: string, visibility: boolean, user_id: string, trackIds: string[], emotion: Emotions) {
     return this.handleSpotifyApi(() =>
       this.createPlaylist(name, visibility, user_id).pipe(
         switchMap(playlist =>
-          this.addTracksToPlaylist(trackIds, playlist.id)
+          this.addTracksToPlaylist(trackIds, playlist.id).pipe(
+            map(trackResponse => ({
+              playlist: playlist,
+              trackResponse: trackResponse
+            }))
+          )
         ),
         catchError(error => {
           console.error('error creating playlist or adding tracks: ', error);
@@ -173,6 +208,7 @@ export class SpotifyService {
       )
     );
   }
+
 
 
   getSpotifyRecommendations(emotion: number, event: number, genre: number, tracks: number): Observable<GeneratedSong[]> {

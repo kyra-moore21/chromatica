@@ -25,7 +25,7 @@ export class SupabaseService {
       provider: 'spotify',
       options: {
         scopes:
-          'user-library-modify playlist-read-collaborative playlist-read-private playlist-modify-public playlist-modify-private user-read-email user-read-private user-read-playback-position user-top-read',
+          'user-library-modify playlist-read-collaborative playlist-read-private playlist-modify-public playlist-modify-private user-read-email user-read-private user-read-playback-position user-top-read ugc-image-upload',
         redirectTo: redirectUri,
       },
     });
@@ -51,8 +51,6 @@ export class SupabaseService {
 
   onAuthStateChange(callback: (event: string, session: any) => void) {
     this.supabase.auth.onAuthStateChange((event, session) => {
-      console.log(`Auth state changed: ${event}`);
-
       if (event === 'SIGNED_IN') {
         this.updateTokens(session);
       }

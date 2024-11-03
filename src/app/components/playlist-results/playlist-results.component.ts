@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { GeneratedSong } from '../../models/database.types';
 import { addIcons } from 'ionicons';
 import { IonIcon, NavController } from '@ionic/angular/standalone';
@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
 })
 export class PlaylistResultsComponent implements OnInit {
+  @ViewChild('my_modal_3') modal!: ElementRef<HTMLDialogElement>;
   emotionName: number = 0;
   eventName: number = 0;
   genreName: number = 0;
@@ -26,6 +27,168 @@ export class PlaylistResultsComponent implements OnInit {
   spotifyPlaylistLink: string = '';
   playlistName!: string;
   isAdded: boolean = false;
+  spotifyPlaylistUrl!: string;
+
+  fillerRecommendation: (GeneratedSong & { isSelected?: boolean })[] =
+    [
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+      },
+    ];
 
   constructor(
     private router: Router,
@@ -103,12 +266,23 @@ export class PlaylistResultsComponent implements OnInit {
       return;
     }
 
-    this.spotifyService.createAndAddTracksToPlaylist(name, visibility, spotifyId, trackIds)
-    let playlistId = recommendation[1].playlist_id;
-    if (playlistId != null) {
-      this.formService.updatePlaylist(playlistId);
-    }
-    this.isAdded = true;
+    this.spotifyService.createAndAddTracksToPlaylist(name, visibility, spotifyId, trackIds, this.emotionName)
+      .subscribe({
+        next: (response) => {
+          let playlistId = recommendation[1].playlist_id;
+          var response = response;
+          if (playlistId != null) {
+            this.spotifyService.addPlaylistCoverImage(response.playlist.id, this.emotionName)
+              .catch(error => {
+                console.error('Error uploading playlist cover:', error);
+              });
+            this.formService.updatePlaylist(playlistId, response.playlist.id);
+            this.spotifyPlaylistUrl = `https://open.spotify.com/playlist/${response.playlist.id}`;
+          }
+          this.isAdded = true;
+          this.modal.nativeElement.close();
+        }
+      })
   }
 
   getSpotifyId(): string | null {

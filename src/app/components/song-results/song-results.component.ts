@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { SpotifyService } from '../../services/spotify-service.service';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { ToastService } from '../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-song-results',
@@ -27,12 +28,28 @@ export class SongResultsComponent implements OnInit {
   audioElement: HTMLAudioElement | null = null;
   isAdded: boolean = false;
 
+  fillerRecommendation: GeneratedSong[] =
+    [
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: null,
+        added_to_spotify: false
+      },
+    ];
+
+
   constructor(
     private route: ActivatedRoute,
     private navCtrl: NavController,
     private formService: FormService,
     private spotifyService: SpotifyService,
-    private http: HttpClient,
+    private toast: ToastService,
     private router: Router,
   ) {
     addIcons({ play, pause, close });
@@ -94,9 +111,12 @@ export class SongResultsComponent implements OnInit {
         await this.formService.updateIndividualSong(songId);
 
         console.log('Track added to liked songs and updated in the database.');
+        this.toast.showToast('succesfully added to liked songs', 'success');
+
         this.isAdded = true;
       }
     } catch (error: any) {
+      this.toast.showToast("error adding to liked songs, please try again", 'error')
       console.error(
         'Error in adding song to liked songs or updating the song:',
         error
