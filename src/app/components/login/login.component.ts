@@ -178,8 +178,8 @@ export class LoginComponent implements OnInit {
 
   async loginSpotify() {
     const { data, error } = await this.supabase.signInWithSpotify(
-      'http://localhost:8100/callback'
-      // 'chromatica://callback'
+      // 'http://localhost:8100/callback'
+      'chromatica://callback'
     );
   }
 }
