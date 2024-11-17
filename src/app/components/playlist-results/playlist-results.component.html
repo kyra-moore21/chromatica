@@ -1,36 +1,38 @@
 <div class="overflow-y-auto overflow-x-hidden relative ion-padding font-courierPrime">
   <div class="relative p-4">
-    <button (click)="navigateToHome()" class="absolute right-5 top-[22px] text-gray-400 font-courierPrime">
-      <ion-icon name="close" class="text-3xl"></ion-icon>
+    <button (click)="navigateToHome()" class="absolute right-2 top-[22px] text-gray-400 font-courierPrime">
+      <ion-icon name="close" class="text-4xl"></ion-icon>
     </button>
   </div>
 
-  <h2 class="text-center mt-7 mb-7 ml-2 mr-2">
+  <h2 class="text-center text-text mt-7 mb-7 ml-2 mr-2">
     your {{ this.emotionName.toString().toLowerCase() }}, {{ this.eventName.toString().toLowerCase() }}{{
     this.genreName.toString().toLowerCase() !== 'none' ? ', ' +
     this.genreName.toString().toLowerCase() : '' }}
     playlist
   </h2>
 
-  <ul class="flex flex-col gap-4 pb-20">
-    @for (song of fillerRecommendation; track song; let i = $index) {
-    <li class="flex items-center list-none justify-between bg-gray-800 rounded-lg shadow-md p-2">
+  <ul class="flex flex-col gap-3 pb-20 text-text">
+    @for (song of recommendations; track song; let i = $index) {
+    <li
+      class="flex items-center list-none justify-between bg-gradient-to-b from-slate-800 to-gray-900 border border-gray-900 rounded-lg shadow-md p-2">
       <div class="flex items-center">
-        <input [(ngModel)]="song.isSelected" type="checkbox" class="w-7 h-7 checkbox checkbox-accent mr-2" />
-        <img class="rounded-sm h-16 w-16 object-cover mr-2" [src]="song.song_image_url" [alt]="song.track_name" />
-        <div class="flex-grow mr-2 w-56">
-          <h3 class="m-0 p-0 font-courierPrime truncate flex flex-row items-center justify-center"><img
-              src="Spotify_Primary_Logo_RGB_White.png" alt="Spotify Logo" class="h-5 w-5 mr-2" />
+        <input [(ngModel)]="song.isSelected" type="checkbox"
+          class="w-7 h-7 checkbox border-[#2f5d6b] [--chkbg:#3A7A8A] [--chkfg:#c9e8f5] checked:border-[#1e444e] mr-2 " />
+        <img class="rounded-sm h-16 w-16 object-cover mr-2 ml-2" [src]="song.song_image_url" [alt]="song.track_name" />
+        <div class="w-56 ml-2">
+          <h3 class="m-0 p-0 font-courierPrime truncate">
             {{ song.track_name }}
           </h3>
-          <p class="truncate font-courierPrime text-gray-400">
+          <p class="m-0 p-0 truncate font-courierPrime text-gray-400">
             {{ song.artist }}
           </p>
         </div>
       </div>
       @if(song.preview_url) {
       <button (click)="togglePlayPause(i)">
-        <ion-icon [name]="isPlaying(i) ? 'pause' : 'play'" class="text-accent text-3xl"></ion-icon>
+        <ion-icon [name]="isPlaying(i) ? 'pause' : 'play'"
+          class="text-extracolor border-[#1e444e] text-4xl mr-2"></ion-icon>
       </button>
       }
     </li>
@@ -55,19 +57,20 @@
 
 
   <dialog #my_modal_3 id="my_modal_3" class="modal modal-middle">
-    <div class="modal-box h-auto flex items-center justify-center">
+    <div
+      class="modal-box h-auto flex pt-24 pb-24 items-center justify-center bg-gradient-to-b from-slate-800 to-gray-900">
       <form class="w-full" (submit)="$event.preventDefault()">
-        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          (click)="modal.nativeElement.close()">✕</button>
-        <div class="flex flex-col gap-4 items-center">
+        <button class="btn btn-ghost absolute right-4 top-4" (click)="modal.nativeElement.close()"><ion-icon
+            name="close" class="text-4xl"></ion-icon></button>
+        <div class="flex flex-col gap-5 items-center">
           <img [src]="'lil-guys/'+ emotionName.toString().toLowerCase() + '.png'" alt="Emotion Image"
-            class="rounded-md w-56 object-cover" />
-          <label class="font-courierPrime font-thin">name your playlist:</label>
+            class="rounded-md w-44 object-cover" />
+          <label class="font-courierPrime font-normal text-2xl">name your playlist</label>
           <input type="text" [(ngModel)]="playlistName" name="playlistName"
-            class="py-2 px-4 pe-11 block rounded-lg text-black font-courierPrime font-thin"
+            class="py-2 px-4 pe-11 block rounded-lg text-black font-courierPrime font-thin shadow-sm border border-gray-300"
             placeholder="name your playlist..." />
           <button (click)="CreateSpotifyPlaylist(playlistName, true, recommendations)"
-            class="btn btn-info font-courierPrime font-thin text-white py-2 px-16">add to <img
+            class="btn btn-info font-courierPrime font-thin shadow-lg text-white py-3 px-6">add to <img
               src="/Spotify_Full_Logo_RGB_White.png" alt="Spotify Logo" height="80px" width="80px"
               class="mb-[0.15rem]" /></button>
         </div>

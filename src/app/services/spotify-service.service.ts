@@ -16,6 +16,7 @@ import {
   Observable,
   of,
   switchMap,
+  throwError,
 } from 'rxjs';
 import { SupabaseService } from '../services/supabase.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
@@ -26,7 +27,8 @@ import { CommonService } from '../services/common.service';
   providedIn: 'root',
 })
 export class SpotifyService {
-
+  private supabaseUrl = 'https://ifnsuywocfgtyzqqixss.supabase.co';
+  // private supabaseUrl = 'http://localhost:54321'; // For local testing
 
   constructor(
     private supabase: SupabaseService,
@@ -80,10 +82,12 @@ export class SpotifyService {
           if (!refresh_token) {
             throw new Error('No refresh token available');
           }
+          console.log('401 caught, refresh token exists:', refresh_token.substring(0, 10) + '...');
           console.log('Attempting to refresh Spotify token...');
           return this.refreshSpotifyToken(refresh_token).pipe(
             switchMap(data => {
               // Update tokens in localStorage
+              console.log('Got new access token:', data.access_token.substring(0, 10) + '...');
               localStorage.setItem('oauth_provider_token', data.access_token);
               if (data.refresh_token) {
                 localStorage.setItem('oauth_refresh_token', data.refresh_token);
@@ -98,26 +102,40 @@ export class SpotifyService {
   }
 
   private refreshSpotifyToken(refreshToken: string): Observable<any> {
-    return from(fetch('https://accounts.spotify.com/api/token', {
+    const storageKey = 'sb-ifnsuywocfgtyzqqixss-auth-token';
+
+    const sessionString = localStorage.getItem(storageKey);
+    if (!sessionString) {
+      throw new Error('No session found');
+    }
+
+    const session = JSON.parse(sessionString!);
+    const userJwt = session.access_token;
+    console.log('User JWT:', userJwt.substring(0, 10) + '...');
+
+    return from(fetch(`${this.supabaseUrl}/functions/v1/refresh-spotify-token`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userJwt}`,
       },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-        client_id: environment.SPOTIFY_CLIENT_ID,
-        client_secret: environment.SPOTIFY_CLIENT_SECRET
-      }).toString()
-    }).then(response => {
-      if (!response.ok) {
-        return response.json().then(err => {
-          console.error("Spotify token refresh error:", err);
-          throw new Error(`Token refresh failed: ${err.error} - ${err.error_description}`);
-        });
-      }
-      return response.json();
-    }));
+      body: JSON.stringify({ refresh_token: refreshToken })
+    })).pipe(
+      switchMap(response =>
+        from(response.json()).pipe(
+          map(data => {
+            if (!response.ok) {
+              throw new Error(`Token refresh failed: ${data.error} - ${data.error_description}`);
+            }
+            return data;
+          })
+        )
+      ),
+      catchError(error => {
+        console.error("Spotify token refresh error:", error);
+        return throwError(() => error);
+      })
+    );
   }
 
 

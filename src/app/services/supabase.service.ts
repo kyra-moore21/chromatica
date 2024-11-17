@@ -57,6 +57,9 @@ export class SupabaseService {
       else if (event === 'SIGNED_OUT') {
         this.clearTokens();
       }
+      else if (event === 'USER_UPDATED') {
+
+      }
       callback(event, session);
     });
   }
