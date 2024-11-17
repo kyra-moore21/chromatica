@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonSelectionComponent } from './button-selection/button-selection.component';
 import { IsLoadingComponent } from '../is-loading/is-loading.component';
 import { firstValueFrom } from 'rxjs';
+import { ToastService } from '../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-form',
@@ -69,7 +70,8 @@ export class FormComponent implements OnInit {
     private route: ActivatedRoute,
     private formService: FormService,
     private spotifyService: SpotifyService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private toastService: ToastService
   ) {
     addIcons({ close, sad });
   }
@@ -155,7 +157,7 @@ export class FormComponent implements OnInit {
       });
 
     } catch (error) {
-      console.error('Error in form submission:', error);
+      this.toastService.showToast(`Error in form submission: ${error}`, 'error');
       this.error = true;
       this.errorMSG = error;
       this.isLoading = false;

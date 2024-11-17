@@ -66,7 +66,6 @@ export class SongResultsComponent implements OnInit {
 
   async loadRecommendation() {
     this.recommendations = this.formService.getRecommendation();
-    console.log(this.recommendations);
     if (this.recommendations && this.recommendations.length > 0) {
       const firstRecommendation = this.recommendations[0];
       if (firstRecommendation.preview_url) {
@@ -110,7 +109,6 @@ export class SongResultsComponent implements OnInit {
         // If successfully added to liked songs, update the song in the database
         await this.formService.updateIndividualSong(songId);
 
-        console.log('Track added to liked songs and updated in the database.');
         this.toast.showToast('succesfully added to liked songs', 'success');
 
         this.isAdded = true;

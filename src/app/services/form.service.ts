@@ -114,7 +114,6 @@ export class FormService {
       if (songError) throw songError;
 
     } catch (error: any) {
-      console.error('Error updating song:', error);
       throw error;
     }
   }
@@ -132,7 +131,7 @@ export class FormService {
         .eq('id', playlistId)
       if (playlistError) throw playlistError;
     } catch (error: any) {
-      throw error
+      throw error;
     }
   }
 

@@ -289,7 +289,6 @@ export class PlaylistResultsComponent implements OnInit {
     const userDataString = localStorage.getItem('user');
 
     if (!userDataString) {
-      console.error('No user data found in localStorage');
       return null;
     }
 
@@ -297,7 +296,6 @@ export class PlaylistResultsComponent implements OnInit {
       const userData = JSON.parse(userDataString);
       return userData.spotify_id;
     } catch (error) {
-      console.error('Error parsing user data:', error);
       return null;
     }
   }
