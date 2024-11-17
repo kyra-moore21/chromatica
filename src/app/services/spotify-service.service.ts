@@ -67,7 +67,6 @@ export class SpotifyService {
         }),
         catchError(error => {
           this.toastService.showToast("error adding to liked songs, please try again", 'error')
-          console.error('Error adding song to liked songs:', error);
           return of(false);
         })
       );
@@ -82,12 +81,9 @@ export class SpotifyService {
           if (!refresh_token) {
             throw new Error('No refresh token available');
           }
-          console.log('401 caught, refresh token exists:', refresh_token.substring(0, 10) + '...');
-          console.log('Attempting to refresh Spotify token...');
           return this.refreshSpotifyToken(refresh_token).pipe(
             switchMap(data => {
               // Update tokens in localStorage
-              console.log('Got new access token:', data.access_token.substring(0, 10) + '...');
               localStorage.setItem('oauth_provider_token', data.access_token);
               if (data.refresh_token) {
                 localStorage.setItem('oauth_refresh_token', data.refresh_token);
@@ -111,7 +107,6 @@ export class SpotifyService {
 
     const session = JSON.parse(sessionString!);
     const userJwt = session.access_token;
-    console.log('User JWT:', userJwt.substring(0, 10) + '...');
 
     return from(fetch(`${this.supabaseUrl}/functions/v1/refresh-spotify-token`, {
       method: 'POST',
@@ -216,7 +211,6 @@ export class SpotifyService {
           )
         ),
         catchError(error => {
-          console.error('error creating playlist or adding tracks: ', error);
           this.toastService.showToast(
             this.commonService.lowercaseRemoveStop(error.message),
             'error'
@@ -289,9 +283,9 @@ export class SpotifyService {
                 });
 
                 //log the features
-                denormalizedFeatures.forEach((feature, i) => {
-                  console.log(`Feature ${i}: ${feature}`);
-                });
+                // denormalizedFeatures.forEach((feature, i) => {
+                //   console.log(`Feature ${i}: ${feature}`);
+                // });
 
                 const token = localStorage.getItem('oauth_provider_token');
                 if (!token) {
@@ -333,24 +327,24 @@ export class SpotifyService {
                         observer.next(recommendations);
                         observer.complete();
                       } else {
-                        console.error('No songs found.');
+                        this.toastService.showToast('No songs found', 'error');
                         observer.error('No songs found');
                       }
                     })
                       .catch((error) => {
-                        console.log('Error fetching recommendations: ' + error);
+                        this.toastService.showToast(`Error fetching recommendations: ${error}`, 'error');
                       }));
                 });
               } else {
-                console.log('Unexpected prediction structure');
+                this.toastService.showToast('Unexpected prediction structure', 'error');
               }
             })
             .catch((err) => {
-              console.log('Error getting prediction: ' + err);
+              this.toastService.showToast(err, 'error');
             });
         })
         .catch((err) => {
-          console.log('Error loading model: ' + err);
+          this.toastService.showToast(err, 'error');
         });
     });
   }
@@ -379,11 +373,10 @@ export class SpotifyService {
         map(response => {
           // Map the track IDs and create the seed_tracks string
           const trackIds = response.items.map((item: any) => item.id);
-          console.log(trackIds);
           return `seed_tracks=${trackIds.join('%2C')}`;
         }),
         catchError(error => {
-          console.error('Error fetching top tracks:', error);
+          this.toastService.showToast(`Error fetching top tracks: ${error}`, 'error');
           return of(''); // Return an empty string in case of an error
         })
       )
@@ -433,7 +426,7 @@ export class SpotifyService {
           return response.items.slice(0, limit).map((artist: any) => artist.id);
         }),
         catchError(error => {
-          console.error('Error fetching top artists for no genre:', error);
+          this.toastService.showToast(`${error}`, 'error');
           return of([]); // Return an empty array in case of an error
         })
       );
@@ -441,7 +434,6 @@ export class SpotifyService {
   }
 
   convertToSpotifyParams(genre: number): Observable<string> {
-    console.log('Genre number received:', genre);
 
     // Convert number to enum value
     const genreEnum = Genres[genre];
@@ -456,7 +448,6 @@ export class SpotifyService {
           return this.getTopTracks(1).pipe(
             map(seedTracks => {
               const combinedParams = `${seedArtists}&${seedTracks}`;
-              console.log('Final combined parameters with no genre selected:', combinedParams);
               return combinedParams;
             })
           );
@@ -500,13 +491,11 @@ export class SpotifyService {
               const combinedParams = seedTracks
                 ? `${seedArtists}&${spotifyParam}&${seedTracks}`
                 : seedArtists;
-              console.log('Final combined parameters with artists and tracks:', combinedParams);
               return combinedParams;
             })
           );
         } else {
           // If no matching artists, use the genre parameter alone
-          console.log('No matching artists found, using genre only:', spotifyParam);
           return of(spotifyParam);
         }
       })
