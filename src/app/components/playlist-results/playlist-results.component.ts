@@ -251,8 +251,9 @@ export class PlaylistResultsComponent implements OnInit {
     this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
   }
 
-  CreateSpotifyPlaylist(name: string, visibility: boolean, recommendation: GeneratedSong[]) {
+  createSpotifyPlaylist(visibility: boolean, recommendation: GeneratedSong[]) {
     const spotifyId = this.getSpotifyId();
+    const playlistName = `${this.emotionName}, ${this.eventName} Playlist`;
     if (!spotifyId) {
       console.error('No Spotify ID available');
       return;
@@ -266,23 +267,31 @@ export class PlaylistResultsComponent implements OnInit {
       return;
     }
 
-    this.spotifyService.createAndAddTracksToPlaylist(name, visibility, spotifyId, trackIds, this.emotionName)
+    this.spotifyService.createAndAddTracksToPlaylist(playlistName, visibility, spotifyId, trackIds, this.emotionName)
       .subscribe({
         next: (response) => {
+          let spotifyPlaylistId = response.playlist.id;
           let playlistId = recommendation[1].playlist_id;
           var response = response;
-          if (playlistId != null) {
-            this.spotifyService.addPlaylistCoverImage(response.playlist.id, this.emotionName)
+          if (spotifyPlaylistId != null && playlistId != null) {
+            this.spotifyService.addPlaylistCoverImage(spotifyPlaylistId, this.emotionName)
               .catch(error => {
                 console.error('Error uploading playlist cover:', error);
               });
+
             this.formService.updatePlaylist(playlistId, response.playlist.id);
+
             this.spotifyPlaylistUrl = `https://open.spotify.com/playlist/${response.playlist.id}`;
+            this.isAdded = true;
+            window.location.href = this.spotifyPlaylistUrl;
           }
           this.isAdded = true;
-          this.modal.nativeElement.close();
         }
       })
+  }
+
+  openSpotify() {
+    window.location.href = this.spotifyPlaylistUrl;
   }
 
   getSpotifyId(): string | null {
