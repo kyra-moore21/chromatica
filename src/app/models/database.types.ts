@@ -471,6 +471,7 @@ export type CompositeTypes<
   ? PublicSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
   : never;
 
+  // generated models
 export interface Friendship {
   created_at: string | null;
   friend_id: string;
@@ -478,6 +479,9 @@ export interface Friendship {
   id: string;
   updated_at: string | null;
   user_id: string;
+
+  friend_details?: User;
+  user_details?: User;
 }
 
 export interface GeneratedPlaylist {

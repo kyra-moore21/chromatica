@@ -5,6 +5,18 @@
       <h5 class="font-courierPrime mb-0 mt-1">{{user.username}}</h5>
       <p class="font-courierPrime text-sm mt-0">social score: {{user.social_score}}</p>
     </div>
-    <ion-icon name="person-add-sharp" class="ml-auto h-[30px] w-[30px]" (click)="navigateToFriendsList()"></ion-icon>
+
+    <!-- Icon with badge -->
+    <div class="relative ml-auto">
+      <ion-icon name="person-add-sharp" class="h-[30px] w-[30px]" (click)="navigateToFriendsList()"></ion-icon>
+      <!-- Badge for pending requests -->
+       @if (pendingRequestCount > 0) {
+        <span
+          class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"
+        >
+          {{ pendingRequestCount }}
+        </span>
+       }
+    </div>
   </div>
 </div>

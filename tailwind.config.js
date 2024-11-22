@@ -19,7 +19,7 @@ module.exports = {
         courierPrime: ["Courier Prime", "monospace"],
       },
       backgroundImage: {
-        "navbar-gradient": "linear-gradient(180deg, #042630 36%, #083a49 100%)",
+        "navbar-gradient": "linear-gradient(0deg, #042630 36%, #083a49 100%), background-size: 100% 100%, height: auto",
         "main-gradient":
           "linear-gradient(0deg, #2e6170 0%, rgba(30, 68, 78, 0.39) 100%)",
         "bubble-gradient": "linear-gradient(180deg, #346b7a 0%, #388196 100%)",
