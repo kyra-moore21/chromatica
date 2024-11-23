@@ -5,20 +5,15 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
-console.log("Starting spotify-token-refresh function")
 
 //if you need to add more allowed origins, add them to this array
 //then run npx supabase functions deploy refresh-spotify-token
-const allowedOrigins = [
-  'http://localhost:8100', // ionic serve 
-];
-
 
 Deno.serve(async (req) => {
-  const origin = req.headers.get('Origin') || '';
+
 
   const corsHeaders = {
-    'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : 'http://localhost:8100', //eventually change to just production url
+    'Access-Control-Allow-Origin': '*', //eventually change to just production url
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-client-info, apikey',
     'Access-Control-Allow-Credentials': 'true',

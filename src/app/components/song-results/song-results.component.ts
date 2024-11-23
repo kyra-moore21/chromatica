@@ -66,10 +66,13 @@ export class SongResultsComponent implements OnInit {
 
   async loadRecommendation() {
     this.recommendations = this.formService.getRecommendation();
-    if (this.recommendations && this.recommendations.length > 0) {
-      const firstRecommendation = this.recommendations[0];
-      if (firstRecommendation.preview_url) {
-        this.initAudioElement(firstRecommendation.preview_url);
+    if (!this.recommendations || this.recommendations.length === 0) {
+      this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
+    }
+    if (this.recommendations) {
+      const recommendation = this.recommendations[0];
+      if (recommendation.preview_url) {
+        this.initAudioElement(recommendation.preview_url);
       }
     }
   }

@@ -213,6 +213,8 @@ export class PlaylistResultsComponent implements OnInit {
       ...song,
       isSelected: true
     }));
+    if (this.recommendations.length === 0 || this.recommendations === null) {
+    } this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
   }
 
 
@@ -253,7 +255,7 @@ export class PlaylistResultsComponent implements OnInit {
 
   createSpotifyPlaylist(visibility: boolean, recommendation: GeneratedSong[]) {
     const spotifyId = this.getSpotifyId();
-    const playlistName = `${this.emotionName}, ${this.eventName} Playlist`;
+    const playlistName = `${this.emotionName.toString().toLowerCase()}, ${this.eventName.toString().toLowerCase()} playlist`;
     if (!spotifyId) {
       console.error('No Spotify ID available');
       return;
