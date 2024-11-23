@@ -6,6 +6,10 @@ import { addIcons } from 'ionicons';
 import { pause, play, close } from 'ionicons/icons';
 import { FormService } from '../../services/form.service';
 import { CommonModule } from '@angular/common';
+import { SpotifyService } from '../../services/spotify-service.service';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { ToastService } from '../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-song-results',
@@ -22,12 +26,31 @@ export class SongResultsComponent implements OnInit {
   errorMessage: string = '';
   isPlaying: boolean = false;
   audioElement: HTMLAudioElement | null = null;
+  isAdded: boolean = false;
+
+  fillerRecommendation: GeneratedSong[] =
+    [
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: null,
+        added_to_spotify: false
+      },
+    ];
+
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    private navCtrl: NavController,
     private formService: FormService,
-    private navCtrl: NavController
+    private spotifyService: SpotifyService,
+    private toast: ToastService,
+    private router: Router,
   ) {
     addIcons({ play, pause, close });
   }
@@ -43,10 +66,13 @@ export class SongResultsComponent implements OnInit {
 
   async loadRecommendation() {
     this.recommendations = this.formService.getRecommendation();
-    if (this.recommendations && this.recommendations.length > 0) {
-      const firstRecommendation = this.recommendations[0];
-      if (firstRecommendation.preview_url) {
-        this.initAudioElement(firstRecommendation.preview_url);
+    if (!this.recommendations || this.recommendations.length === 0) {
+      this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
+    }
+    if (this.recommendations) {
+      const recommendation = this.recommendations[0];
+      if (recommendation.preview_url) {
+        this.initAudioElement(recommendation.preview_url);
       }
     }
   }
@@ -72,6 +98,30 @@ export class SongResultsComponent implements OnInit {
   }
 
   navigateToHome() {
+    this.isAdded = false;
+    this.audioElement?.pause();
     this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
+  }
+
+  async addToLikedSongs(trackId: string, songId: string) {
+    try {
+      const success = await firstValueFrom(
+        this.spotifyService.addToLikedSongs(trackId)
+      );
+      if (success) {
+        // If successfully added to liked songs, update the song in the database
+        await this.formService.updateIndividualSong(songId);
+
+        this.toast.showToast('succesfully added to liked songs', 'success');
+
+        this.isAdded = true;
+      }
+    } catch (error: any) {
+      this.toast.showToast("error adding to liked songs, please try again", 'error')
+      console.error(
+        'Error in adding song to liked songs or updating the song:',
+        error
+      );
+    }
   }
 }

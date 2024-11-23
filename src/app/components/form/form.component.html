@@ -1,74 +1,54 @@
 @if(isLoading){
 <app-is-loading></app-is-loading>
+} @else if(error){
+<button (click)="navigateToHome()" class="absolute right-5 top-[22px] text-gray-400 font-courierPrime">
+  <ion-icon name="close" class="text-3xl"></ion-icon>
+</button>
+<div class="flex items-center justify-center h-screen  pb-32">
+  <div class="flex flex-col items-center gap-4">
+    <div class="flex justify-center">
+      <ion-icon name="sad" class="text-6xl"></ion-icon>
+    </div>
+    <h2 class="text-center ml-4 mr-4">an error occured, please try again</h2>
+    <button (click)="navigateToHome()"
+      class="btn btn-active font-courierPrime text-center font-thin px-14 py-3 mt-10 w-full max-w-xs rounded-lg shadow-lg">home</button>
+  </div>
+</div>
 } @else {
 <ion-content class="ion-padding bg-bg" [scrollEvents]="true">
   <div class="relative md:max-w-4xl md:mx-auto md:px-8">
     <div class="relative p-4">
-      <button
-        (click)="navigateToHome()"
-        class="absolute right-6 top-6 text-gray-400"
-      >
+      <button (click)="navigateToHome()" class="absolute right-6 top-6 text-gray-400">
         <ion-icon name="close" class="text-3xl"></ion-icon>
       </button>
     </div>
 
     @switch (currentStep) { @case ('emotion') {
-    <app-button-selection
-      [title]="'Choose an emotion'"
-      [items]="availableEmotions"
-      [selectedItem]="selectedEmotion"
-      [defaultValue]="Emotions.None"
-      [enumType]="'Emotions'"
-      [generationType]="generationType"
-      (selectedItemChange)="onEmotionsChange($event)"
-      (proceed)="changeStep('event')"
-    ></app-button-selection>
+    <app-button-selection [title]="'Choose an emotion'" [items]="availableEmotions" [selectedItem]="selectedEmotion"
+      [defaultValue]="Emotions.None" [enumType]="'Emotions'" [generationType]="generationType"
+      (selectedItemChange)="onEmotionsChange($event)" (proceed)="changeStep('event')"></app-button-selection>
 
     } @case ('event') {
-    <app-button-selection
-      [title]="'Choose an event'"
-      [items]="availableEvents"
-      [selectedItem]="selectedEvents"
-      [defaultValue]="Events.None"
-      [enumType]="'Events'"
-      [generationType]="generationType"
-      (selectedItemChange)="onEventsChange($event)"
-      (proceed)="changeStep('genre')"
-    ></app-button-selection>
+    <app-button-selection [title]="'Choose an event'" [items]="availableEvents" [selectedItem]="selectedEvents"
+      [defaultValue]="Events.None" [enumType]="'Events'" [generationType]="generationType"
+      (selectedItemChange)="onEventsChange($event)" (proceed)="changeStep('genre')"></app-button-selection>
 
     } @case ('genre') {
-    <app-button-selection
-      [title]="'Choose a genre'"
-      [items]="availableGenres"
-      [selectedItem]="selectedGenre"
-      [defaultValue]="Genres.None"
-      [enumType]="'Genres'"
-      [generationType]="generationType"
-      (selectedItemChange)="onGenresChange($event)"
-      (proceed)="proceedToCount()"
-    ></app-button-selection>
+    <app-button-selection [title]="'Choose a genre'" [items]="availableGenres" [selectedItem]="selectedGenre"
+      [defaultValue]="Genres.None" [enumType]="'Genres'" [generationType]="generationType"
+      (selectedItemChange)="onGenresChange($event)" (proceed)="proceedToCount()"></app-button-selection>
 
     } @case ('count') {
-    <div
-      class="flex flex-col justify-start min-h-screen pt-16 md:pt-24 md:min-h-0"
-    >
-      <div
-        class="bg-[#032731] rounded-lg shadow-lg p-8 mx-auto max-w-md w-full mt-20 height md:max-w-xl md:mt-8"
-      >
+    <div class="flex flex-col justify-start min-h-screen pt-16 md:pt-24 md:min-h-0">
+      <div class="bg-[#032731] rounded-lg shadow-lg p-8 mx-auto max-w-md w-full mt-20 height md:max-w-xl md:mt-8">
         <h3 class="text-center font-courierPrime pb-6 text-lg">
           choose your playlist size:
         </h3>
-        <div
-          class="flex flex-wrap justify-center gap-4 max-w-4xl mc-auto pt-4 pb-14"
-        >
+        <div class="flex flex-wrap justify-center gap-4 max-w-4xl mc-auto pt-4 pb-14">
           @for (option of songCountOptions; track option;) {
 
-          <button
-            [ngClass]="{ selected: numberOfSongs === option }"
-            [ngStyle]="getSizeForCount(option)"
-            (click)="onSongCountChange(option)"
-            class="moodBtn shadow-md flex items-center justify-center"
-          >
+          <button [ngClass]="{ selected: numberOfSongs === option }" [ngStyle]="getSizeForCount(option)"
+            (click)="onSongCountChange(option)" class="moodBtn shadow-md flex items-center justify-center">
             {{ option }} tracks
           </button>
 
@@ -78,8 +58,7 @@
           @if(numberOfSongs != 1){
           <button
             class="btn btn-active font-courierPrime font-thin px-14 py-3 mt-10 w-full max-w-xs rounded-lg shadow-lg"
-            (click)="submitForm()"
-          >
+            (click)="submitForm()">
             generate playlist
           </button>
           }

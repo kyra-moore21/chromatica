@@ -42,6 +42,8 @@ export class SupabaseService {
     return this.supabase.auth.signInWithOAuth({
       provider: 'spotify',
       options: {
+        scopes:
+          'user-library-modify playlist-read-collaborative playlist-read-private playlist-modify-public playlist-modify-private user-read-email user-read-private user-read-playback-position user-top-read ugc-image-upload',
         redirectTo: redirectUri,
       },
     });
@@ -57,5 +59,37 @@ export class SupabaseService {
 
   getSession() {
     return this.supabase.auth.getSession();
+  }
+
+  onAuthStateChange(callback: (event: string, session: any) => void) {
+    this.supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') {
+        this.updateTokens(session);
+      } else if (event === 'SIGNED_OUT') {
+        this.clearTokens();
+      } else if (event === 'USER_UPDATED') {
+      }
+      callback(event, session);
+    });
+  }
+
+  private updateTokens(session: any) {
+    if (session && session.provider_token) {
+      window.localStorage.setItem(
+        'oauth_provider_token',
+        session.provider_token
+      );
+    }
+    if (session && session.provider_refresh_token) {
+      window.localStorage.setItem(
+        'oauth_refresh_token',
+        session.provider_refresh_token
+      );
+    }
+  }
+
+  private clearTokens() {
+    window.localStorage.removeItem('oauth_provider_token');
+    window.localStorage.removeItem('oauth_refresh_token');
   }
 }

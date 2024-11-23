@@ -44,3 +44,6 @@ Thumbs.db
 
 .env.local
 environment.ts
+
+# Capacitor build files
+android/

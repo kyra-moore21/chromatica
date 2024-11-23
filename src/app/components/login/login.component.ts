@@ -7,7 +7,6 @@ import { CommonService } from '../../services/common.service';
 import * as Tone from 'tone';
 import { Capacitor } from '@capacitor/core';
 
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -55,14 +54,19 @@ export class LoginComponent implements OnInit {
     const userId = session.user.id;
 
     // Example user fetch and navigation logic
-    this.supabase.getClient().from('users').select('*').eq('id', userId).then((data) => {
-      if (data.error) {
-        console.error('Failed to fetch user:', data.error);
-      } else {
-        localStorage.setItem('user', JSON.stringify(data.data[0]));
-        this.navCtrl.navigateForward('tabs/home', { animated: false });
-      }
-    });
+    this.supabase
+      .getClient()
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .then((data) => {
+        if (data.error) {
+          console.error('Failed to fetch user:', data.error);
+        } else {
+          localStorage.setItem('user', JSON.stringify(data.data[0]));
+          this.navCtrl.navigateForward('tabs/home', { animated: false });
+        }
+      });
   }
 
   handleTouchMove(event: TouchEvent) {

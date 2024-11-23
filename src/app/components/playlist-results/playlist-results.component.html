@@ -1,48 +1,38 @@
-<div
-  class="overflow-y-auto overflow-x-hidden relative ion-padding font-courierPrime"
->
+<div class="overflow-y-auto overflow-x-hidden relative ion-padding font-courierPrime">
   <div class="relative p-4">
-    <button
-      (click)="navigateToHome()"
-      class="absolute right-6 top-6 text-gray-400"
-    >
-      <ion-icon name="close" class="text-3xl"></ion-icon>
+    <button (click)="navigateToHome()" class="absolute right-2 top-[22px] text-gray-400 font-courierPrime">
+      <ion-icon name="close" class="text-4xl"></ion-icon>
     </button>
   </div>
-  <h2 class="text-center mt-12 mb-8">
-    your {{ this.emotionName.toString().toLowerCase() }},
-    {{ this.eventName.toString().toLowerCase() }},
-    {{ this.genreName.toString().toLowerCase() }} playlist
+
+  <h2 class="text-center text-text mt-7 mb-7 ml-2 mr-2">
+    your {{ this.emotionName.toString().toLowerCase() }}, {{ this.eventName.toString().toLowerCase() }}{{
+    this.genreName.toString().toLowerCase() !== 'none' ? ', ' +
+    this.genreName.toString().toLowerCase() : '' }}
+    playlist
   </h2>
-  <ul class="flex flex-col gap-4 pb-20">
+
+  <ul class="flex flex-col gap-3 pb-20 text-text">
     @for (song of recommendations; track song; let i = $index) {
-    <li class="flex items-center list-none justify-between">
+    <li
+      class="flex items-center list-none justify-between bg-gradient-to-b from-slate-800 to-gray-900 border border-gray-900 rounded-lg shadow-md p-2">
       <div class="flex items-center">
-        <input
-          checked
-          type="checkbox"
-          class="w-7 h-7 checkbox checkbox-accent mr-2"
-        />
-        <img
-          class="rounded-md h-16 w-16 object-cover mr-2"
-          [src]="song.song_image_url"
-          [alt]="song.track_name"
-        />
-        <div class="flex-grow mr-2 w-56">
+        <input [(ngModel)]="song.isSelected" type="checkbox"
+          class="w-7 h-7 checkbox border-[#2f5d6b] [--chkbg:#3A7A8A] [--chkfg:#c9e8f5] checked:border-[#1e444e] mr-2 " />
+        <img class="rounded-sm h-16 w-16 object-cover mr-2 ml-2" [src]="song.song_image_url" [alt]="song.track_name" />
+        <div class="w-56 ml-2">
           <h3 class="m-0 p-0 font-courierPrime truncate">
             {{ song.track_name }}
           </h3>
-          <p class="truncate font-courierPrime text-gray-500">
+          <p class="m-0 p-0 truncate font-courierPrime text-gray-400">
             {{ song.artist }}
           </p>
         </div>
       </div>
       @if(song.preview_url) {
       <button (click)="togglePlayPause(i)">
-        <ion-icon
-          [name]="isPlaying(i) ? 'pause' : 'play'"
-          class="text-tertiary text-3xl"
-        ></ion-icon>
+        <ion-icon [name]="isPlaying(i) ? 'pause' : 'play'"
+          class="text-extracolor border-[#1e444e] text-4xl mr-2"></ion-icon>
       </button>
       }
     </li>
@@ -51,8 +41,17 @@
 </div>
 <div class="text-center mt-4">
   <footer class="fixed bottom-0 left-0 z-20 w-full transparent-footer pt-4">
-    <button class="btn btn-info font-courierPrime font-thin mb-2">
-      listen on spotify
+    @if (!isAdded) {
+    <button (click)="createSpotifyPlaylist(true, recommendations)"
+      class="btn btn-info font-courierPrime font-thin text-white p-2 mb-2">
+      listen on
+      <img src="/Spotify_Full_Logo_RGB_White.png" alt="Spotify Logo" height="80px" width="80px" class="mb-[0.15rem]" />
     </button>
+    } @else {
+    <button (click)="openSpotify()" class="btn btn-info font-courierPrime font-thin text-white p-2 mb-2">
+      listen on
+      <img src="/Spotify_Full_Logo_RGB_White.png" alt="Spotify Logo" height="80px" width="80px" class="mb-[0.15rem]" />
+    </button>
+    }
   </footer>
 </div>

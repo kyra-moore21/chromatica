@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonicModule, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import {
@@ -8,12 +8,14 @@ import {
   Genres,
 } from '../../../../supabase/functions/emotion-event-enum';
 import { addIcons } from 'ionicons';
-import { close } from 'ionicons/icons';
+import { close, sad } from 'ionicons/icons';
 import { FormService } from '../../services/form.service';
 import { SpotifyService } from '../../services/spotify-service.service';
 import { FormsModule } from '@angular/forms';
 import { ButtonSelectionComponent } from './button-selection/button-selection.component';
 import { IsLoadingComponent } from '../is-loading/is-loading.component';
+import { firstValueFrom } from 'rxjs';
+import { ToastService } from '../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-form',
@@ -31,6 +33,8 @@ import { IsLoadingComponent } from '../is-loading/is-loading.component';
 export class FormComponent implements OnInit {
   @ViewChild(IonContent, { static: false }) content!: IonContent;
   generationType: 'Song' | 'Playlist' = 'Song';
+  error: boolean = false;
+  errorMSG: any;
   //enum references
   Emotions = Emotions;
   Events = Events;
@@ -64,12 +68,12 @@ export class FormComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private formService: FormService,
     private spotifyService: SpotifyService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private toastService: ToastService
   ) {
-    addIcons({ close });
+    addIcons({ close, sad });
   }
 
   ngOnInit() {
@@ -118,59 +122,49 @@ export class FormComponent implements OnInit {
     }
   }
 
-  submitForm() {
-    this.isLoading = true;
-    const emotionName = this.formService.convertEnumName(
-      Emotions,
-      this.selectedEmotion
-    );
-    const eventName = this.formService.convertEnumName(
-      Events,
-      this.selectedEvents
-    );
-    const genreName = this.formService.convertEnumName(
-      Genres,
-      this.selectedGenre
-    );
-    let tracks: number =
-      this.generationType === 'Song' ? 1 : this.numberOfSongs;
+  async submitForm() {
+    try {
+      this.isLoading = true;
+      const emotionName = this.formService.convertEnumName(Emotions, this.selectedEmotion);
+      const eventName = this.formService.convertEnumName(Events, this.selectedEvents);
+      const genreName = this.formService.convertEnumName(Genres, this.selectedGenre);
 
-    this.spotifyService
-      .getSpotifyRecommendations(
-        this.selectedEmotion,
-        this.selectedEvents,
-        this.selectedGenre,
-        tracks
-      )
-      .subscribe({
-        next: async (response) => {
-          await this.formService.setRecommendation(
-            response,
-            this.generationType
-          );
-          const navigationRoute =
-            this.generationType === 'Song'
-              ? '/song-results'
-              : '/playlist-results';
-          this.navCtrl.navigateForward([navigationRoute], {
-            queryParams: {
-              emotion: emotionName,
-              event: eventName,
-              genre: genreName,
-            },
-            animated: false,
-          });
-          this.isLoading = false;
+      const tracks = this.generationType === 'Song' ? 1 : this.numberOfSongs;
+
+      const spotifyResponse = await firstValueFrom(
+        this.spotifyService.getSpotifyRecommendations(
+          this.selectedEmotion,
+          this.selectedEvents,
+          this.selectedGenre,
+          tracks
+        )
+      );
+
+      await this.formService.setRecommendation(spotifyResponse, this.generationType);
+      await this.formService.updateUserMoodGenreEvents(eventName, emotionName, genreName);
+
+      const navigationRoute = this.generationType === 'Song'
+        ? '/song-results'
+        : '/playlist-results';
+
+      this.navCtrl.navigateForward([navigationRoute], {
+        queryParams: {
+          emotion: emotionName,
+          event: eventName,
+          genre: genreName,
         },
-        error: (error) => {
-          console.error('Error fetching recommendations:', error);
-          this.isLoading = false;
-          // Handle error (e.g., show error message to user)
-        },
-        complete: () => {
-          this.resetForm();
-        },
+        animated: false,
       });
+
+    } catch (error) {
+      this.toastService.showToast(`Error in form submission: ${error}`, 'error');
+      this.error = true;
+      this.errorMSG = error;
+      this.isLoading = false;
+    } finally {
+      this.isLoading = false;
+      this.resetForm();
+    }
   }
   onSongCountChange(count: number) {
     this.numberOfSongs = count;

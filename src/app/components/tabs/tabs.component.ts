@@ -7,15 +7,15 @@ import { homeSharp, timeSharp, peopleSharp, personSharp } from 'ionicons/icons';
   selector: 'app-tabs',
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.scss'],
-  standalone: true, 
+  standalone: true,
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel]
 })
-export class TabsComponent  implements OnInit {
+export class TabsComponent implements OnInit {
 
-  constructor() { 
-    addIcons({ homeSharp, timeSharp, peopleSharp, personSharp  })
+  constructor() {
+    addIcons({ homeSharp, timeSharp, peopleSharp, personSharp })
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
 }

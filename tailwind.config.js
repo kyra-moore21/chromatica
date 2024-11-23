@@ -13,6 +13,7 @@ module.exports = {
         iconFocused: "#c9e8f5",
         button: "#377e98",
         spotify: "#1DB954",
+        extracolor: '#3A7A8A',
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
