@@ -208,13 +208,14 @@ export class PlaylistResultsComponent implements OnInit {
       this.loadRecommendation();
     });
   }
-  loadRecommendation() {
-    this.recommendations = this.formService.getRecommendation().map(song => ({
+  async loadRecommendation() {
+    this.recommendations = await this.formService.getRecommendation().map(song => ({
       ...song,
       isSelected: true
     }));
-    if (this.recommendations.length === 0 || this.recommendations === null) {
-    } this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
+    if (this.recommendations.length === 0 || !this.recommendations) {
+      this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
+    }
   }
 
 
@@ -253,7 +254,7 @@ export class PlaylistResultsComponent implements OnInit {
     this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
   }
 
-  createSpotifyPlaylist(visibility: boolean, recommendation: GeneratedSong[]) {
+  async createSpotifyPlaylist(visibility: boolean, recommendation: GeneratedSong[]) {
     const spotifyId = this.getSpotifyId();
     const playlistName = `${this.emotionName.toString().toLowerCase()}, ${this.eventName.toString().toLowerCase()} playlist`;
     if (!spotifyId) {
@@ -269,7 +270,7 @@ export class PlaylistResultsComponent implements OnInit {
       return;
     }
 
-    this.spotifyService.createAndAddTracksToPlaylist(playlistName, visibility, spotifyId, trackIds, this.emotionName)
+    await this.spotifyService.createAndAddTracksToPlaylist(playlistName, visibility, spotifyId, trackIds, this.emotionName)
       .subscribe({
         next: (response) => {
           let spotifyPlaylistId = response.playlist.id;
@@ -302,7 +303,6 @@ export class PlaylistResultsComponent implements OnInit {
     if (!userDataString) {
       return null;
     }
-
     try {
       const userData = JSON.parse(userDataString);
       return userData.spotify_id;
