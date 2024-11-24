@@ -25,7 +25,6 @@ export class PassForgotComponent implements OnInit {
   }
 
   sendReset() {
-    //check if email is populated
-    this.supabase.forgotPass(this.email);
+
   }
 }

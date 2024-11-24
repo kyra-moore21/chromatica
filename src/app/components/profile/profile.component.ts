@@ -283,15 +283,26 @@ export class ProfileComponent implements OnInit {
 
   // Method to choose a picture from the gallery
   async chooseFromGallery() {
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      resultType: CameraResultType.DataUrl,
-      source: CameraSource.Photos,
-    });
-    this.selectedImage = image.dataUrl; // Store the base64 image
-    this.updateImagePreview();
+    console.log("Initiating camera operation...");
+    
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Photos,
+      });
+      
+      console.log("Image successfully retrieved:", image);
+      this.selectedImage = image.dataUrl;
+      this.updateImagePreview();
+    } catch (error) {
+      console.error("Error during Camera.getPhoto operation:", error);
+    }
+    
+    console.log("Camera operation completed.");
   }
+  
 
   // Method to update the image preview
   updateImagePreview() {
@@ -299,15 +310,18 @@ export class ProfileComponent implements OnInit {
       'profileImagePreview'
     );
     profileImagePreview.src = this.selectedImage; // Update the preview with the selected image
+    console.log('update preview')
   }
 
-  // Save the selected picture (implement your upload logic here)
   saveProfilePicture() {
-    if (this.selectedImage) {
-      console.log('Selected image to save:', this.selectedImage);
-      // You can send the base64 image to your server for saving/upload
-    } else {
-      alert('Please select an image before saving.');
-    }
+    // if (this.selectedImage) {
+    //   console.log('Selected image to save:', this.selectedImage);
+    //   //upload a profile picture to the database
+    //   this.supabase.getClient().storage.from('avatars').upload(`${this.user.id}.png`, this.selectedImage).then((data) => {
+    //     console.log(data)
+    //   })
+    // } else {
+    //   alert('Please select an image before saving.');
+    // }
   }
 }
