@@ -272,17 +272,16 @@ export class PlaylistResultsComponent implements OnInit {
 
     await this.spotifyService.createAndAddTracksToPlaylist(playlistName, visibility, spotifyId, trackIds, this.emotionName)
       .subscribe({
-        next: (response) => {
+        next: async (response) => {
           let spotifyPlaylistId = response.playlist.id;
           let playlistId = recommendation[1].playlist_id;
-          var response = response;
           if (spotifyPlaylistId != null && playlistId != null) {
-            this.spotifyService.addPlaylistCoverImage(spotifyPlaylistId, this.emotionName)
+            await this.spotifyService.addPlaylistCoverImage(spotifyPlaylistId, this.emotionName)
               .catch(error => {
                 console.error('Error uploading playlist cover:', error);
               });
 
-            this.formService.updatePlaylist(playlistId, response.playlist.id);
+            await this.formService.updatePlaylist(playlistId, response.playlist.id);
 
             this.spotifyPlaylistUrl = `https://open.spotify.com/playlist/${response.playlist.id}`;
             this.isAdded = true;
