@@ -10,13 +10,14 @@ import { IonIcon, NavController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { personAddSharp } from 'ionicons/icons';
 import { ToastService } from '../../shared/toast/toast.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-social',
   templateUrl: './social.component.html',
   styleUrls: ['./social.component.scss'],
   standalone: true,
-  imports: [IonIcon],
+  imports: [FormsModule, IonIcon],
 })
 export class SocialComponent implements OnInit {
   user: User = {
@@ -40,6 +41,7 @@ export class SocialComponent implements OnInit {
   pendingRequestCount: number = 0;
   songs: GeneratedSong[] = [];
   playlists: GeneratedPlaylist[] = [];
+  mergedContent: (GeneratedSong | GeneratedPlaylist)[] = [];
 
   constructor(
     private supabase: SupabaseService,
@@ -97,6 +99,10 @@ export class SocialComponent implements OnInit {
       console.log('Using cached data');
       this.songs = JSON.parse(cachedSongs);
       this.playlists = JSON.parse(cachedPlaylists);
+      //set types 
+      this.songs = this.songs.map((song) => ({ ...song, type: 'song', liked: false }));
+      this.playlists = this.playlists.map((playlist) => ({ ...playlist, type: 'playlist', liked: false }));
+      this.mergedContent = [...this.songs, ...this.playlists];
     } else {
       console.log('Fetching data from server');
       await this.fetchGeneratedContent();
@@ -125,7 +131,7 @@ export class SocialComponent implements OnInit {
     .select(`
       id, track_name, artist, song_image_url, spotify_track_id, user_id,
       playlist_id, preview_url, added_to_spotify,
-      users ( profile_visibility )
+      users (username, profile_visibility)
     `)
     .in('user_id', friendIds) // Only fetch songs from friends
     .or('profile_visibility.eq.public,profile_visibility.eq.friends_only', { referencedTable: 'users' }) // Public and friends-only visibility
@@ -138,7 +144,9 @@ export class SocialComponent implements OnInit {
       return;
     }
 
-    this.songs = songs;
+    this.songs = songs.map((song) => ({ ...song, type: 'song', liked: false }));
+    //filter out songs that have a playlist_id
+    this.songs = this.songs.filter((song) => !song.playlist_id);
     localStorage.setItem('generatedSongs', JSON.stringify(songs));
 
     // get playlists
@@ -148,7 +156,7 @@ export class SocialComponent implements OnInit {
       .select(`
         id, playlist_image_url, user_id,
         spotify_playlist_id, added_to_spotify,
-        users(profile_visibility)
+        users(username, profile_visibility)
       `)
       .in('user_id', friendIds) // Only fetch playlists from friends
       .or('profile_visibility.eq.public,profile_visibility.eq.friends_only', { referencedTable: 'users' }) // Filter visibility
@@ -158,7 +166,11 @@ export class SocialComponent implements OnInit {
       return;
     }
 
-    this.playlists = playlists;
+    this.playlists = playlists.map((playlist) => ({ ...playlist, type: 'playlist', liked: false }));
+
+    // Merge songs and playlists into a single list
+    this.mergedContent = [...this.songs, ...this.playlists];
+    console.log('Merged content:', this.mergedContent);
     localStorage.setItem('generatedPlaylists', JSON.stringify(playlists));
     localStorage.setItem('cacheTime', Date.now().toString());
   }

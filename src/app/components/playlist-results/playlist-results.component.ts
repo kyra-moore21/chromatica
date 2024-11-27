@@ -42,6 +42,8 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song',
+        user: null
       },
       {
         id: '123',
@@ -54,6 +56,8 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song',
+        user: null
       },
       {
         id: '123',
@@ -66,6 +70,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
       {
         id: '123',
@@ -78,6 +83,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
       {
         id: '123',
@@ -90,6 +96,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
       {
         id: '123',
@@ -102,6 +109,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
       {
         id: '123',
@@ -114,6 +122,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
 
       {
@@ -127,6 +136,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
       {
         id: '123',
@@ -139,6 +149,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
       {
         id: '123',
@@ -151,6 +162,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
       {
         id: '123',
@@ -163,6 +175,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
       {
         id: '123',
@@ -175,6 +188,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
       {
         id: '123',
@@ -187,6 +201,7 @@ export class PlaylistResultsComponent implements OnInit {
         preview_url: "https://via.placeholder.com/300",
         added_to_spotify: false,
         isSelected: true,
+        type: 'song'
       },
     ];
 

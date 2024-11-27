@@ -490,6 +490,8 @@ export interface GeneratedPlaylist {
   playlist_image_url: string | null;
   spotify_playlist_id: string | null;
   added_to_spotify: boolean;
+  type: string;
+  user?: User | null;
 }
 
 export interface GeneratedSong {
@@ -502,6 +504,8 @@ export interface GeneratedSong {
   spotify_track_id: string;
   preview_url: string | null;
   added_to_spotify: boolean;
+  type: string;
+  user?: User | null;
 }
 
 export interface UserEvent {

@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet, Router, ActivatedRoute } from '@angular/router';
 import { IonicModule, NavController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase.service';
+import { NetworkService } from '../../services/network.service';
 
 @Component({
   selector: 'app-homepage',
@@ -14,12 +15,15 @@ export class HomepageComponent implements OnInit {
   emotionName: string = '';
   eventName: string = '';
   genreName: string = '';
+  modelExists: boolean = false;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private changeDetector: ChangeDetectorRef,
     private supabaseService: SupabaseService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private network: NetworkService
   ) {}
 
   navigateToForm(type: 'Song' | 'Playlist') {
@@ -31,7 +35,7 @@ export class HomepageComponent implements OnInit {
 
   title = 'chromatica';
 
-  ngOnInit() {
+  async ngOnInit() {
     this.changeDetector.detectChanges();
 
     //get user from local storage and check if username is null
@@ -40,6 +44,16 @@ export class HomepageComponent implements OnInit {
 
     if (!cachedUsername) {
       this.navCtrl.navigateForward('/choose-username', { animated: false });
+    }
+
+    //check if model exists
+    const model = localStorage.getItem('tensorflowjs_models/model/info');
+    this.modelExists = model !== null;
+
+    //if model doesnt exist, then show a loading symbol and generate a new one for the user
+    if(this.modelExists == false) {
+      await this.network.train();
+      this.modelExists = true;
     }
   }
 }

@@ -51,7 +51,7 @@ export class NetworkService {
     const modelData = localStorage.getItem('tensorflowjs_models/model/info');
 
     if (modelData === null) {
-      this.updateConsole('Building model');
+      //this.updateConsole('Building model');
       // Define the model
       model = tf.sequential();
 
@@ -103,7 +103,7 @@ export class NetworkService {
         metrics: ['mae'],
       });
     } else {
-      this.updateConsole('Loading model');
+      //this.updateConsole('Loading model');
       model = await tf.loadLayersModel('localstorage://model');
       model.compile({
         loss: tf.losses.huberLoss,
