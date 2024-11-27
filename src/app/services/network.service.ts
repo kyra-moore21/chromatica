@@ -51,7 +51,7 @@ export class NetworkService {
     const modelData = localStorage.getItem('tensorflowjs_models/model/info');
 
     if (modelData === null) {
-      //this.updateConsole('Building model');
+      console.log('Building model');
       // Define the model
       model = tf.sequential();
 
@@ -103,7 +103,7 @@ export class NetworkService {
         metrics: ['mae'],
       });
     } else {
-      //this.updateConsole('Loading model');
+      console.log('Loading model');
       model = await tf.loadLayersModel('localstorage://model');
       model.compile({
         loss: tf.losses.huberLoss,
@@ -183,7 +183,7 @@ export class NetworkService {
         callbacks: {
           onEpochEnd: async (epoch, logs) => {
             const mae = logs!['mae'].toFixed(2); // Format MAE to 2 decimal places
-            this.updateConsole(
+            console.log(
               `Epoch: ${epoch} Loss: ${logs!['loss']} Accuracy (MAE): ${mae}`
             );
           },
@@ -193,7 +193,7 @@ export class NetworkService {
         validationSplit: 0.1,
       })
       .then(() => {
-        this.updateConsole('Training complete');
+        console.log('Training complete');
       });
 
     await model.save('localstorage://model');
