@@ -7,6 +7,9 @@ import { CommonService } from '../../services/common.service';
 import * as Tone from 'tone';
 import { Capacitor } from '@capacitor/core';
 
+import { Database } from '../../models/database.types';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -33,11 +36,12 @@ export class LoginComponent implements OnInit {
   email: string = '';
   password: string = '';
 
+
   constructor(
     private navCtrl: NavController,
     private supabase: SupabaseService,
     private toast: ToastService,
-    private common: CommonService
+    private common: CommonService,
   ) {}
 
   ngOnInit() {
