@@ -1,3 +1,6 @@
+@if(modelExists == false) {
+<span class="loading loading-ring loading-lg"></span>
+} @else {
 <div class="ion-padding overflow-x-scroll">
   <div class="flex flex-col justify-center mt-6 font-courierPrime">
     <div class="flex flex-row items-center justify-center">
@@ -7,7 +10,6 @@
       <button class="btn btn-accent font-thin mx-3 w-48" (click)="navigateToForm('Playlist')">
         generate playlist
       </button>
-
     </div>
   </div>
   <h4 class="mt-8 mb-1 pb-0 ml-5 flex flex-row">your recent <img src="/Spotify_Full_Logo_RGB_White.png"
@@ -78,3 +80,6 @@
       </a>
     </li>
     }
+  </ul>
+</div>
+}

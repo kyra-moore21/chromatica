@@ -22,9 +22,11 @@ export class HomepageComponent implements OnInit {
   genreName: string = '';
   songs: GeneratedSong[] = [];
   playlists: GeneratedPlaylist[] = [];
+  modelExists: boolean = false;
+
   constructor(
     private changeDetector: ChangeDetectorRef,
-    private supabaseService: SupabaseService,
+    private supabase: SupabaseService,
     private navCtrl: NavController,
     private toast: ToastService,
     private network: NetworkService
@@ -40,155 +42,9 @@ export class HomepageComponent implements OnInit {
   }
 
   title = 'chromatica';
-  fillerRecommendation: (GeneratedSong)[] =
-    [
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
 
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-      {
-        id: '123',
-        user_id: 'abc',
-        playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: "https://via.placeholder.com/300",
-        added_to_spotify: false,
-      },
-    ];
 
-  ngOnInit() {
+  async ngOnInit() {
     this.changeDetector.detectChanges();
 
     //get user from local storage and check if username is null
@@ -198,15 +54,40 @@ export class HomepageComponent implements OnInit {
     if (!cachedUsername) {
       this.navCtrl.navigateForward('/choose-username', { animated: false });
     }
+    //check if model exists
+    const model = localStorage.getItem('tensorflowjs_models/model/info');
+    this.modelExists = model !== null;
+
+    //if model doesnt exist, then show a loading symbol and load from supabase
+    if (this.modelExists == false) {
+      //load model from supabase
+      this.supabase
+        .getClient()
+        .from('model_data')
+        .select('*')
+        .then((data) => {
+          if (data.error) {
+            console.error('Failed to fetch model info:', data.error);
+          } else {
+            console.log('Model info fetched:', data);
+            //save the model info to local storage
+            localStorage.setItem('tensorflowjs_models/model/info', data.data[0].info);
+            localStorage.setItem('tensorflowjs_models/model/model_metadata', data.data[0].model_metadata);
+            localStorage.setItem('tensorflowjs_models/model/model_topology', data.data[0].model_topology);
+            localStorage.setItem('tensorflowjs_models/model/weight_data', data.data[0].weight_data);
+            localStorage.setItem('tensorflowjs_models/model/weight_specs', data.data[0].weight_specs);
+          }
+        });
+
+      this.modelExists = true;
+    }
+
     this.getSpotifyPlaylists();
     this.getSpotifySongs();
-    console.log('Is native platform:', Capacitor.isNativePlatform());
-    console.log('Platform:', Capacitor.getPlatform());
-
   }
 
   private async getSpotifyPlaylists() {
-    await this.supabaseService.getClient()
+    await this.supabase.getClient()
       .from('generated_playlists')
       .select('playlist_image_url, spotify_playlist_id')
       .eq('added_to_spotify', true)
@@ -229,7 +110,7 @@ export class HomepageComponent implements OnInit {
   }
 
   private async getSpotifySongs() {
-    await this.supabaseService.getClient()
+    await this.supabase.getClient()
       .from('generated_songs')
       .select('song_image_url, spotify_track_id, track_name, artist')
       // .is('playlist_id', null)

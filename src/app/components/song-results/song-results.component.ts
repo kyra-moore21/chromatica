@@ -39,7 +39,9 @@ export class SongResultsComponent implements OnInit {
         artist: "Sample Artist 1",
         spotify_track_id: "12345abcde",
         preview_url: null,
-        added_to_spotify: false
+        added_to_spotify: false,
+        type: "song",
+        user: null,
       },
     ];
 
