@@ -19,7 +19,7 @@ export class SupabaseService {
     );
 
     // Set up auth state change listener
-    this.supabase.auth.onAuthStateChange((event, session) => {
+    this.onAuthStateChange((event, session) => {
       console.log('Auth state change:', event);
       this.authState.next({ event, session }); // Update BehaviorSubject with the latest auth state
     });
@@ -66,7 +66,6 @@ export class SupabaseService {
   onAuthStateChange(callback: (event: string, session: any) => void) {
     this.supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
-
         await this.updateTokens(session);
       } else if (event === 'SIGNED_OUT') {
         await this.clearTokens();
@@ -79,8 +78,6 @@ export class SupabaseService {
   private async updateTokens(session: any) {
     const isNative = Capacitor.isNativePlatform();
 
-    console.log('Session received:', session); // Add this to debug
-
     if (session && session.provider_token) {
       const token = JSON.stringify(session.provider_token);
       if (isNative) {
@@ -89,8 +86,7 @@ export class SupabaseService {
           value: token
         });
       } else {
-        console.log('setting token in local storage:', token);
-        localStorage.setItem('oauth_provider_token', token);
+        localStorage.setItem('oauth_provider_token', session.provider_token);
       }
     }
 
@@ -102,7 +98,7 @@ export class SupabaseService {
           value: token
         });
       } else {
-        localStorage.setItem('oauth_refresh_token', token);
+        localStorage.setItem('oauth_refresh_token', session.provider_refresh_token);
       }
     }
   }
