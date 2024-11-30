@@ -22,6 +22,8 @@ import { SupabaseService } from '../services/supabase.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ToastService } from '../shared/toast/toast.service';
 import { CommonService } from '../services/common.service';
+import { Capacitor } from '@capacitor/core';
+import { Preferences } from '@capacitor/preferences';
 
 @Injectable({
   providedIn: 'root',
@@ -40,8 +42,16 @@ export class SpotifyService {
   }
 
 
-  getProviderToken() {
-    return localStorage.getItem('oauth_provider_token');
+  async getProviderToken() {
+    if (Capacitor.getPlatform() === 'web') {
+      return localStorage.getItem('oauth_provider_token');
+    }
+    else if (Capacitor.isNativePlatform()) {
+      const { value } = await Preferences.get({ key: 'oauth_provider_token' });
+      return value;
+    }
+    console.error('No provider token available');
+    return null;
   }
 
   addToLikedSongs(trackId: string): Observable<boolean> {

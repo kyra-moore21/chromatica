@@ -1,3 +1,6 @@
+@if(isLoading) {
+<app-is-loading></app-is-loading>
+}
 <div class="overflow-y-auto overflow-x-hidden relative ion-padding font-courierPrime">
   <div class="relative p-4">
     <button (click)="navigateToHome()" class="absolute right-2 top-[22px] text-gray-400 font-courierPrime">
@@ -15,7 +18,7 @@
   <ul class="flex flex-col gap-3 pb-20 text-text">
     @for (song of recommendations; track song; let i = $index) {
     <li
-      class="flex items-center list-none justify-between bg-gradient-to-b from-slate-800 to-gray-900 border border-gray-900 rounded-lg shadow-md p-2">
+      class="flex items-center list-none justify-between bg-main-gradient from-slate-800 to-gray-900 border border-gray-900 rounded-lg shadow-md p-2">
       <div class="flex items-center">
         <input [(ngModel)]="song.isSelected" type="checkbox"
           class="w-7 h-7 checkbox border-[#2f5d6b] [--chkbg:#3A7A8A] [--chkfg:#c9e8f5] checked:border-[#1e444e] mr-2 " />
