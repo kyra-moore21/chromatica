@@ -1,85 +1,93 @@
-@if(modelExists == false) {
-<span class="loading loading-ring loading-lg"></span>
-} @else {
-<div class="ion-padding overflow-x-scroll">
-  <div class="flex flex-col justify-center mt-6 font-courierPrime">
-    <div class="flex flex-row items-center justify-center">
-      <button class="btn btn-accent font-thin mx-3 w-48" (click)="navigateToForm('Song')">
+<div class="ion-padding overflow-y-auto overflow-x-hidden">
+  <h1 class="font-courierPrime  text-center font-bold">
+    <span class="rainbow" (touchstart)="handleTouchMove($event)" (touchmove)="handleTouchMove($event)"
+      (touchend)="stopPlaying()">
+      <span id="letter-0" class="text-orange-500">c</span>
+      <span id="letter-1" class="text-yellow-500">h</span>
+      <span id="letter-2" class="text-yellow-400">r</span>
+      <span id="letter-3" class="text-green-400">o</span>
+      <span id="letter-4" class="text-blue-400">m</span>
+      <span id="letter-5" class="text-indigo-400">a</span>
+      <span id="letter-6" class="text-purple-400">t</span>
+      <span id="letter-7" class="text-pink-400">i</span>
+      <span id="letter-8" class="text-red-400">c</span>
+      <span id="letter-9" class="text-lime-400">a</span>
+    </span>
+  </h1>
+  <h6 class="font-courierPrime text-center my-0 ">your personal music generation genius</h6>
+  <!-- Generate buttons section -->
+  <div class="rounded-lg bg-main-gradient p-6 mt-6 max-w-md mx-auto">
+    <div class="flex flex-col items-center justify-center gap-6 font-courierPrime">
+      <button class="btn btn-accent font-semibold text-lg py-3 px-8 w-full max-w-sm" (click)="navigateToForm('Song')">
         generate song
       </button>
-      <button class="btn btn-accent font-thin mx-3 w-48" (click)="navigateToForm('Playlist')">
+      <button class="btn btn-accent font-semibold text-lg py-3 px-8 w-full max-w-sm"
+        (click)="navigateToForm('Playlist')">
         generate playlist
       </button>
     </div>
   </div>
-  <h4 class="mt-8 mb-1 pb-0 ml-5 flex flex-row">your recent <img src="/Spotify_Full_Logo_RGB_White.png"
-      alt="Spotify Logo" height="80px" width="80px" class="mb-[0.15rem] ml-2 mr-2" /> playlists</h4>
-  <div class="carousel carousel-center rounded-sm max-w-md space-x-2 p-4 mt-0 pt-0">
-    @for (playlist of playlists; track $index) {
-    <div class="carousel-item w-36 h-36">
-      <a href="https://open.spotify.com/playlist/{{playlist.spotify_playlist_id}}" target="_blank">
-        <img [src]="playlist.playlist_image_url" class="rounded-sm" />
-      </a>
-    </div>
-    }
-  </div>
-  <h4 class="mt-8 mb-1 pb-0 ml-5">feeling stuck? try one of these</h4>
-  <div class="carousel carousel-center rounded-sm max-w-md space-x-2 p-4 mt-0 pt-0">
-    <div class="carousel-item flex flex-col w-36 h-36">
-      <p class="text-[.75em] ml-auto mr-auto">beach day rock</p>
-      <img src="/lil-guys/angry.png" class="rounded-sm" />
-    </div>
-    <div class="carousel-item flex flex-col w-36 h-36">
-      <p class="text-[.75em] ml-auto mr-auto">walking pop</p>
-      <img src="/lil-guys/excited.png" class="rounded-sm" />
-    </div>
-    <div class="carousel-item flex flex-col w-36 h-36">
-      <p class="text-[.75em] ml-auto mr-auto">beach day rock</p>
-      <img src="/lil-guys/angry.png" class="rounded-sm" />
-    </div>
-    <div class="carousel-item flex flex-col w-36 h-36">
-      <p class="text-[.75em] ml-auto mr-auto">beach day rock</p>
-      <img src="/lil-guys/hopeful.png" class="rounded-sm" />
-    </div>
-    <div class="carousel-item flex flex-col w-36 h-36">
-      <p class="text-[.75em] ml-auto mr-auto">beach day rock</p>
-      <img src="/lil-guys/hopeful.png" class="rounded-sm" />
-    </div>
-    <div class="carousel-item flex flex-col w-36 h-36">
-      <p class="text-[.75em] ml-auto mr-auto">beach day rock</p>
-      <img src="/lil-guys/angry.png" class="rounded-sm" />
-    </div>
-    <div class="carousel-item flex flex-col w-36 h-36">
-      <p class="text-[.75em] ml-auto mr-auto">beach day rock</p>
-      <img src="/lil-guys/angry.png" class="rounded-sm" />
-    </div>
-    <div class="carousel-item flex flex-col w-36 h-36">
-      <p class="text-[.75em] ml-auto mr-auto">beach day rock</p>
-      <img src="/lil-guys/grateful.png" class="rounded-sm" />
-    </div>
-  </div>
-  <h4 class="mt-8 mb-1 pb-0 ml-5 flex flex-row">your recent <img src="/Spotify_Full_Logo_RGB_White.png"
-      alt="Spotify Logo" height="80px" width="80px" class="mb-[0.15rem] ml-2 mr-2" /> songs</h4>
-  <ul class="flex flex-col gap-3 pb-20 text-text">
-    @for (song of songs; track song;) {
-    <li
-      class="flex items-center list-none justify-between bg-main-gradient from-slate-800 to-gray-900 border border-gray-900 rounded-lg shadow-md p-2">
-      <div class="flex items-center">
-        <img class="rounded-sm h-16 w-16 object-cover mr-2 ml-2" [src]="song.song_image_url" [alt]="song.track_name" />
-        <div class="w-56 ml-2">
-          <h3 class="m-0 p-0 font-courierPrime truncate">
-            {{ song.track_name }}
-          </h3>
-          <p class="m-0 p-0 truncate font-courierPrime text-gray-400">
-            {{ song.artist }}
-          </p>
-        </div>
+
+  <!-- Playlists section -->
+  <h4 class="mt-8 mb-1 pb-0 ml-5 flex flex-row font-semibold items-center">
+    your recent
+    <img src="/Spotify_Full_Logo_RGB_White.png" alt="Spotify Logo" height="90px" width="90px"
+      class="mb-[0.15rem] mx-2" />
+    playlists
+  </h4>
+  <div class="carousel carousel-center bg-main-gradient rounded-lg max-w-md mx-auto p-6">
+    <div class="flex justify-start items-center gap-4">
+      @for (playlist of playlists; track $index) {
+      <div class="carousel-item w-36 h-36 pr-4">
+        <a href="https://open.spotify.com/playlist/{{playlist.spotify_playlist_id}}" target="_blank">
+          <img [src]="playlist.playlist_image_url" class="rounded-sm w-full h-full object-cover" />
+        </a>
       </div>
-      <a href="https://open.spotify.com/track/{{song.spotify_track_id}}" target="_blank">
-        <ion-icon name="play" class="text-accent border-[#1e444e] text-4xl mr-2"></ion-icon>
-      </a>
-    </li>
-    }
-  </ul>
+      }
+    </div>
+  </div>
+
+  <!-- Suggestions section -->
+  <h4 class="mt-8 mb-1 pb-0 ml-5 font-semibold">feeling stuck? try one of these</h4>
+  <div class="carousel carousel-center bg-main-gradient rounded-lg max-w-md mx-auto p-6 pb-8">
+    <div class="flex justify-center items-center gap-4">
+      @for (suggestion of suggestionsList; track suggestion) {
+      <div class="carousel-item flex flex-col items-center justify-center w-36 h-36 pr-4">
+        <p class="text-[.75em] text-center mb-1">{{ suggestion.displayText }}</p>
+        <img [src]="suggestion.imageUrl" class="rounded-sm w-full h-full object-cover" />
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Songs section -->
+  <h4 class="mt-8 mb-1 pb-0 ml-5 flex flex-row font-semibold items-center">
+    your recent
+    <img src="/Spotify_Full_Logo_RGB_White.png" alt="Spotify Logo" height="90px" width="90px"
+      class="mb-[0.15rem] mx-2" />
+    songs
+  </h4>
+  <div class="rounded-lg bg-main-gradient p-6 max-w-md mx-auto">
+    <ul class="flex flex-col gap-3 pb-4 text-text">
+      @for (song of songs; track song;) {
+      <li
+        class="flex items-center list-none justify-between bg-gradient-to-b from-slate-800 to-gray-900 border border-gray-900 rounded-lg shadow-md p-2">
+        <div class="flex items-center flex-1 min-w-0">
+          <img class="rounded-sm h-16 w-16 object-cover mx-2" [src]="song.song_image_url" [alt]="song.track_name" />
+          <div class="flex-1 min-w-0 ml-2">
+            <h3 class="m-0 p-0 font-courierPrime truncate">
+              {{ song.track_name }}
+            </h3>
+            <p class="m-0 p-0 truncate font-courierPrime text-gray-400">
+              {{ song.artist }}
+            </p>
+          </div>
+        </div>
+        <a href="https://open.spotify.com/track/{{song.spotify_track_id}}" target="_blank" class="shrink-0">
+          <ion-icon name="play" class="text-accent border-[#1e444e] text-4xl mr-2"></ion-icon>
+        </a>
+      </li>
+      }
+    </ul>
+  </div>
 </div>
-}

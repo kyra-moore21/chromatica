@@ -15,33 +15,36 @@
     playlist
   </h2>
 
-  <ul class="flex flex-col gap-3 pb-20 text-text">
-    @for (song of recommendations; track song; let i = $index) {
-    <li
-      class="flex items-center list-none justify-between bg-main-gradient from-slate-800 to-gray-900 border border-gray-900 rounded-lg shadow-md p-2">
-      <div class="flex items-center">
-        <input [(ngModel)]="song.isSelected" type="checkbox"
-          class="w-7 h-7 checkbox border-[#2f5d6b] [--chkbg:#3A7A8A] [--chkfg:#c9e8f5] checked:border-[#1e444e] mr-2 " />
-        <img class="rounded-sm h-16 w-16 object-cover mr-2 ml-2" [src]="song.song_image_url" [alt]="song.track_name" />
-        <div class="w-56 ml-2">
-          <h3 class="m-0 p-0 font-courierPrime truncate">
-            {{ song.track_name }}
-          </h3>
-          <p class="m-0 p-0 truncate font-courierPrime text-gray-400">
-            {{ song.artist }}
-          </p>
+  <div class="rounded-lg bg-main-gradient p-6 pb-0">
+    <ul class="flex flex-col gap-3 pb-20 text-text">
+      @for (song of recommendations; track song; let i = $index) {
+      <li
+        class="flex items-center list-none justify-between bg-gradient-to-b from-slate-800 to-gray-900 border border-gray-900 rounded-lg shadow-md p-2">
+        <div class="flex items-center">
+          <input [(ngModel)]="song.isSelected" type="checkbox"
+            class="w-6 h-6 checkbox checkbox-accent border-accent checked:border-[#1e444e] mr-2 " />
+          <img class="rounded-sm h-16 w-16 object-covermr-2 ml-2" [src]="song.song_image_url" [alt]="song.track_name" />
+          <div class="w-56 ml-4">
+            <h3 class="m-0 p-0 font-courierPrime text-lg truncate">
+              {{ song.track_name }}
+            </h3>
+            <p class="m-0 p-0 truncate font-courierPrime text-sm text-gray-400">
+              {{ song.artist }}
+            </p>
+          </div>
         </div>
-      </div>
-      @if(song.preview_url) {
-      <button (click)="togglePlayPause(i)">
-        <ion-icon [name]="isPlaying(i) ? 'pause' : 'play'"
-          class="text-extracolor border-[#1e444e] text-4xl mr-2"></ion-icon>
-      </button>
+        @if(song.preview_url) {
+        <button (click)="togglePlayPause(i)">
+          <ion-icon [name]="isPlaying(i) ? 'pause' : 'play'"
+            class="text-accent border-[#1e444e] text-3xl mr-2"></ion-icon>
+        </button>
+        }
+      </li>
       }
-    </li>
-    }
-  </ul>
+    </ul>
+  </div>
 </div>
+
 <div class="text-center mt-4">
   <footer class="fixed bottom-0 left-0 z-20 w-full transparent-footer pt-4">
     @if (!isAdded) {

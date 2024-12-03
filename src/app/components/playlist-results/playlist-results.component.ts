@@ -226,15 +226,17 @@ export class PlaylistResultsComponent implements OnInit {
     });
   }
   async loadRecommendation() {
-    this.recommendations = await this.formService.getRecommendation().map(song => ({
-      ...song,
-      isSelected: true
-    }));
+    this.recommendations = this.fillerRecommendation;
     this.isLoading = false;
-    if (this.recommendations.length === 0 || !this.recommendations) {
-      this.isLoading = false;
-      this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
-    }
+    // await this.formService.getRecommendation().map(song => ({
+    //   ...song,
+    //   isSelected: true
+    // }));
+    // this.isLoading = false;
+    // if (this.recommendations.length === 0 || !this.recommendations) {
+    //   this.isLoading = false;
+    //   this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
+    // }
   }
 
 

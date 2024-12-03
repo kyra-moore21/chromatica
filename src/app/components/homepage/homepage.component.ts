@@ -8,6 +8,16 @@ import { addIcons } from 'ionicons';
 import { ToastService } from '../../shared/toast/toast.service';
 import { NetworkService } from '../../services/network.service';
 import { Capacitor } from '@capacitor/core';
+import { Emotions, Events, Genres } from '../../../../supabase/functions/emotion-event-enum';
+import * as Tone from 'tone';
+
+interface SuggestionItem {
+  emotion: Emotions;
+  event: Events;
+  genre: Genres;
+  displayText: string;
+  imageUrl: string;
+}
 
 @Component({
   selector: 'app-homepage',
@@ -17,6 +27,20 @@ import { Capacitor } from '@capacitor/core';
   standalone: true,
 })
 export class HomepageComponent implements OnInit {
+  synth = new Tone.Synth().toDestination();
+  chromaticScale = [
+    'C4',
+    'C#4',
+    'D4',
+    'D#4',
+    'E4',
+    'F4',
+    'F#4',
+    'G4',
+    'G#4',
+    'A4',
+  ];
+  isPlaying = false;
   emotionName: string = '';
   eventName: string = '';
   genreName: string = '';
@@ -132,6 +156,99 @@ export class HomepageComponent implements OnInit {
         }
       })
   }
+
+  handleTouchMove(event: TouchEvent) {
+    const touch = event.touches[0]; // Get the touch point
+    const element = document.elementFromPoint(
+      touch.clientX,
+      touch.clientY
+    ) as HTMLElement;
+
+    // Check if the touched element is a letter
+    if (element && element.id.startsWith('letter-')) {
+      const letterIndex = parseInt(element.id.split('-')[1], 10);
+      this.playNoteForLetter(letterIndex, element);
+    }
+  }
+
+  stopPlaying() { }
+
+  playNoteForLetter(index: number, element: HTMLElement) {
+    const note = this.chromaticScale[index % this.chromaticScale.length];
+    this.synth.triggerAttackRelease(note, '8n');
+
+    // Remove the class, force reflow, then add the class
+    element.classList.remove('jump');
+
+    // Force a reflow (paint) before re-adding the class
+    void element.offsetWidth;
+
+    element.classList.add('jump');
+
+    // Remove the 'jump' class after the animation ends (0.5s in this case)
+    setTimeout(() => {
+      element.classList.remove('jump');
+    }, 500); // Match the duration of the animation
+  }
+
+  suggestionsList: SuggestionItem[] = [
+    {
+      emotion: Emotions.Angry,
+      event: Events.BeachDay,
+      genre: Genres.Rock,
+      displayText: 'beach day rock',
+      imageUrl: '/lil-guys/angry.png'
+    },
+    {
+      emotion: Emotions.Excited,
+      event: Events.Walking,
+      genre: Genres.Pop,
+      displayText: 'walking pop',
+      imageUrl: '/lil-guys/excited.png'
+    },
+    {
+      emotion: Emotions.Happy,
+      event: Events.Running,
+      genre: Genres.EDM,
+      displayText: 'running edm',
+      imageUrl: '/lil-guys/angry.png'
+    },
+    {
+      emotion: Emotions.Hopeful,
+      event: Events.Study,
+      genre: Genres.LoFi,
+      displayText: 'study lofi',
+      imageUrl: '/lil-guys/hopeful.png'
+    },
+    {
+      emotion: Emotions.Calm,
+      event: Events.Sleep,
+      genre: Genres.Ambient,
+      displayText: 'sleep ambient',
+      imageUrl: '/lil-guys/hopeful.png'
+    },
+    {
+      emotion: Emotions.Peaceful,
+      event: Events.Morning,
+      genre: Genres.Jazz,
+      displayText: 'morning jazz',
+      imageUrl: '/lil-guys/angry.png'
+    },
+    {
+      emotion: Emotions.Joy,
+      event: Events.Party,
+      genre: Genres.House,
+      displayText: 'party house',
+      imageUrl: '/lil-guys/angry.png'
+    },
+    {
+      emotion: Emotions.Grateful,
+      event: Events.Evening,
+      genre: Genres.Soul,
+      displayText: 'evening soul',
+      imageUrl: '/lil-guys/grateful.png'
+    }
+  ];
 
   async train() {
     await this.network.train();
