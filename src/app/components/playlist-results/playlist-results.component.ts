@@ -43,7 +43,6 @@ export class PlaylistResultsComponent implements OnInit {
         added_to_spotify: false,
         isSelected: true,
         type: 'song',
-        user: null
       },
       {
         id: '123',
@@ -57,7 +56,6 @@ export class PlaylistResultsComponent implements OnInit {
         added_to_spotify: false,
         isSelected: true,
         type: 'song',
-        user: null
       },
       {
         id: '123',

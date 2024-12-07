@@ -131,20 +131,20 @@ export class SocialComponent implements OnInit {
     .select(`
       id, track_name, artist, song_image_url, spotify_track_id, user_id,
       playlist_id, preview_url, added_to_spotify,
-      users (username, profile_visibility)
+      users(*)
     `)
     .in('user_id', friendIds) // Only fetch songs from friends
     .or('profile_visibility.eq.public,profile_visibility.eq.friends_only', { referencedTable: 'users' }) // Public and friends-only visibility
   
   
-  
+    console.log('Songs:', songs);
 
     if (songsError) {
       console.error('Error fetching generated content:', songsError);
       return;
     }
 
-    this.songs = songs.map((song) => ({ ...song, type: 'song', liked: false }));
+    this.songs = songs.map((song) => ({ ...song, users: song.users, type: 'song', liked: false }));
     //filter out songs that have a playlist_id
     this.songs = this.songs.filter((song) => !song.playlist_id);
     localStorage.setItem('generatedSongs', JSON.stringify(songs));
@@ -166,7 +166,7 @@ export class SocialComponent implements OnInit {
       return;
     }
 
-    this.playlists = playlists.map((playlist) => ({ ...playlist, type: 'playlist', liked: false }));
+    this.playlists = playlists.map((playlist) => ({ ...playlist, users: playlist.users[0], type: 'playlist', liked: false }));
 
     // Merge songs and playlists into a single list
     this.mergedContent = [...this.songs, ...this.playlists];
