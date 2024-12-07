@@ -232,9 +232,6 @@ export class SocialComponent implements OnInit {
   //   `)
   //   .in('user_id', friendIds) // Only fetch songs from friends
   //   .or('profile_visibility.eq.public,profile_visibility.eq.friends_only', { referencedTable: 'users' }) // Public and friends-only visibility
-  
-  
-    console.log('Songs:', songs);
 
   //   if (songsError) {
   //     console.error('Error fetching generated content:', songsError);
