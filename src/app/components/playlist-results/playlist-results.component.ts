@@ -146,7 +146,7 @@ export class PlaylistResultsComponent implements OnInit {
         song_image_url: "https://i1.sndcdn.com/artworks-E31e8UYdDmmr-0-t500x500.jpg",
         track_name: "Jaded",
         artist: "Spiritbox",
-        spotify_track_id: "6IdyYbGg1jxiWhfwm2Ykjn",
+        spotify_track_id: "4dtzwmgueSMg5ztNn9h1Nj",
         preview_url: "fakepreviewurlforlooks.com",
         added_to_spotify: false,
         isSelected: true,
@@ -245,6 +245,7 @@ export class PlaylistResultsComponent implements OnInit {
 
     const selectedSongs = this.recommendations.filter(song => song.isSelected);
     const trackIds: string[] = selectedSongs.map(data => data.spotify_track_id);
+    console.log('Selected Track IDs:', trackIds);
 
     if (trackIds.length === 0) {
       console.error('No songs selected');
