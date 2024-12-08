@@ -471,6 +471,13 @@ export type CompositeTypes<
   ? PublicSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
   : never;
 
+
+  // created models
+  export interface SimplifiedUser {
+    username: string;
+    profile_visibility: string;
+  }
+
   // generated models
 export interface Friendship {
   created_at: string | null;
@@ -491,7 +498,8 @@ export interface GeneratedPlaylist {
   spotify_playlist_id: string | null;
   added_to_spotify: boolean;
   type: string;
-  user?: User | null;
+  liked?: boolean;
+  users?: any;
 }
 
 export interface GeneratedSong {
@@ -505,7 +513,8 @@ export interface GeneratedSong {
   preview_url: string | null;
   added_to_spotify: boolean;
   type: string;
-  user?: User | null;
+  liked?: boolean;
+  users?: any;
 }
 
 export interface UserEvent {

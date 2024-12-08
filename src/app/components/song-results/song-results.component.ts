@@ -40,8 +40,7 @@ export class SongResultsComponent implements OnInit {
         spotify_track_id: "1kCJ1s8wtiXF3OK3dwQIcG",
         preview_url: "fakepreviewurlforlooks.com",
         added_to_spotify: false,
-        type: "song",
-        user: null,
+        type: "song"
       },
     ];
 

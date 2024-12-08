@@ -46,17 +46,37 @@ export class PlaylistResultsComponent implements OnInit {
         added_to_spotify: false,
         isSelected: true,
         type: 'song',
-        user: null
       },
       {
         id: '123',
         user_id: 'abc',
         playlist_id: null,
+<<<<<<< HEAD
         song_image_url: "https://d13fy1xtnzm9jo.cloudfront.net/ktiv59oy/1000x1000",
         track_name: "Sleeptalk",
         artist: "Dayseeker",
         spotify_track_id: "53Ssvy5Rww0BPTtOw375zW",
         preview_url: "fakepreviewurlforlooks.com",
+=======
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+        added_to_spotify: false,
+        isSelected: true,
+        type: 'song',
+      },
+      {
+        id: '123',
+        user_id: 'abc',
+        playlist_id: null,
+        song_image_url: "https://via.placeholder.com/300",
+        track_name: "Sample Track 1",
+        artist: "Sample Artist 1",
+        spotify_track_id: "12345abcde",
+        preview_url: "https://via.placeholder.com/300",
+>>>>>>> 7574716d8d290711ba0b543a410f274fdc3c9bb2
         added_to_spotify: false,
         isSelected: true,
         type: 'song'
