@@ -16,6 +16,7 @@ import { ButtonSelectionComponent } from './button-selection/button-selection.co
 import { IsLoadingComponent } from '../is-loading/is-loading.component';
 import { firstValueFrom } from 'rxjs';
 import { ToastService } from '../../shared/toast/toast.service';
+import { GeneratedSong } from '../../models/database.types';
 
 @Component({
   selector: 'app-form',
@@ -131,16 +132,16 @@ export class FormComponent implements OnInit {
 
       const tracks = this.generationType === 'Song' ? 1 : this.numberOfSongs;
 
-      const spotifyResponse = await firstValueFrom(
-        this.spotifyService.getSpotifyRecommendations(
-          this.selectedEmotion,
-          this.selectedEvents,
-          this.selectedGenre,
-          tracks
-        )
-      );
+      // const spotifyResponse = await firstValueFrom(
+      //   this.spotifyService.getSpotifyRecommendations(
+      //     this.selectedEmotion,
+      //     this.selectedEvents,
+      //     this.selectedGenre,
+      //     tracks
+      //   )
+      // );
 
-      await this.formService.setRecommendation(spotifyResponse, this.generationType, this.selectedEmotion);
+      // await this.formService.setRecommendation(spotifyResponse, this.generationType, this.selectedEmotion);
       // await this.formService.updateUserMoodGenreEvents(eventName, emotionName, genreName);
 
       const navigationRoute = this.generationType === 'Song'

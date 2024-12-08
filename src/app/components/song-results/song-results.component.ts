@@ -34,11 +34,11 @@ export class SongResultsComponent implements OnInit {
         id: '123',
         user_id: 'abc',
         playlist_id: null,
-        song_image_url: "https://via.placeholder.com/300",
-        track_name: "Sample Track 1",
-        artist: "Sample Artist 1",
-        spotify_track_id: "12345abcde",
-        preview_url: null,
+        song_image_url: "https://i.scdn.co/image/ab67616d0000b273a3149ece257b201310a1d9fe",
+        track_name: "High on my lows",
+        artist: "Sawyer Hill",
+        spotify_track_id: "1kCJ1s8wtiXF3OK3dwQIcG",
+        preview_url: "fakepreviewurlforlooks.com",
         added_to_spotify: false,
         type: "song",
         user: null,
@@ -67,16 +67,17 @@ export class SongResultsComponent implements OnInit {
   }
 
   async loadRecommendation() {
-    this.recommendations = this.formService.getRecommendation();
-    if (!this.recommendations || this.recommendations.length === 0) {
-      this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
-    }
-    if (this.recommendations) {
-      const recommendation = this.recommendations[0];
-      if (recommendation.preview_url) {
-        this.initAudioElement(recommendation.preview_url);
-      }
-    }
+    this.recommendations = this.fillerRecommendation;
+    // this.recommendations = this.formService.getRecommendation();
+    // // if (!this.recommendations || this.recommendations.length === 0) {
+    // //   this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
+    // // }
+    // if (this.recommendations) {
+    //   const recommendation = this.recommendations[0];
+    //   if (recommendation.preview_url) {
+    //     this.initAudioElement(recommendation.preview_url);
+    //   }
+    // }
   }
 
   initAudioElement(previewUrl: string) {
@@ -112,7 +113,7 @@ export class SongResultsComponent implements OnInit {
       );
       if (success) {
         // If successfully added to liked songs, update the song in the database
-        await this.formService.updateIndividualSong(songId);
+        // await this.formService.updateIndividualSong(songId);
 
         this.toast.showToast('succesfully added to liked songs', 'success');
 

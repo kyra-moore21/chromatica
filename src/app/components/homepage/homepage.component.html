@@ -35,28 +35,37 @@
       class="mb-[0.15rem] mx-2" />
     playlists
   </h4>
-  <div class="carousel carousel-center bg-main-gradient rounded-lg max-w-md mx-auto p-6">
-    <div class="flex justify-start items-center gap-4">
-      @for (playlist of playlists; track $index) {
-      <div class="carousel-item w-36 h-36 pr-4">
-        <a href="https://open.spotify.com/playlist/{{playlist.spotify_playlist_id}}" target="_blank">
-          <img [src]="playlist.playlist_image_url" class="rounded-sm w-full h-full object-cover" />
-        </a>
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-main-gradient rounded-md p-4">
+      <div class="carousel carousel-center w-full mask-fade-edges">
+        <div class="flex justify-start items-center gap-4 pl-2">
+          @for (playlist of playlists; track $index) {
+          <div class="carousel-item w-32 h-32 pr-4">
+            <a href="https://open.spotify.com/playlist/{{playlist.spotify_playlist_id}}" target="_blank">
+              <img [src]="playlist.playlist_image_url" class="rounded-md w-full h-full object-cover" />
+            </a>
+          </div>
+          }
+        </div>
       </div>
-      }
     </div>
   </div>
 
+
   <!-- Suggestions section -->
   <h4 class="mt-8 mb-1 pb-0 ml-5 font-semibold">feeling stuck? try one of these</h4>
-  <div class="carousel carousel-center bg-main-gradient rounded-lg max-w-md mx-auto p-6 pb-8">
-    <div class="flex justify-center items-center gap-4">
-      @for (suggestion of suggestionsList; track suggestion) {
-      <div class="carousel-item flex flex-col items-center justify-center w-36 h-36 pr-4">
-        <p class="text-[.75em] text-center mb-1">{{ suggestion.displayText }}</p>
-        <img [src]="suggestion.imageUrl" class="rounded-sm w-full h-full object-cover" />
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-main-gradient rounded-md p-4">
+      <div class="carousel carousel-center w-full mask-fade-edges">
+        <div class="flex justify-center items-center gap-4 pl-2">
+          @for (suggestion of suggestionsList; track suggestion) {
+          <div class="carousel-item flex flex-col items-center justify-center w-32 pr-4">
+            <p class="text-[.75em] text-center mb-1">{{ suggestion.displayText }}</p>
+            <img [src]="suggestion.imageUrl" class="rounded-md w-full h-full object-cover" />
+          </div>
+          }
+        </div>
       </div>
-      }
     </div>
   </div>
 
@@ -75,10 +84,10 @@
         <div class="flex items-center flex-1 min-w-0">
           <img class="rounded-sm h-16 w-16 object-cover mx-2" [src]="song.song_image_url" [alt]="song.track_name" />
           <div class="flex-1 min-w-0 ml-2">
-            <h3 class="m-0 p-0 font-courierPrime truncate">
+            <h3 class="m-0 p-0 text-lg font-courierPrime truncate">
               {{ song.track_name }}
             </h3>
-            <p class="m-0 p-0 truncate font-courierPrime text-gray-400">
+            <p class="m-0 p-0 text-sm truncate font-courierPrime text-gray-400">
               {{ song.artist }}
             </p>
           </div>

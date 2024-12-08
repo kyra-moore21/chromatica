@@ -211,7 +211,7 @@ export class HomepageComponent implements OnInit {
       event: Events.Running,
       genre: Genres.EDM,
       displayText: 'running edm',
-      imageUrl: '/lil-guys/angry.png'
+      imageUrl: '/lil-guys/happy.png'
     },
     {
       emotion: Emotions.Hopeful,
@@ -225,21 +225,21 @@ export class HomepageComponent implements OnInit {
       event: Events.Sleep,
       genre: Genres.Ambient,
       displayText: 'sleep ambient',
-      imageUrl: '/lil-guys/hopeful.png'
+      imageUrl: '/lil-guys/calm.png'
     },
     {
       emotion: Emotions.Peaceful,
       event: Events.Morning,
       genre: Genres.Jazz,
       displayText: 'morning jazz',
-      imageUrl: '/lil-guys/angry.png'
+      imageUrl: '/lil-guys/peaceful.png'
     },
     {
       emotion: Emotions.Joy,
       event: Events.Party,
       genre: Genres.House,
       displayText: 'party house',
-      imageUrl: '/lil-guys/angry.png'
+      imageUrl: '/lil-guys/joy.png'
     },
     {
       emotion: Emotions.Grateful,
