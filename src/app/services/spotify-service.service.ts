@@ -22,6 +22,8 @@ import { SupabaseService } from '../services/supabase.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ToastService } from '../shared/toast/toast.service';
 import { CommonService } from '../services/common.service';
+import { Capacitor } from '@capacitor/core';
+import { Preferences } from '@capacitor/preferences';
 
 @Injectable({
   providedIn: 'root',
@@ -40,8 +42,16 @@ export class SpotifyService {
   }
 
 
-  getProviderToken() {
-    return localStorage.getItem('oauth_provider_token');
+  async getProviderToken() {
+    if (Capacitor.getPlatform() === 'web') {
+      return localStorage.getItem('oauth_provider_token');
+    }
+    else if (Capacitor.isNativePlatform()) {
+      const { value } = await Preferences.get({ key: 'oauth_provider_token' });
+      return value;
+    }
+    console.error('No provider token available');
+    return null;
   }
 
   addToLikedSongs(trackId: string): Observable<boolean> {
@@ -230,7 +240,6 @@ export class SpotifyService {
       const eventEnum = event as Events;
       const genreEnum = genre as Genres;
 
-
       const oneHotArray = combineEncodings(emotionEnum, eventEnum, genreEnum);
 
       // Create a tensor from the one hot array
@@ -247,7 +256,7 @@ export class SpotifyService {
           // Use array() to get the predicted values directly
           noisyPrediction
             .array()
-            .then((array) => {
+            .then(async (array) => {
               if (Array.isArray(array) && Array.isArray(array[0])) {
                 const features = array[0] as number[];
 
@@ -287,54 +296,53 @@ export class SpotifyService {
                 //   console.log(`Feature ${i}: ${feature}`);
                 // });
 
-                const token = localStorage.getItem('oauth_provider_token');
-                if (!token) {
-                  console.error('No authentication token found');
-                  return;
-                }
-
                 // Call the Spotify API using only the predicted target features
-                this.convertToSpotifyParams(genre).subscribe(spotifyParams => {
-                  console.log(spotifyParams);
-                  this.handleSpotifyApi(() => from(
-                    fetch(
-                      `https://api.spotify.com/v1/recommendations?limit=${tracks}&market=US&${spotifyParams}&target_acousticness=${denormalizedFeatures[0]}&target_danceability=${denormalizedFeatures[1]}&target_energy=${denormalizedFeatures[2]}&target_instrumentalness=${denormalizedFeatures[3]}&target_key=${denormalizedFeatures[4]}&target_liveness=${denormalizedFeatures[5]}&target_loudness=${denormalizedFeatures[6]}&target_mode=${denormalizedFeatures[7]}&target_speechiness=${denormalizedFeatures[8]}&target_tempo=${denormalizedFeatures[9]}&target_time_signature=${denormalizedFeatures[10]}&target_valence=${denormalizedFeatures[11]}`,
-                      {
-                        method: 'GET',
-                        headers: {
-                          Authorization: `Bearer ${this.getProviderToken()}`,
-                        },
-                      }
-                    )
-                  )).subscribe(response =>
-                    response.json().then(data => {
-                      if (data.tracks && data.tracks.length > 0) {
-                        const recommendations: GeneratedSong[] =
-                          data.tracks.map((track: any) => ({
-                            id: '', // This will be set by the database
-                            user_id: '', // This will be set in the FormService
-                            playlist_id: null,
-                            track_name: track.name,
-                            artist: track.artists[0].name,
-                            spotify_track_id: track.id,
-                            song_image_url:
-                              track.album.images.length > 0
-                                ? track.album.images[0].url
-                                : null,
-                            preview_url: track.preview_url || '',
-                            added_to_spotify: false, // Default value
-                          }));
-                        observer.next(recommendations);
-                        observer.complete();
-                      } else {
-                        this.toastService.showToast('No songs found', 'error');
-                        observer.error('No songs found');
-                      }
-                    })
-                      .catch((error) => {
-                        this.toastService.showToast(`Error fetching recommendations: ${error}`, 'error');
-                      }));
-                });
+                from(this.getProviderToken()).pipe(
+                  switchMap(token => {
+                    return this.convertToSpotifyParams(genre).pipe(
+                      switchMap(spotifyParams => {
+                        return this.handleSpotifyApi(() => from(
+                          fetch(
+                            `https://api.spotify.com/v1/recommendations?limit=${tracks}&market=US&${spotifyParams}&target_acousticness=${denormalizedFeatures[0]}&target_danceability=${denormalizedFeatures[1]}&target_energy=${denormalizedFeatures[2]}&target_instrumentalness=${denormalizedFeatures[3]}&target_key=${denormalizedFeatures[4]}&target_liveness=${denormalizedFeatures[5]}&target_loudness=${denormalizedFeatures[6]}&target_mode=${denormalizedFeatures[7]}&target_speechiness=${denormalizedFeatures[8]}&target_tempo=${denormalizedFeatures[9]}&target_time_signature=${denormalizedFeatures[10]}&target_valence=${denormalizedFeatures[11]}`,
+                            {
+                              method: 'GET',
+                              headers: {
+                                Authorization: `Bearer ${token}`,
+                              },
+                            }
+                          )
+                        ));
+                      })
+                    );
+                  })
+                ).subscribe(response =>
+                  response.json().then(data => {
+                    if (data.tracks && data.tracks.length > 0) {
+                      const recommendations: GeneratedSong[] =
+                        data.tracks.map((track: any) => ({
+                          id: '', // This will be set by the database
+                          user_id: '', // This will be set in the FormService
+                          playlist_id: null,
+                          track_name: track.name,
+                          artist: track.artists[0].name,
+                          spotify_track_id: track.id,
+                          song_image_url:
+                            track.album.images.length > 0
+                              ? track.album.images[0].url
+                              : null,
+                          preview_url: track.preview_url || '',
+                          added_to_spotify: false, // Default value
+                        }));
+                      observer.next(recommendations);
+                      observer.complete();
+                    } else {
+                      this.toastService.showToast('No songs found', 'error');
+                      observer.error('No songs found');
+                    }
+                  })
+                    .catch((error: any) => {
+                      this.toastService.showToast(`Error fetching recommendations: ${error}`, 'error');
+                    }));
               } else {
                 this.toastService.showToast('Unexpected prediction structure', 'error');
               }
@@ -359,78 +367,86 @@ export class SpotifyService {
   }
 
   getTopTracks(limit: number): Observable<string> {
-    return this.handleSpotifyApi(() => {
-      const token = this.getProviderToken();
-      const offset = this.createRandomOffset();
-      //using top five tracks default is medium_term/6 months
-      const url: string = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=${limit}&offset=${offset}`;
+    return from(this.getProviderToken()).pipe(
+      switchMap(token => {
+        return this.handleSpotifyApi(() => {
+          const offset = this.createRandomOffset();
+          //using top five tracks default is medium_term/6 months
+          const url: string = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=${limit}&offset=${offset}`;
 
-      return this.http.get<any>(url, {
-        headers: new HttpHeaders({
-          Authorization: `Bearer ${token}`,
-        }),
-      }).pipe(
-        map(response => {
-          // Map the track IDs and create the seed_tracks string
-          const trackIds = response.items.map((item: any) => item.id);
-          return `seed_tracks=${trackIds.join('%2C')}`;
-        }),
-        catchError(error => {
-          this.toastService.showToast(`Error fetching top tracks: ${error}`, 'error');
-          return of(''); // Return an empty string in case of an error
-        })
-      )
-    })
+          return this.http.get<any>(url, {
+            headers: new HttpHeaders({
+              Authorization: `Bearer ${token}`,
+            }),
+          }).pipe(
+            map(response => {
+              // Map the track IDs and create the seed_tracks string
+              const trackIds = response.items.map((item: any) => item.id);
+              return `seed_tracks=${trackIds.join('%2C')}`;
+            }),
+            catchError(error => {
+              this.toastService.showToast(`Error fetching top tracks: ${error}`, 'error');
+              return of(''); // Return an empty string in case of an error
+            })
+          );
+        });
+      })
+    );
   }
 
   getFilteredByGenreTopArtists(genre: string, limit: number): Observable<string[] | null> {
-    return this.handleSpotifyApi(() => {
-      const token = this.getProviderToken();
-      const url = `https://api.spotify.com/v1/me/top/artists?limit=50`;
+    return from(this.getProviderToken()).pipe(
+      switchMap(token => {
+        return this.handleSpotifyApi(() => {
+          const url = `https://api.spotify.com/v1/me/top/artists?limit=50`;
 
-      return this.http.get<any>(url, {
-        headers: new HttpHeaders({
-          Authorization: `Bearer ${token}`,
-        }),
-      }).pipe(
-        map(response => {
-          // Filter the top artists based on the provided genre
-          const matchingArtists = response.items.filter((artist: any) =>
-            artist.genres.includes(genre.toLowerCase())
+          return this.http.get<any>(url, {
+            headers: new HttpHeaders({
+              Authorization: `Bearer ${token}`,
+            }),
+          }).pipe(
+            map(response => {
+              // Filter the top artists based on the provided genre
+              const matchingArtists = response.items.filter((artist: any) =>
+                artist.genres.includes(genre.toLowerCase())
+              );
+
+              // Return the first 5 matching artist IDs or null if none found
+              if (matchingArtists.length > 0) {
+                return matchingArtists.slice(0, limit).map((artist: any) => artist.id);
+              } else {
+                return null;
+              }
+            })
           );
-
-          // Return the first 5 matching artist IDs or null if none found
-          if (matchingArtists.length > 0) {
-            return matchingArtists.slice(0, limit).map((artist: any) => artist.id);
-          } else {
-            return null;
-          }
-        })
-      );
-    })
+        });
+      })
+    );
   }
 
   getTopArtistsForNoGenre(limit: number): Observable<string[]> {
-    return this.handleSpotifyApi(() => {
-      const token = this.getProviderToken();
-      const offset = this.createRandomOffset();
-      const url = `https://api.spotify.com/v1/me/top/artists?limit=${limit}&offset=${offset}`;
+    return from(this.getProviderToken()).pipe(
+      switchMap(token => {
+        return this.handleSpotifyApi(() => {
+          const offset = this.createRandomOffset();
+          const url = `https://api.spotify.com/v1/me/top/artists?limit=${limit}&offset=${offset}`;
 
-      return this.http.get<any>(url, {
-        headers: new HttpHeaders({
-          Authorization: `Bearer ${token}`,
-        }),
-      }).pipe(
-        map(response => {
-          // Simply return the top artist IDs up to the specified limit
-          return response.items.slice(0, limit).map((artist: any) => artist.id);
-        }),
-        catchError(error => {
-          this.toastService.showToast(`${error}`, 'error');
-          return of([]); // Return an empty array in case of an error
-        })
-      );
-    })
+          return this.http.get<any>(url, {
+            headers: new HttpHeaders({
+              Authorization: `Bearer ${token}`,
+            }),
+          }).pipe(
+            map(response => {
+              return response.items.slice(0, limit).map((artist: any) => artist.id);
+            }),
+            catchError(error => {
+              this.toastService.showToast(`${error}`, 'error');
+              return of([]);
+            })
+          );
+        });
+      })
+    );
   }
 
   convertToSpotifyParams(genre: number): Observable<string> {
@@ -478,7 +494,7 @@ export class SpotifyService {
     const spotifyParam = genreMap[genreEnum] || `seed_genres=${genreEnum.toLowerCase()}`;
 
     // Fetch top artists that match the genre
-    return this.getFilteredByGenreTopArtists(genreEnum.toLowerCase(), 3).pipe(
+    return this.getFilteredByGenreTopArtists(genreEnum.toLowerCase(), 2).pipe(
       switchMap(matchingArtists => {
         if (matchingArtists) {
           // If there are matching artists, construct the seed_artists parameter

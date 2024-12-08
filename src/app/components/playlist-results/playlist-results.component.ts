@@ -3,17 +3,19 @@ import { GeneratedSong } from '../../models/database.types';
 import { addIcons } from 'ionicons';
 import { IonIcon, NavController } from '@ionic/angular/standalone';
 import { close, pause, play } from 'ionicons/icons';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormService } from '../../services/form.service';
 import { CommonModule } from '@angular/common';
 import { SpotifyService } from '../../services/spotify-service.service';
 import { FormsModule } from '@angular/forms';
+import { IsLoadingComponent } from '../is-loading/is-loading.component';
+import { firstValueFrom, from } from 'rxjs';
 
 @Component({
   selector: 'app-playlist-results',
   templateUrl: './playlist-results.component.html',
   styleUrls: ['./playlist-results.component.scss'],
-  imports: [IonIcon, CommonModule, FormsModule],
+  imports: [IonIcon, CommonModule, FormsModule, IsLoadingComponent, RouterModule],
   standalone: true,
 })
 export class PlaylistResultsComponent implements OnInit {
@@ -28,6 +30,7 @@ export class PlaylistResultsComponent implements OnInit {
   playlistName!: string;
   isAdded: boolean = false;
   spotifyPlaylistUrl!: string;
+  isLoading: boolean = true;
 
   fillerRecommendation: (GeneratedSong & { isSelected?: boolean })[] =
     [
@@ -204,7 +207,6 @@ export class PlaylistResultsComponent implements OnInit {
     ];
 
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
     private formService: FormService,
     private spotifyService: SpotifyService,
@@ -221,13 +223,18 @@ export class PlaylistResultsComponent implements OnInit {
       this.loadRecommendation();
     });
   }
-  loadRecommendation() {
-    this.recommendations = this.formService.getRecommendation().map(song => ({
-      ...song,
-      isSelected: true
-    }));
-    if (this.recommendations.length === 0 || this.recommendations === null) {
-    } this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
+  async loadRecommendation() {
+    this.recommendations = this.fillerRecommendation;
+    this.isLoading = false;
+    // await this.formService.getRecommendation().map(song => ({
+    //   ...song,
+    //   isSelected: true
+    // }));
+    // this.isLoading = false;
+    // if (this.recommendations.length === 0 || !this.recommendations) {
+    //   this.isLoading = false;
+    //   this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
+    // }
   }
 
 
@@ -266,9 +273,10 @@ export class PlaylistResultsComponent implements OnInit {
     this.navCtrl.navigateForward(['/tabs/home'], { animated: false });
   }
 
-  createSpotifyPlaylist(visibility: boolean, recommendation: GeneratedSong[]) {
+  async createSpotifyPlaylist(visibility: boolean, recommendation: GeneratedSong[]) {
     const spotifyId = this.getSpotifyId();
     const playlistName = `${this.emotionName.toString().toLowerCase()}, ${this.eventName.toString().toLowerCase()} playlist`;
+
     if (!spotifyId) {
       console.error('No Spotify ID available');
       return;
@@ -282,27 +290,35 @@ export class PlaylistResultsComponent implements OnInit {
       return;
     }
 
-    this.spotifyService.createAndAddTracksToPlaylist(playlistName, visibility, spotifyId, trackIds, this.emotionName)
-      .subscribe({
-        next: (response) => {
-          let spotifyPlaylistId = response.playlist.id;
-          let playlistId = recommendation[1].playlist_id;
-          var response = response;
-          if (spotifyPlaylistId != null && playlistId != null) {
-            this.spotifyService.addPlaylistCoverImage(spotifyPlaylistId, this.emotionName)
-              .catch(error => {
-                console.error('Error uploading playlist cover:', error);
-              });
+    this.isLoading = true;
 
-            this.formService.updatePlaylist(playlistId, response.playlist.id);
+    const response = await firstValueFrom(
+      this.spotifyService.createAndAddTracksToPlaylist(
+        playlistName,
+        visibility,
+        spotifyId,
+        trackIds,
+        this.emotionName
+      )
+    );
 
-            this.spotifyPlaylistUrl = `https://open.spotify.com/playlist/${response.playlist.id}`;
-            this.isAdded = true;
-            window.location.href = this.spotifyPlaylistUrl;
-          }
-          this.isAdded = true;
-        }
-      })
+    const spotifyPlaylistId = response.playlist.id;
+    // const playlistId = recommendation[1].playlist_id;
+
+    if (spotifyPlaylistId) {
+      await firstValueFrom(
+        from(this.spotifyService.addPlaylistCoverImage(spotifyPlaylistId, this.emotionName))
+      );
+
+      // await this.formService.updatePlaylist(playlistId, response.playlist.id);
+
+      this.spotifyPlaylistUrl = `https://open.spotify.com/playlist/${response.playlist.id}`;
+      this.isAdded = true;
+      window.location.href = this.spotifyPlaylistUrl;
+    }
+
+    this.isLoading = false;
+    this.isAdded = true;
   }
 
   openSpotify() {
@@ -315,7 +331,6 @@ export class PlaylistResultsComponent implements OnInit {
     if (!userDataString) {
       return null;
     }
-
     try {
       const userData = JSON.parse(userDataString);
       return userData.spotify_id;

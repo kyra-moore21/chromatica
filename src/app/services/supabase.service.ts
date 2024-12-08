@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs';
 import { Database } from '../models/database.types';
+import { Preferences } from '@capacitor/preferences';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +19,7 @@ export class SupabaseService {
     );
 
     // Set up auth state change listener
-    this.supabase.auth.onAuthStateChange((event, session) => {
+    this.onAuthStateChange((event, session) => {
       console.log('Auth state change:', event);
       this.authState.next({ event, session }); // Update BehaviorSubject with the latest auth state
     });
@@ -62,34 +64,53 @@ export class SupabaseService {
   }
 
   onAuthStateChange(callback: (event: string, session: any) => void) {
-    this.supabase.auth.onAuthStateChange((event, session) => {
+    this.supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
-        this.updateTokens(session);
+        await this.updateTokens(session);
       } else if (event === 'SIGNED_OUT') {
-        this.clearTokens();
+        await this.clearTokens();
       } else if (event === 'USER_UPDATED') {
       }
       callback(event, session);
     });
   }
 
-  private updateTokens(session: any) {
+  private async updateTokens(session: any) {
+    const isNative = Capacitor.isNativePlatform();
+
     if (session && session.provider_token) {
-      window.localStorage.setItem(
-        'oauth_provider_token',
-        session.provider_token
-      );
+      const token = JSON.stringify(session.provider_token);
+      if (isNative) {
+        await Preferences.set({
+          key: 'oauth_provider_token',
+          value: token
+        });
+      } else {
+        localStorage.setItem('oauth_provider_token', session.provider_token);
+      }
     }
+
     if (session && session.provider_refresh_token) {
-      window.localStorage.setItem(
-        'oauth_refresh_token',
-        session.provider_refresh_token
-      );
+      const token = JSON.stringify(session.provider_refresh_token);
+      if (isNative) {
+        await Preferences.set({
+          key: 'oauth_refresh_token',
+          value: token
+        });
+      } else {
+        localStorage.setItem('oauth_refresh_token', session.provider_refresh_token);
+      }
     }
   }
 
-  private clearTokens() {
-    window.localStorage.removeItem('oauth_provider_token');
-    window.localStorage.removeItem('oauth_refresh_token');
+  private async clearTokens() {
+    if (Capacitor.isNativePlatform()) {
+      await Preferences.remove({ key: 'oauth_provider_token' });
+      await Preferences.remove({ key: 'oauth_refresh_token' });
+    }
+    else {
+      localStorage.removeItem('oauth_provider_token');
+      localStorage.removeItem('oauth_refresh_token');
+    }
   }
 }

@@ -38,63 +38,63 @@ export class FormService {
 
   async setRecommendation(
     recommendation: GeneratedSong[],
-    generationType: 'Song' | 'Playlist') {
+    generationType: 'Song' | 'Playlist', emotion: Emotions) {
     const supabase = this.supabase.getClient();
 
     try {
-      let playlistId: string | null = null;
+      // let playlistId: string | null = null;
 
-      // Create playlist if needed
-      if (generationType === 'Playlist') {
-        const { data: playlistData, error: playlistError } = await supabase
-          .from('generated_playlists')
-          .insert({
-            user_id: this.user.id,
-            playlist_image_url: recommendation[0]?.song_image_url || null,
-            spotify_playlist_id: null,
-            added_to_spotify: false,
-          })
-          .select('id')
-          .single();
+      // // Create playlist if needed
+      // if (generationType === 'Playlist') {
+      //   const { data: playlistData, error: playlistError } = await supabase
+      //     .from('generated_playlists')
+      //     .insert({
+      //       user_id: this.user.id,
+      //       playlist_image_url: `/lil-guys/${Emotions[emotion].toString().toLowerCase()}.png`,
+      //       spotify_playlist_id: null,
+      //       added_to_spotify: false,
+      //     })
+      //     .select('id')
+      //     .single();
 
-        if (playlistError) throw playlistError;
-        playlistId = playlistData.id;
-      }
+      //   if (playlistError) throw playlistError;
+      //   playlistId = playlistData.id;
+      // }
 
-      // Insert songs
-      const { data: insertedSongs, error } = await supabase
-        .from('generated_songs')
-        .insert(
-          recommendation.map(song => ({
-            user_id: this.user.id,
-            track_name: song.track_name,
-            playlist_id: playlistId,
-            artist: song.artist,
-            spotify_track_id: song.spotify_track_id,
-            song_image_url: song.song_image_url,
-            preview_url: song.preview_url,
-            added_to_spotify: false,
-          }))
-        )
-        .select('*');
+      // // Insert songs
+      // const { data: insertedSongs, error } = await supabase
+      //   .from('generated_songs')
+      //   .insert(
+      //     recommendation.map(song => ({
+      //       user_id: this.user.id,
+      //       track_name: song.track_name,
+      //       playlist_id: playlistId,
+      //       artist: song.artist,
+      //       spotify_track_id: song.spotify_track_id,
+      //       song_image_url: song.song_image_url,
+      //       preview_url: song.preview_url,
+      //       added_to_spotify: false,
+      //     }))
+      //   )
+      //   .select('*');
 
-      if (error) throw error;
+      // if (error) throw error;
 
-      // Map back to GeneratedSong type with IDs
-      const songsWithIds = insertedSongs.map((dbSong: any) => ({
-        ...recommendation.find(r => r.spotify_track_id === dbSong.spotify_track_id)!,
-        id: dbSong.id,
-        playlist_id: dbSong.playlist_id,
-        added_to_spotify: dbSong.added_to_spotify,
-      }));
+      // // Map back to GeneratedSong type with IDs
+      // const songsWithIds = insertedSongs.map((dbSong: any) => ({
+      //   ...recommendation.find(r => r.spotify_track_id === dbSong.spotify_track_id)!,
+      //   id: dbSong.id,
+      //   playlist_id: dbSong.playlist_id,
+      //   added_to_spotify: dbSong.added_to_spotify,
+      // }));
 
-      this.recommendation = songsWithIds;
-      return songsWithIds;
+      // this.recommendation = songsWithIds;
+      // return songsWithIds;
 
 
       //below can we used to test without adding to db 
-      // this.recommendation = recommendation;
-      // return recommendation;
+      this.recommendation = recommendation;
+      return recommendation;
 
     } catch (error: any) {
       this.toastService.showToast(error.message, 'error');

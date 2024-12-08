@@ -92,9 +92,9 @@ export class FormComponent implements OnInit {
     }
   }
 
-  navigateToHome() {
-    this.resetForm();
-    this.navCtrl.navigateBack(['/tabs/home'], { animated: false });
+  async navigateToHome() {
+    await this.resetForm();
+    await this.navCtrl.navigateBack(['/tabs/home'], { animated: false });
   }
 
   //setting selected emotion to pass in load recommendations
@@ -140,8 +140,8 @@ export class FormComponent implements OnInit {
         )
       );
 
-      await this.formService.setRecommendation(spotifyResponse, this.generationType);
-      await this.formService.updateUserMoodGenreEvents(eventName, emotionName, genreName);
+      await this.formService.setRecommendation(spotifyResponse, this.generationType, this.selectedEmotion);
+      // await this.formService.updateUserMoodGenreEvents(eventName, emotionName, genreName);
 
       const navigationRoute = this.generationType === 'Song'
         ? '/song-results'
