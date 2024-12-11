@@ -1,4 +1,171 @@
-<div class="relative flex items-center justify-center h-16">
-  <h2 class="text-center">Profile</h2>
-  <p class="absolute right-8">edit</p>
+<div class="relative flex-col h-full overflow-auto">
+  <div class="mt-5">
+    <p
+      class="absolute left-5 top-[22px] text-tertiary font-courierPrime"
+      (click)="logout()"
+    >
+      log out
+    </p>
+    <h2 class="text-center my-0 font-semibold flex flex-row justify-center items-center">
+      profile
+    </h2>
+    <p class="absolute right-5 top-[22px] text-red-500 font-courierPrime">
+      delete
+    </p>
+  </div>
+  <div class="mt-5 flex justify-center items-center space-x-5">
+    <div onclick="picture_chg.showModal()">
+      <img src="/mock/test.jpg" height="120px" width="120px" class="rounded" />
+    </div>
+    <div
+      class="flex flex-col justify-center font-light text-lg space-y-4 font-courierPrime"
+    >
+      <span class="flex flex-row justify-start items-center">{{user.username}}
+        <ion-icon name="create-outline" class="ml-2 mb-[3px]" onclick="name_chg.showModal()"></ion-icon>
+      </span>
+      <span>social score: {{user.social_score}}</span>
+      <span>{{user.friend_count}} friend{{user.friend_count == 1 ? '' : 's'}}</span>
+    </div>
+  </div>
+  <div class="font-courierPrime mt-8 flex flex-col justify-center items-center">
+    <h3 class="text-center font-semibold">privacy</h3>
+    <div class="rounded-lg bg-main-gradient w-[85%] p-4">
+      <div class="flex justify-between mt-2 text-lg">
+        <label for="public-profile" class="mr-2">public</label>
+        <input
+          type="checkbox"
+          class="toggle toggle-accent toggle-sm"
+          [checked]="privacyPublic"
+          (change)="privacyChange('public')"
+        />
+      </div>
+      <div class="flex justify-between mt-2 text-lg">
+        <label for="friends-only-profile" class="mr-2">friends only</label>
+        <input
+          type="checkbox"
+          class="toggle toggle-accent toggle-sm"
+          [checked]="privacyFriends"
+          (change)="privacyChange('friends')"
+        />
+      </div>
+      <div class="flex justify-between mt-2 text-lg">
+        <label for="private-profile" class="mr-2">private</label>
+        <input
+          type="checkbox"
+          class="toggle toggle-accent toggle-sm"
+          [checked]="privacyPrivate"
+          (change)="privacyChange('private')"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="font-courierPrime mt-8 flex flex-col justify-center items-center">
+    <h3 class="text-center font-semibold">notification settings</h3>
+    <div class="rounded-lg bg-main-gradient w-[85%] p-4">
+      <div class="flex justify-between mt-2 text-lg">
+        <label for="email-notifications" class="mr-2"
+          >email notifications</label
+        >
+        <input
+          type="checkbox"
+          class="toggle toggle-accent toggle-sm"
+          [checked]="user.email_notifications"
+          (change)="toggleNotif('email')"
+        />
+      </div>
+      <div class="flex justify-between mt-2 text-lg">
+        <label for="push-notifications" class="mr-2">push notifications</label>
+        <input
+          type="checkbox"
+          class="toggle toggle-accent toggle-sm"
+          [checked]="user.push_notifications"
+          (change)="toggleNotif('push')"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="font-courierPrime mt-8 flex flex-col justify-center items-center">
+    <h3 class="text-center font-semibold">spotify connection</h3>
+    <div
+      class="rounded-lg bg-main-gradient w-[85%] p-4 flex items-center justify-center"
+    >
+      <div class="flex flex-row justify-center items-center">
+        <img [src]="spotifyPicUrl" class="rounded-full w-[40px] h-[40px] object-cover" />
+        <span class="ml-4">{{user.spotify_id}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="font-courierPrime mt-8 flex flex-col justify-center items-center">
+    <h3 class="text-center font-semibold">feedback & support</h3>
+    <div
+      class="rounded-lg bg-main-gradient w-[85%] p-4 flex flex-col items-center justify-center"
+    >
+      <textarea
+        class="textarea textarea-accent resize-none w-[95%] mb-4"
+        placeholder="request a feature, report a bug, or ask a question"
+      ></textarea>
+      <button class="btn btn-accent w-[95%]">submit</button>
+      <button class="btn btn-warning w-[95%] mt-4">
+        write a review on the appstore!
+      </button>
+    </div>
+  </div>
+  <div class="font-courierPrime my-8 flex flex-col justify-center items-center">
+    <h3 class="text-center font-semibold">app version</h3>
+    <div
+      class="rounded-lg bg-main-gradient w-[85%] p-4 flex items-center justify-center"
+    >
+      <span>0.1</span>
+    </div>
+  </div>
 </div>
+
+<dialog id="picture_chg" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">change profile picture</h3>
+
+    <!-- Image preview -->
+    <div class="py-4 flex justify-center">
+      <div class="w-24 h-24 rounded-full overflow-hidden">
+        <img id="profileImagePreview" src="/mock/test.jpg" alt="Profile Image" class="w-full h-full object-cover" />
+      </div>
+    </div>
+
+    <!-- Buttons for taking a picture or choosing from gallery -->
+    <div class="flex flex-col items-center space-y-4 py-4">
+      <button class="btn btn-primary" (click)="takePicture()">take a picture</button>
+      <button class="btn btn-secondary" (click)="chooseFromGallery()">choose from gallery</button>
+    </div>
+
+    <!-- Save and Close buttons -->
+    <div class="modal-action">
+      <form class="flex flex-row justify-between w-full">
+        <button class="btn mr-auto btn-success" (click)="saveProfilePicture()">save</button>
+        <button class="btn btn-error">close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+
+<dialog id="name_chg" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold text-center">change your username</h3>
+
+    <!-- input for new username -->
+    <input
+      type="text"
+      class="input input-accent w-full mt-4 "
+      placeholder="new username"
+      [(ngModel)]="newUsername"
+    />
+
+    <!-- Save and Close buttons -->
+    <div class="modal-action">
+      <form method="dialog" class="flex flex-row justify-between w-full">
+        <button class="btn mr-auto btn-success" (click)="saveUsername()">save</button>
+        <button class="btn btn-error">close</button>
+      </form>
+    </div>
+  </div>
+</dialog>

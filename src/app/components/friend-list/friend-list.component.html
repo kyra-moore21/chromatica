@@ -1,0 +1,99 @@
+<div class="relative font-courierPrime w-full h-full pt-[env(safe-area-inset-top)]">
+  <!-- Chevron back icon -->
+  <ion-icon name="chevron-back-outline" 
+    class="absolute top-[calc(env(safe-area-inset-top)+20px)] left-5 h-[25px] w-[25px]" 
+    (click)="navigateBack()">
+  </ion-icon>
+
+  <ion-icon name="add-outline" 
+    class="absolute top-[calc(env(safe-area-inset-top)+20px)] right-5 h-[25px] w-[25px]" onclick="person_add.showModal()">
+  </ion-icon>
+  
+  <!-- Main Content -->
+  <div class="flex flex-col w-full h-full">
+    <div class="flex flex-col justify-center items-center mt-16 h-[50%]">
+      <span class="font-semibold text-xl">current friends</span>
+      <hr class="border-t border-text w-[80%]" />
+      <div class="flex flex-grow justify-start items-start w-[80%]">
+        @for (friend of friendships; track friend) {
+          @if (friend.friendship_status === 'accepted') {
+            <div class="flex items-center mt-5 w-full">
+              <img src="/mock/test.jpg" class="w-12 rounded-full" />
+              <div class="ms-2 mt-0 flex flex-col justify-center items-start">
+                <h5 class="font-courierPrime mb-0 mt-1">{{friend.user_id === user.id ? friend.friend_details?.username : friend.user_details?.username}}</h5>
+              </div>
+              <ion-icon name="person-remove-sharp" class="ml-auto mr-4 h-[30px] w-[30px] text-red-600" (click)="removeFriend(friend)"></ion-icon>
+              <ion-icon name="remove-circle-outline" class="h-[30px] w-[30px] text-red-600" (click)="setFriendToBlock(friend)"></ion-icon>
+            </div>
+          }
+        }
+      </div>
+    </div>
+    <div class="flex flex-col justify-center items-center h-[50%]">
+      <span class="font-semibold text-xl">pending requests</span>
+      <hr class="border-t border-text w-[80%]" />
+      <div class="flex flex-grow justify-start items-start w-[80%]">
+        @for (friend of friendships; track friend) {
+          @if (friend.friendship_status === 'pending' && friend.user_id === user.id) {
+            <div class="flex items-center mt-5 w-full">
+              <img src="/mock/test.jpg" class="w-12 rounded-full" />
+              <div class="ms-2 mt-0 flex flex-col justify-center items-start">
+                <h5 class="font-courierPrime mb-0 mt-1">{{friend.friend_details?.username}}</h5>
+                <span class="text-sm">(requested)</span>
+              </div>
+              <ion-icon name="remove-outline" class="ml-auto h-[30px] w-[30px] text-red-600" (click)="cancelRequest(friend)"></ion-icon>
+            </div>
+          }
+          @if (friend.friendship_status === 'pending' && friend.friend_id === user.id) {
+            <div class="flex items-center mt-5 w-full">
+              <img src="/mock/test.jpg" class="w-12 rounded-full" />
+              <div class="ms-2 mt-0 flex flex-col justify-center items-start">
+                <h5 class="font-courierPrime mb-0 mt-1">{{friend.user_details?.username}}</h5>
+              </div>
+              <ion-icon name="checkmark-outline" class="ml-auto h-[30px] w-[30px] text-green-600" (click)="acceptRequest(friend)"></ion-icon>
+              <ion-icon name="remove-outline" class="h-[30px] w-[30px] text-red-600" (click)="deleteRequest(friend)"></ion-icon>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<dialog id="person_add" class="modal font-courierPrime">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold text-center">add a user</h3>
+    <h5 class="text-sm text-center">(or unblock a user)</h5>
+
+    <!-- Username input -->
+    <div class="form-control">
+      <label for="username" class="label">
+        username
+      </label>
+      <input type="text" class="input" [(ngModel)]="username" />
+    </div>
+
+    <!-- Save and Close buttons -->
+    <div class="modal-action">
+      <form method="dialog" class="flex flex-row justify-between w-full">
+        <button class="btn mr-auto btn-success" (click)="addUser()">add</button>
+        <button class="btn btn-error">close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="block_prompt" class="modal font-courierPrime">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold text-center">block user</h3>
+    <p class="text-center">are you sure you want to block this user?</p>
+
+    <!-- Save and Close buttons -->
+    <div class="modal-action">
+      <form method="dialog" class="flex flex-row justify-between w-full">
+        <button class="btn mr-auto btn-success" (click)="blockFriend()">block</button>
+        <button class="btn btn-error" (click)="friendToBlock = null">close</button>
+      </form>
+    </div>
+  </div>
+</dialog>

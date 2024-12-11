@@ -13,7 +13,7 @@
 :root {
   --color-text: #c9e8f5;
   --color-bg: #021a21;
-  --navbar-background: linear-gradient(180deg, #042630 36%, #083a49 100%);
+  --navbar-background: linear-gradient(0deg, #042630 36%, #083a49 100%);
   /* secondary color is used on the search bar, */
   --color-secondary: #083a49;
   --color-primary: #042630;
@@ -42,4 +42,5 @@
   --ion-tab-bar-color: var(--icon-unfocused);
   --ion-tab-bar-color-selected: var(--icon-focused);
   --ion-toolbar-background: var(--navbar-background);
+
 }

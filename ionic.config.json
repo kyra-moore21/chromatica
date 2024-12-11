@@ -1,5 +1,7 @@
 {
-  "name": "ionic-app",
-  "integrations": {},
+  "name": "chromatica",
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular-standalone"
 }

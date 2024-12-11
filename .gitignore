@@ -1,7 +1,8 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # Compiled output
-/dist
+/www
+/ios
 /tmp
 /out-tsc
 /bazel-out
@@ -43,3 +44,6 @@ Thumbs.db
 
 .env.local
 environment.ts
+
+# Capacitor build files
+android/
